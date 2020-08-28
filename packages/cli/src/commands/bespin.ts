@@ -1,15 +1,8 @@
-import { GluegunCommand } from "gluegun";
 import { TestResultState } from "@testingrequired/bespin-core";
 
-const command: GluegunCommand = {
-  name: "bespin",
-  run: async (toolbox) => {
-    const { print } = toolbox;
+export const name = "bespin";
 
-    print.info("bespin!");
-
-    print.info(TestResultState.PASS);
-  },
+export const run = async ({ print }) => {
+  print.info("bespin!");
+  print.info(TestResultState.PASS);
 };
-
-module.exports = command;
