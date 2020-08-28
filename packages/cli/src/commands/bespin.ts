@@ -1,12 +1,12 @@
-import { GluegunCommand } from 'gluegun'
+import { GluegunCommand } from "gluegun";
 
 const command: GluegunCommand = {
-  name: 'bespin',
+  name: "bespin",
   run: async toolbox => {
-    const { print } = toolbox
+    const { print } = toolbox;
 
-    print.info('bespin!')
+    print.info("bespin!");
   }
-}
+};
 
-module.exports = command
+module.exports = command;

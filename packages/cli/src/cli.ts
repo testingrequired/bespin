@@ -1,17 +1,17 @@
-const { build } = require('gluegun')
+const { build } = require("gluegun");
 
 /**
  * Create the cli and kick it off
  */
 function run(argv) {
   return build()
-    .brand('bespin')
+    .brand("bespin")
     .src(__dirname)
-    .plugins('./node_modules', { matching: 'bespin-*', hidden: true })
+    .plugins("./node_modules", { matching: "bespin-*", hidden: true })
     .help()
     .version()
     .create()
-    .run(argv)
+    .run(argv);
 }
 
-module.exports = { run }
+module.exports = { run };
