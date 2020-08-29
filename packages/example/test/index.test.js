@@ -1,6 +1,8 @@
-import assert from "assert";
-import { sum } from "../src/index";
+const assert = require("assert");
+const { sum } = require("../src/index");
 
-test("sum should work", () => {
-  assert.strictEqual(sum(1 + 1), 2);
-});
+module.exports = {
+  "sum should work": () => {
+    assert.strictEqual(sum(1, 1), 2);
+  },
+};

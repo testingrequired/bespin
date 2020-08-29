@@ -1,4 +1,8 @@
-import { TestResultState } from "@testingrequired/bespin-core";
+import {
+  TestResultState,
+  TestResult,
+  TestInTestFile,
+} from "@testingrequired/bespin-core";
 
 export const name = "bespin";
 
@@ -23,9 +27,44 @@ export const run = async ({ print, filesystem }) => {
 
   print.info(`Test File Parser: ${configFile.parser.constructor.name}`);
 
-  const tests = await Promise.all(
-    testFilePaths.map((path) => configFile.parser.parseTestFile(path))
-  );
+  const tests: Array<TestInTestFile> = (
+    await Promise.all(
+      testFilePaths.map((path) => configFile.parser.parseTestFile(path))
+    )
+  ).flat() as Array<TestInTestFile>;
 
   print.success(`Tests: ${JSON.stringify(tests)}`);
+
+  print.info(`Test Executor: ${configFile.executor.constructor.name}`);
+
+  const results: Array<TestResult> = (
+    await Promise.all(
+      tests.map((test) => configFile.executor.executeTest(test))
+    )
+  ).flat();
+
+  const zippedResults: Array<[TestInTestFile, TestResult]> = results.map(
+    (result, i) => {
+      return [tests[i], result];
+    }
+  );
+
+  zippedResults.forEach((zippedResult) => {
+    const [test, result] = zippedResult;
+    const printMessage = `${test.testFilePath}:${test.testName} ${result.state}`;
+
+    if (result.state === TestResultState.PASS) {
+      print.success(printMessage);
+    } else {
+      print.error(`${printMessage}\nMessage:\n${result.message}`);
+    }
+  });
+
+  const passingRun = results.every(
+    (result) => result.state === TestResultState.PASS
+  );
+
+  if (!passingRun) {
+    process.exit(1);
+  }
 };

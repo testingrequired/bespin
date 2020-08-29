@@ -2,6 +2,7 @@ const {
   Config,
   TestFileLocator,
   TestFileParser,
+  TestInTestFile,
 } = require("@testingrequired/bespin-core");
 const { promisify } = require("util");
 const glob = require("glob");
@@ -20,12 +21,18 @@ class GlobTestFileLocator extends TestFileLocator {
   }
 }
 
-class EmptyTestFileParser extends TestFileParser {
+class SimpleTestFileParser extends TestFileParser {
   async parseTestFile(path) {
-    return [];
+    const testFile = require(path);
+    console.log(testFile);
+
+    return Object.keys(testFile).map((testName) => {
+      console.log(testFile[testName]);
+      return new TestInTestFile(path, testName, testFile[testName]);
+    });
   }
 }
 
 module.exports = Config.new()
   .withLocator(new GlobTestFileLocator())
-  .withParser(new EmptyTestFileParser());
+  .withParser(new SimpleTestFileParser());

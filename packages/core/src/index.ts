@@ -3,7 +3,8 @@
 export class TestInTestFile {
   constructor(
     public readonly testFilePath: string,
-    public readonly testName: string
+    public readonly testName: string,
+    public readonly testFunction: TestFunction
   ) {}
 }
 
@@ -21,9 +22,10 @@ export interface TestResult {
 export class Config {
   public locator?: TestFileLocator;
   public parser?: TestFileParser;
+  public executor?: TestExecutor;
 
   static new() {
-    return new Config();
+    return new Config().withExecutor(new DefaultTestExecutor());
   }
 
   withLocator(locator: TestFileLocator): this {
@@ -35,7 +37,14 @@ export class Config {
     this.parser = parser;
     return this;
   }
+
+  withExecutor(executor: TestExecutor): this {
+    this.executor = executor;
+    return this;
+  }
 }
+
+export type TestFunction = () => Promise<void>;
 
 // CLI
 
@@ -63,4 +72,21 @@ export abstract class TestFileParser extends Middleware {
 
 export abstract class TestExecutor extends Middleware {
   abstract executeTest(test: TestInTestFile): Promise<TestResult>;
+}
+
+export class DefaultTestExecutor extends TestExecutor {
+  async executeTest(test: TestInTestFile): Promise<TestResult> {
+    try {
+      test.testFunction.apply(null);
+
+      return {
+        state: TestResultState.PASS,
+      };
+    } catch (e) {
+      return {
+        state: TestResultState.FAIL,
+        message: e.message,
+      };
+    }
+  }
 }
