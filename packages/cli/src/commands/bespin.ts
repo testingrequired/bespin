@@ -82,7 +82,9 @@ function printResults(
 ): void {
   zippedResults.forEach((zippedResult) => {
     const [test, result] = zippedResult;
-    const printMessage = `${test.testFilePath}:${test.testName} ${result.state}`;
+    const printMessage = `${test.testFilePath}:${test.testName} ${
+      result.state
+    } (${result.time.toFixed(2)}ms)`;
 
     if (result.state === TestResultState.PASS) {
       print.success(printMessage);
