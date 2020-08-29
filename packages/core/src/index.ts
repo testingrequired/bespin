@@ -82,7 +82,7 @@ export abstract class TestExecutor extends Middleware {
 export class DefaultTestExecutor extends TestExecutor {
   async executeTest(test: TestInTestFile): Promise<TestResult> {
     try {
-      test.testFunction.apply(null);
+      await test.testFunction.apply(null);
 
       return {
         state: TestResultState.PASS,
