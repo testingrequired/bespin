@@ -1,3 +1,6 @@
+import { promisify } from 'util';
+const glob = require('glob');
+
 // Core
 
 export class TestInTestFile {
@@ -25,7 +28,9 @@ export class Config {
   public executor?: TestExecutor;
 
   static new() {
-    return new Config().withExecutor(new DefaultTestExecutor());
+    return new Config()
+      .withLocator(new GlobTestFileLocator())
+      .withExecutor(new DefaultTestExecutor());
   }
 
   withLocator(locator: TestFileLocator): this {
@@ -88,5 +93,32 @@ export class DefaultTestExecutor extends TestExecutor {
         message: e.message,
       };
     }
+  }
+}
+
+const globPromise = promisify(glob);
+
+export class GlobTestFileLocator extends TestFileLocator {
+  private pattern: string;
+
+  constructor(pattern = '**/*.test.js') {
+    super();
+
+    this.pattern = pattern;
+  }
+
+  locateTestFilePaths() {
+    return globPromise(this.pattern);
+  }
+}
+
+export class ModuleTestFileParser extends TestFileParser {
+  async parseTestFile(path: string) {
+    const testFile = require(path);
+
+    return Object.keys(testFile).map(testName => {
+      console.log(testFile[testName]);
+      return new TestInTestFile(path, testName, testFile[testName]);
+    });
   }
 }

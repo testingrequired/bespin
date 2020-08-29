@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@testingrequired/bespin-cli": "0.1.0",
-    "@testingrequired/bespin-core": "0.1.0",
-    "glob": "^7.1.6"
+    "@testingrequired/bespin-core": "0.1.0"
   }
 }
