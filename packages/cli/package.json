@@ -45,6 +45,9 @@
     "prettier": "^1.12.1",
     "jest": "^24.1.0"
   },
+  "peerDependencies": {
+    "@testingrequired/bespin-core": "0.1.0"
+  },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"

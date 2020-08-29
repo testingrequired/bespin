@@ -2,7 +2,6 @@
   "version": "0.1.0",
   "license": "MIT",
   "module": "src/index.js",
-  "type": "module",
   "engines": {
     "node": ">=10"
   },
@@ -12,6 +11,8 @@
     "test": "bespin"
   },
   "dependencies": {
-    "@testingrequired/bespin-cli": "0.1.0"
+    "@testingrequired/bespin-cli": "0.1.0",
+    "@testingrequired/bespin-core": "0.1.0",
+    "glob": "^7.1.6"
   }
 }
