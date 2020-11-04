@@ -3,5 +3,8 @@
   "name": "bespin",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "scripts": {
+    "test": "yarn workspaces run test"
+  }
 }
