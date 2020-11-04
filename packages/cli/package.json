@@ -12,7 +12,7 @@
     "lint": "tslint -p .",
     "clean-build": "rm -rf ./build",
     "compile": "tsc -p .",
-    "copy-templates": "./copytemplates.sh",
+    "copy-templates": "",
     "build": "yarn format && yarn lint && yarn clean-build && yarn compile && yarn copy-templates",
     "prepublishOnly": "yarn build",
     "test": "jest",
