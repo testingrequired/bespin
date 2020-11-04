@@ -3,7 +3,7 @@ import {
   TestResult,
   TestInTestFile,
   TestExecutor,
-  TestFileParser,
+  TestFileParser
 } from "@testingrequired/bespin-core";
 import { GluegunPrint } from "gluegun";
 
@@ -38,7 +38,7 @@ export const run = async ({ print, filesystem }) => {
   printResults(zippedResults, print);
 
   const passingRun = results.every(
-    (result) => result.state === TestResultState.PASS
+    result => result.state === TestResultState.PASS
   );
 
   if (!passingRun) {
@@ -48,8 +48,8 @@ export const run = async ({ print, filesystem }) => {
 
 async function getTests(testFilePaths: Array<string>, parser: TestFileParser) {
   const tests: Array<TestInTestFile> = (
-    await Promise.all(testFilePaths.map((path) => parser.parseTestFile(path)))
-  ).flat() as Array<TestInTestFile>;
+    await Promise.all(testFilePaths.map(path => parser.parseTestFile(path)))
+  ).flat();
 
   return tests;
 }
@@ -59,7 +59,7 @@ async function getResults(
   executor: TestExecutor
 ) {
   return (
-    await Promise.all(tests.map((test) => executor.executeTest(test)))
+    await Promise.all(tests.map(test => executor.executeTest(test)))
   ).flat();
 }
 
@@ -80,7 +80,7 @@ function printResults(
   zippedResults: Array<[TestInTestFile, TestResult]>,
   print: GluegunPrint
 ): void {
-  zippedResults.forEach((zippedResult) => {
+  zippedResults.forEach(zippedResult => {
     const [test, result] = zippedResult;
     const printMessage = `${test.testFilePath}:${test.testName} ${
       result.state

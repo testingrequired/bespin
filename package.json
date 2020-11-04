@@ -5,6 +5,8 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "yarn workspaces run test"
+    "build": "yarn workspace @testingrequired/bespin-core run build && yarn workspace @testingrequired/bespin-cli run build",
+    "test": "yarn workspaces run test",
+    "verify": "yarn build && yarn test"
   }
 }
