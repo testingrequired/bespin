@@ -10,3 +10,4 @@ export { TestExecutor } from './TestExecutor';
 export { TestFileParser } from './TestFileParser';
 export { ModuleTestFileParser } from './ModuleTestFileParser';
 export { Config } from './Config';
+export { Runner } from './Runner';

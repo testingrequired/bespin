@@ -1,11 +1,4 @@
-import {
-  TestResultState,
-  TestResult,
-  TestInTestFile,
-  TestExecutor,
-  TestFileParser
-} from "@testingrequired/bespin-core";
-import { GluegunPrint } from "gluegun";
+import { TestResultState, Runner, Config } from "@testingrequired/bespin-core";
 
 export const name = "bespin";
 
@@ -22,74 +15,32 @@ export const run = async ({ print, filesystem }) => {
     return;
   }
 
-  const configFile = await import(configFilePath);
+  const configFile: Config = await import(configFilePath);
 
-  print.info(`Test File Locator: ${configFile.locator.constructor.name}`);
-  const testFilePaths = await configFile.locator.locateTestFilePaths();
-  print.success(`Test Files: ${JSON.stringify(testFilePaths)}`);
+  const runner = new Runner();
 
-  print.info(`Test File Parser: ${configFile.parser.constructor.name}`);
-  const tests = await getTests(testFilePaths, configFile.parser);
-  print.success(`Tests: ${JSON.stringify(tests)}`);
-  print.info(`Test Executor: ${configFile.executor.constructor.name}`);
+  const results = await runner.run(configFile);
 
-  const results = await getResults(tests, configFile.executor);
-  const zippedResults = await getZippedResults(tests, results);
-  printResults(zippedResults, print);
+  results.forEach(([{ testName, testFilePath }, { state, time, message }]) => {
+    const formattedTime = `${time.toFixed(2)}ms`;
+    const printMessage = `${testFilePath}:${testName} ${state} (${formattedTime})`;
 
-  const passingRun = results.every(
-    result => result.state === TestResultState.PASS
-  );
-
-  if (!passingRun) {
-    process.exit(1);
-  }
-};
-
-async function getTests(testFilePaths: Array<string>, parser: TestFileParser) {
-  const tests: Array<TestInTestFile> = (
-    await Promise.all(testFilePaths.map(path => parser.parseTestFile(path)))
-  ).flat();
-
-  return tests;
-}
-
-async function getResults(
-  tests: Array<TestInTestFile>,
-  executor: TestExecutor
-) {
-  return (
-    await Promise.all(tests.map(test => executor.executeTest(test)))
-  ).flat();
-}
-
-async function getZippedResults(
-  tests: Array<TestInTestFile>,
-  results: Array<TestResult>
-) {
-  const zippedResults: Array<[TestInTestFile, TestResult]> = results.map(
-    (result, i) => {
-      return [tests[i], result];
-    }
-  );
-
-  return zippedResults;
-}
-
-function printResults(
-  zippedResults: Array<[TestInTestFile, TestResult]>,
-  print: GluegunPrint
-): void {
-  zippedResults.forEach(zippedResult => {
-    const [test, result] = zippedResult;
-    const printMessage = `${test.testFilePath}:${test.testName} ${
-      result.state
-    } (${result.time.toFixed(2)}ms)`;
-
-    if (result.state === TestResultState.PASS) {
+    if (state === TestResultState.PASS) {
       print.success(printMessage);
     } else {
-      print.error(`${printMessage}\nMessage:\n${result.message}`);
+      print.error(`${printMessage}\nMessage:\n${message}`);
     }
   });
-}
+
+  const passingRun = results
+    .map(([_, result]) => result)
+    .every(({ state }) => state === TestResultState.PASS);
+
+  if (passingRun) {
+    print.success("PASS");
+  } else {
+    print.error(`FAIL`);
+  }
+
+  process.exit(passingRun ? 0 : 1);
+};
