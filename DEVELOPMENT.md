@@ -25,3 +25,12 @@ Run tests in all packages
 Runs the build and test
 
 `yarn verify`
+
+## CLI
+
+To run the bespin configured in the example package. Great for quickly playing with the CLI.
+
+```bash
+$ yarn bespin
+$ yarn bespin -h
+```

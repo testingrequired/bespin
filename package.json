@@ -7,6 +7,7 @@
   "scripts": {
     "build": "yarn workspace @testingrequired/bespin-core run build && yarn workspace @testingrequired/bespin-cli run build",
     "test": "yarn workspaces run test",
-    "verify": "yarn build && yarn test"
+    "verify": "yarn build && yarn test",
+    "bespin": "yarn workspace @testingrequired/bespin-example run test"
   }
 }
