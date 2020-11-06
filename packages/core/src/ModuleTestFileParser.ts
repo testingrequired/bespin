@@ -6,7 +6,6 @@ export class ModuleTestFileParser extends TestFileParser {
     const testFile = require(path);
 
     return Object.keys(testFile).map(testName => {
-      console.log(testFile[testName]);
       return new TestInTestFile(path, testName, testFile[testName]);
     });
   }

@@ -21,7 +21,7 @@ export const run = async ({ print, filesystem }) => {
 
   const results = await runner.run(configFile);
 
-  results.forEach(([{ testName, testFilePath }, { state, time, message }]) => {
+  results.forEach(([[testFilePath, testName], { state, time, message }]) => {
     const formattedTime = `${time.toFixed(2)}ms`;
     const printMessage = `${testFilePath}:${testName} ${state} (${formattedTime})`;
 
