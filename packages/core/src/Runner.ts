@@ -41,7 +41,13 @@ export class Runner {
           });
 
           worker.on('message', (result: [[string, string], TestResult]) => {
-            results.push(result);
+            const [[testFilePath, testName], testResult] = result;
+
+            const shortTestFilePath = testFilePath
+              .replace(process.cwd(), '')
+              .slice(1);
+
+            results.push([[shortTestFilePath, testName], testResult]);
           });
 
           worker.on('exit', () => {
