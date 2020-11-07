@@ -1,15 +1,15 @@
 import { performance } from 'perf_hooks';
 import { TestResult, TestResultState } from './TestResult';
-import { TestInTestFile } from './TestInTestFile';
 import { TestExecutor } from './TestExecutor';
+import { TestFunction } from './TestFunction';
 
 export class DefaultTestExecutor extends TestExecutor {
-  async executeTest(test: TestInTestFile): Promise<TestResult> {
+  async executeTest(test: TestFunction): Promise<TestResult> {
     let t0;
 
     try {
       t0 = performance.now();
-      await test.testFunction.apply(null);
+      await test.apply(null);
       const t1 = performance.now();
       const time = t1 - t0;
 

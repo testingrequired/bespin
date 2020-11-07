@@ -1,64 +1,73 @@
 import path from 'path';
 import { Config } from './Config';
-import { TestFileParser } from './TestFileParser';
 import { TestResult } from './TestResult';
 import { Worker } from 'worker_threads';
+import { TestInTestFile } from './TestInTestFile';
 
 export class Runner {
-  async run(
-    configFile: Config
-  ): Promise<Array<[[string, string], TestResult]>> {
+  async run(configFilePath: string): Promise<[TestInTestFile, TestResult][]> {
+    const configFile: Config = await import(configFilePath);
+
     if (!configFile.locator || !configFile.parser || !configFile.executor) {
-      throw new Error('');
+      throw new Error('Incomplete config file');
     }
+
+    const { parser } = configFile;
 
     const testFilePaths = await configFile.locator.locateTestFilePaths();
-    const tests = await TestFileParser.getTests(
-      testFilePaths,
-      configFile.parser
-    );
+    const testsInTestFiles = (
+      await Promise.all(
+        testFilePaths.map(testFilePath => parser.getTests(testFilePath))
+      )
+    ).flat();
 
-    const threads: Array<Worker> = [];
-
-    for (let test of tests) {
-      threads.push(
+    const threads: Array<Worker> = testsInTestFiles.map(
+      testInTestFile =>
         new Worker(`${__dirname}/TestWorker.js`, {
-          workerData: [
-            path.join(process.cwd(), test.testFilePath),
-            test.testName,
-          ],
+          workerData: {
+            testInTestFile: {
+              ...testInTestFile,
+              testFilePath: path.join(
+                process.cwd(),
+                testInTestFile.testFilePath
+              ),
+            },
+            configFilePath,
+          },
         })
-      );
-    }
-
-    const returnPromise = new Promise<Array<[[string, string], TestResult]>>(
-      (resolve, reject) => {
-        const results: Array<[[string, string], TestResult]> = [];
-
-        for (let worker of threads) {
-          worker.on('error', err => {
-            reject(err);
-          });
-
-          worker.on('message', (result: [[string, string], TestResult]) => {
-            const [[testFilePath, testName], testResult] = result;
-
-            const shortTestFilePath = testFilePath
-              .replace(process.cwd(), '')
-              .slice(1);
-
-            results.push([[shortTestFilePath, testName], testResult]);
-          });
-
-          worker.on('exit', () => {
-            if (results.length === tests.length) {
-              resolve(results);
-            }
-          });
-        }
-      }
     );
 
-    return returnPromise;
+    return new Promise<[TestInTestFile, TestResult][]>((resolve, reject) => {
+      const results: [TestInTestFile, TestResult][] = [];
+
+      for (let worker of threads) {
+        worker.on('error', err => {
+          reject(err);
+        });
+
+        worker.on('message', (result: [TestInTestFile, TestResult]) => {
+          const [testInTestFile, testResult] = result;
+          const { testFilePath, testName } = testInTestFile;
+
+          const fixedTestFilePath = testFilePath
+            .replace(process.cwd(), '')
+            .slice(1);
+
+          results.push([
+            {
+              testFilePath: fixedTestFilePath,
+              testName,
+            },
+            testResult,
+          ]);
+        });
+
+        worker.on('exit', () => {
+          if (results.length === testsInTestFiles.length) {
+            resolve(results);
+          }
+        });
+      }
+    });
   }
 }

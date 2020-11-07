@@ -1,5 +1,5 @@
 import { GluegunToolbox } from "gluegun";
-import { TestResultState, Runner, Config } from "@testingrequired/bespin-core";
+import { TestResultState, Runner } from "@testingrequired/bespin-core";
 
 export const name = "bespin";
 
@@ -18,15 +18,13 @@ export const run = async (toolbox: GluegunToolbox) => {
     return;
   }
 
-  const configFile: Config = await import(configFilePath);
-
   const runner = new Runner();
 
-  const results = await runner.run(configFile);
+  const results = await runner.run(configFilePath);
 
-  results.forEach(([[testFilePath, testName], { state, time, message }]) => {
+  results.forEach(([testInTestFile, { state, time, message }]) => {
     const formattedTime = `${time.toFixed(2)}ms`;
-    const printMessage = `${testFilePath}:${testName} ${state} (${formattedTime})`;
+    const printMessage = `${testInTestFile.testFilePath}:${testInTestFile.testName} ${state} (${formattedTime})`;
 
     if (state === TestResultState.PASS) {
       print.success(printMessage);

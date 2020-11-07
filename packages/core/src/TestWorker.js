@@ -1,35 +1,25 @@
+const path = require('path');
 const { isMainThread, parentPort, workerData } = require('worker_threads');
-const { TestExecutor, TestFileParser } = require('./index');
 
 if (isMainThread) {
   throw new Error('Test worker can not run on main thread');
 }
 
 async function worker() {
-  const configFile = require(`${process.cwd()}/bespin.config.js`);
+  const { testInTestFile, configFilePath } = workerData;
+  const { testFilePath, testName } = testInTestFile;
 
-  if (!configFile.parser || !configFile.executor) {
-    return;
+  const configFile = require(path.join(process.cwd(), configFilePath));
+
+  if (!configFile.locator || !configFile.parser || !configFile.executor) {
+    throw new Error('Incomplete config file');
   }
 
-  const [testFilePath, testName] = workerData;
+  const test = await configFile.parser.getTestFunction(testFilePath, testName);
 
-  const tests = await TestFileParser.getTests(
-    [testFilePath],
-    configFile.parser
-  );
+  const result = await configFile.executor.executeTest(test);
 
-  const test = tests.find(
-    t => t.testFilePath === testFilePath && t.testName === testName
-  );
-
-  if (!test) {
-    return;
-  }
-
-  const results = await TestExecutor.getResults([test], configFile.executor);
-
-  parentPort.postMessage([workerData, results[0]]);
+  parentPort.postMessage([testInTestFile, result]);
 }
 
 worker();
