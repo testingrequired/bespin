@@ -1,9 +1,12 @@
+import { GluegunToolbox } from "gluegun";
 import { TestResultState, Runner, Config } from "@testingrequired/bespin-core";
 
 export const name = "bespin";
 
-export const run = async ({ print, filesystem }) => {
-  const configFilePath = "bespin.config.js";
+export const run = async (toolbox: GluegunToolbox) => {
+  const { print, filesystem } = toolbox;
+
+  const configFilePath = toolbox.parameters.options?.c || "bespin.config.js";
 
   print.info("bespin");
 
