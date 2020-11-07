@@ -15,7 +15,6 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "jsx": "react",
-    "esModuleInterop": true,
-    "allowJs": true
+    "esModuleInterop": true
   }
 }
