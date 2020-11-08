@@ -1,5 +1,5 @@
-const path = require('path');
-const { isMainThread, parentPort, workerData } = require('worker_threads');
+import path from 'path';
+import { isMainThread, parentPort, workerData } from 'worker_threads';
 
 if (isMainThread) {
   throw new Error('Test worker can not run on main thread');
@@ -19,7 +19,7 @@ async function worker() {
 
   const result = await configFile.executor.executeTest(test);
 
-  parentPort.postMessage([testInTestFile, result]);
+  parentPort?.postMessage([testInTestFile, result]);
 }
 
 worker();

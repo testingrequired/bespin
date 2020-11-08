@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "tsdx build && cp ./src/TestWorker.js ./dist/TestWorker.js",
+    "build": "tsdx build --entry src/index.ts && tsc -p tsconfig.worker.json",
     "test": "tsdx test",
     "lint": "tsdx lint",
     "prepare": "tsdx build"
