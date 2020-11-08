@@ -29,4 +29,22 @@ export class Config {
     this.executor = executor;
     return this;
   }
+
+  static async load(configFilePath: string): Promise<Required<Config>> {
+    const configFile: Config = await import(configFilePath);
+
+    if (!Config.isValidConfig(configFile)) {
+      throw new Error('Invalid config file');
+    }
+
+    return configFile;
+  }
+
+  static isValidConfig(configFile: Config): configFile is Required<Config> {
+    if (!configFile.locator || !configFile.parser || !configFile.executor) {
+      return false;
+    }
+
+    return true;
+  }
 }

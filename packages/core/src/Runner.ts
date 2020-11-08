@@ -6,18 +6,14 @@ import { TestInTestFile } from './TestInTestFile';
 
 export class Runner {
   async run(configFilePath: string): Promise<[TestInTestFile, TestResult][]> {
-    const configFile: Config = await import(configFilePath);
-
-    if (!configFile.locator || !configFile.parser || !configFile.executor) {
-      throw new Error('Incomplete config file');
-    }
-
-    const { parser } = configFile;
+    const configFile = await Config.load(configFilePath);
 
     const testFilePaths = await configFile.locator.locateTestFilePaths();
     const testsInTestFiles = (
       await Promise.all(
-        testFilePaths.map(testFilePath => parser.getTests(testFilePath))
+        testFilePaths.map(testFilePath =>
+          configFile.parser.getTests(testFilePath)
+        )
       )
     ).flat();
 
