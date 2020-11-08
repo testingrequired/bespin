@@ -2,20 +2,7 @@
   "extends": "./tsconfig.json",
   "include": ["src/TestWorker.ts"],
   "compilerOptions": {
-    "target": "ES5",
     "module": "CommonJS",
-    "lib": ["esnext"],
-    "importHelpers": true,
-    "declaration": true,
-    "sourceMap": true,
-    "outDir": "dist",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
-    "jsx": "react",
-    "esModuleInterop": true
+    "outDir": "dist"
   }
 }
