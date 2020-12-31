@@ -1,4 +1,4 @@
-import path from 'path';
+import { join } from 'path';
 import { Config } from './Config';
 import { TestResult } from './TestResult';
 import { Worker } from 'worker_threads';
@@ -6,37 +6,31 @@ import { TestInTestFile } from './TestInTestFile';
 
 export class Runner {
   async run(configFilePath: string): Promise<[TestInTestFile, TestResult][]> {
-    const configFile = await Config.load(configFilePath);
+    const { locator, parser } = await Config.load(configFilePath);
 
-    const testFilePaths = await configFile.locator.locateTestFilePaths();
+    const testFilePaths = await locator.locateTestFilePaths();
+
     const testsInTestFiles = (
-      await Promise.all(
-        testFilePaths.map(testFilePath =>
-          configFile.parser.getTests(testFilePath)
-        )
-      )
+      await Promise.all(testFilePaths.map(path => parser.getTests(path)))
     ).flat();
 
-    const threads: Array<Worker> = testsInTestFiles.map(
-      testInTestFile =>
-        new Worker(`${__dirname}/TestWorker.js`, {
-          workerData: {
-            testInTestFile: {
-              ...testInTestFile,
-              testFilePath: path.join(
-                process.cwd(),
-                testInTestFile.testFilePath
-              ),
-            },
-            configFilePath,
-          },
-        })
-    );
-
     return new Promise<[TestInTestFile, TestResult][]>((resolve, reject) => {
-      const results: [TestInTestFile, TestResult][] = [];
+      const results: Array<[TestInTestFile, TestResult]> = [];
 
-      for (let worker of threads) {
+      const workers: Array<Worker> = testsInTestFiles.map(
+        testInTestFile =>
+          new Worker(`${__dirname}/TestWorker.js`, {
+            workerData: {
+              testInTestFile: {
+                ...testInTestFile,
+                testFilePath: join(process.cwd(), testInTestFile.testFilePath),
+              },
+              configFilePath,
+            },
+          })
+      );
+
+      for (const worker of workers) {
         worker.on('error', err => {
           reject(err);
         });
