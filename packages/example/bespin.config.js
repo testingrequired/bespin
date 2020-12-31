@@ -1,11 +1,11 @@
 const {
   Config,
   GlobTestFileLocator,
-  ModuleTestFileParser,
+  SpecTestFileParse,
   DefaultTestExecutor,
 } = require("@testingrequired/bespin-core");
 
 module.exports = new Config()
   .withLocator(new GlobTestFileLocator("**/*.test.js"))
-  .withParser(new ModuleTestFileParser())
+  .withParser(new SpecTestFileParse())
   .withExecutor(new DefaultTestExecutor());
