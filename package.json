@@ -9,8 +9,5 @@
     "test": "yarn workspaces run test",
     "verify": "yarn build && yarn test",
     "bespin": "yarn workspace @testingrequired/bespin-example run test"
-  },
-  "dependencies": {
-    "tsdx": "^0.14.1"
   }
 }
