@@ -2,8 +2,6 @@ import { promisify } from 'util';
 const glob = require('glob');
 import { TestFileLocator } from './TestFileLocator';
 
-const globPromise = promisify(glob);
-
 export class GlobTestFileLocator extends TestFileLocator {
   private pattern: string;
 
@@ -14,6 +12,7 @@ export class GlobTestFileLocator extends TestFileLocator {
   }
 
   locateTestFilePaths() {
+    const globPromise = promisify(glob);
     return globPromise(this.pattern);
   }
 }
