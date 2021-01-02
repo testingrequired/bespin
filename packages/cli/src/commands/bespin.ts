@@ -45,21 +45,6 @@ class TerminalReporter extends Reporter {
     super();
   }
 
-  // @ts-ignore: Unused argument/s
-  onTestStart(testInTestFile: TestInTestFile): void {
-    // @ts-ignore
-  }
-
-  // @ts-ignore: Unused argument/s
-  onTestEnd(testInTestFile: TestInTestFile, testResult: TestResult): void {
-    // @ts-ignore
-  }
-
-  // @ts-ignore: Unused argument/s
-  onRunStart(testsInTestFiles: TestInTestFile[]): void {
-    // @ts-ignore
-  }
-
   onRunEnd(results: [TestInTestFile, TestResult][]): void {
     const { print } = this.toolbox;
 

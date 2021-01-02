@@ -3,14 +3,15 @@ import { TestInTestFile } from './TestInTestFile';
 import { TestResult } from './TestResult';
 
 export abstract class Reporter extends Middleware {
-  abstract onTestStart(testInTestFile: TestInTestFile): void;
+  // @ts-ignore: unused argument/s
+  onTestStart(testInTestFile: TestInTestFile): void {}
 
-  abstract onTestEnd(
-    testInTestFile: TestInTestFile,
-    testResult: TestResult
-  ): void;
+  // @ts-ignore: unused argument/s
+  onTestEnd(testInTestFile: TestInTestFile, testResult: TestResult): void {}
 
-  abstract onRunStart(testsInTestFiles: Array<TestInTestFile>): void;
+  // @ts-ignore: unused argument/s
+  onRunStart(testsInTestFiles: Array<TestInTestFile>): void {}
 
-  abstract onRunEnd(results: Array<[TestInTestFile, TestResult]>): void;
+  // @ts-ignore: unused argument/s
+  onRunEnd(results: Array<[TestInTestFile, TestResult]>): void {}
 }
