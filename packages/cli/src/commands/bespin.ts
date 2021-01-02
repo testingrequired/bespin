@@ -1,5 +1,5 @@
 import { GluegunToolbox } from "gluegun";
-import { TestResultState, Runner } from "@testingrequired/bespin-core";
+import { TestResultState, Runner, Config } from "@testingrequired/bespin-core";
 
 export const name = "bespin";
 
@@ -18,9 +18,11 @@ export const run = async (toolbox: GluegunToolbox) => {
     return;
   }
 
+  const config = await Config.load(configFilePath);
+
   const runner = new Runner();
 
-  const results = await runner.run(configFilePath);
+  const results = await runner.run(config, configFilePath);
 
   results.forEach(([testInTestFile, { state, time, message }]) => {
     const formattedTime = `${time.toFixed(2)}ms`;

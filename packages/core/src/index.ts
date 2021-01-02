@@ -13,5 +13,7 @@ export { ModuleTestFileParser } from './ModuleTestFileParser';
 export { SpecTestFileParse } from './SpecTestFileParser';
 export { TestFileLocator } from './TestFileLocator';
 export { GlobTestFileLocator } from './GlobTestFileLocator';
+export { Reporter } from './Reporter';
+export { DebugReporter } from './DebugReporter';
 export { Config } from './Config';
 export { Runner } from './Runner';

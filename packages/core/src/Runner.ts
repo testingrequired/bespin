@@ -6,21 +6,16 @@ import { TestInTestFile } from './TestInTestFile';
 
 export class Runner {
   async run(
+    config: Required<Config>,
     configFilePath: string
   ): Promise<Array<[TestInTestFile, TestResult]>> {
     return new Promise<Array<[TestInTestFile, TestResult]>>(
       async (resolve, reject) => {
-        const config = await Config.load(configFilePath);
+        const testsInTestFiles = await Config.getTestsInTestFiles(config);
 
-        const testFilePaths = await config.locator.locateTestFilePaths();
-
-        const testsInTestFiles = (
-          await Promise.all(
-            testFilePaths.map(path => config.parser.getTests(path))
-          )
-        ).flat();
-
-        debugger;
+        for (const reporter of config.reporters) {
+          reporter.onRunStart(testsInTestFiles);
+        }
 
         const workers: Array<Worker> = testsInTestFiles.map(testInTestFile => {
           /**
@@ -40,7 +35,6 @@ export class Runner {
         });
 
         const results: Array<[TestInTestFile, TestResult]> = [];
-        debugger;
 
         for (const worker of workers) {
           worker.on('error', err => {
@@ -63,11 +57,19 @@ export class Runner {
               testName,
             };
 
+            for (const reporter of config.reporters) {
+              reporter.onTestEnd(fixedTestInTestFile, testResult);
+            }
+
             results.push([fixedTestInTestFile, testResult]);
           });
 
           worker.on('exit', () => {
             if (results.length === testsInTestFiles.length) {
+              for (const reporter of config.reporters) {
+                reporter.onRunEnd(results);
+              }
+
               resolve(results);
             }
           });
