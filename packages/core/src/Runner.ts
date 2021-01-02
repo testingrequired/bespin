@@ -5,12 +5,12 @@ import { Worker } from 'worker_threads';
 import { TestInTestFile } from './TestInTestFile';
 
 export class Runner {
-  run(configFilePath: string): Promise<[TestInTestFile, TestResult][]> {
+  async run(
+    configFilePath: string
+  ): Promise<Array<[TestInTestFile, TestResult]>> {
     return new Promise<Array<[TestInTestFile, TestResult]>>(
       async (resolve, reject) => {
         const config = await Config.load(configFilePath);
-
-        const results: Array<[TestInTestFile, TestResult]> = [];
 
         const testFilePaths = await config.locator.locateTestFilePaths();
 
@@ -19,6 +19,8 @@ export class Runner {
             testFilePaths.map(path => config.parser.getTests(path))
           )
         ).flat();
+
+        debugger;
 
         const workers: Array<Worker> = testsInTestFiles.map(testInTestFile => {
           /**
@@ -36,6 +38,9 @@ export class Runner {
             },
           });
         });
+
+        const results: Array<[TestInTestFile, TestResult]> = [];
+        debugger;
 
         for (const worker of workers) {
           worker.on('error', err => {
