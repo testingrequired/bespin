@@ -4,36 +4,6 @@ import { TestResult } from './TestResult';
 import { Worker } from 'worker_threads';
 import { TestInTestFile } from './TestInTestFile';
 
-export declare interface Runner {
-  emit(event: 'runStart', testsInTestFiles: Array<TestInTestFile>): boolean;
-  on(
-    event: 'runStart',
-    listener: (testsInTestFiles: Array<TestInTestFile>) => void
-  ): this;
-
-  emit(event: 'testStart', testsInTestFile: TestInTestFile): boolean;
-  on(
-    event: 'testStart',
-    listener: (testsInTestFile: TestInTestFile) => void
-  ): this;
-
-  emit(
-    event: 'testEnd',
-    testInTestFile: TestInTestFile,
-    result: TestResult
-  ): boolean;
-  on(
-    event: 'testEnd',
-    listener: (testInTestFile: TestInTestFile, result: TestResult) => void
-  ): this;
-
-  emit(event: 'runEnd', results: Array<[TestInTestFile, TestResult]>): boolean;
-  on(
-    event: 'runEnd',
-    listener: (results: Array<[TestInTestFile, TestResult]>) => void
-  ): this;
-}
-
 export class Runner extends EventEmitter {
   async run(
     testsInTestFiles: Array<TestInTestFile>,
@@ -47,9 +17,11 @@ export class Runner extends EventEmitter {
           /**
            * Ensure test worker can import test file.
            */
+          const testFilePath = join(process.cwd(), testInTestFile.testFilePath);
+
           const testInTestFileForWorker = {
             ...testInTestFile,
-            testFilePath: join(process.cwd(), testInTestFile.testFilePath),
+            testFilePath,
           };
 
           this.emit('testStart', testInTestFile);
@@ -101,4 +73,34 @@ export class Runner extends EventEmitter {
       }
     );
   }
+}
+
+export declare interface Runner {
+  emit(event: 'runStart', testsInTestFiles: Array<TestInTestFile>): boolean;
+  on(
+    event: 'runStart',
+    listener: (testsInTestFiles: Array<TestInTestFile>) => void
+  ): this;
+
+  emit(event: 'testStart', testsInTestFile: TestInTestFile): boolean;
+  on(
+    event: 'testStart',
+    listener: (testsInTestFile: TestInTestFile) => void
+  ): this;
+
+  emit(
+    event: 'testEnd',
+    testInTestFile: TestInTestFile,
+    result: TestResult
+  ): boolean;
+  on(
+    event: 'testEnd',
+    listener: (testInTestFile: TestInTestFile, result: TestResult) => void
+  ): this;
+
+  emit(event: 'runEnd', results: Array<[TestInTestFile, TestResult]>): boolean;
+  on(
+    event: 'runEnd',
+    listener: (results: Array<[TestInTestFile, TestResult]>) => void
+  ): this;
 }

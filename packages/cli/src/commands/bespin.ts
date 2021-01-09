@@ -32,13 +32,13 @@ export const run = async (toolbox: GluegunToolbox) => {
 function initializeRunner(config: Required<Config>): Runner {
   const runner = new Runner();
 
-  runner.on("runStart", (testsInTestFiles) => {
+  runner.on("runStart", testsInTestFiles => {
     for (const reporter of config.reporters) {
       reporter.onRunStart(testsInTestFiles);
     }
   });
 
-  runner.on("testStart", (testsInTestFile) => {
+  runner.on("testStart", testsInTestFile => {
     for (const reporter of config.reporters) {
       reporter.onTestStart(testsInTestFile);
     }
@@ -50,7 +50,7 @@ function initializeRunner(config: Required<Config>): Runner {
     }
   });
 
-  runner.on("runEnd", (results) => {
+  runner.on("runEnd", results => {
     for (const reporter of config.reporters) {
       reporter.onRunEnd(results);
     }
