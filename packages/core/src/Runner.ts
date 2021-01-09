@@ -1,32 +1,60 @@
+import { EventEmitter } from 'events';
 import { join } from 'path';
-import { Config } from './Config';
 import { TestResult } from './TestResult';
 import { Worker } from 'worker_threads';
 import { TestInTestFile } from './TestInTestFile';
 
-export class Runner {
+export declare interface Runner {
+  emit(event: 'runStart', testsInTestFiles: Array<TestInTestFile>): boolean;
+  on(
+    event: 'runStart',
+    listener: (testsInTestFiles: Array<TestInTestFile>) => void
+  ): this;
+
+  emit(event: 'testStart', testsInTestFile: TestInTestFile): boolean;
+  on(
+    event: 'testStart',
+    listener: (testsInTestFile: TestInTestFile) => void
+  ): this;
+
+  emit(
+    event: 'testEnd',
+    testInTestFile: TestInTestFile,
+    result: TestResult
+  ): boolean;
+  on(
+    event: 'testEnd',
+    listener: (testInTestFile: TestInTestFile, result: TestResult) => void
+  ): this;
+
+  emit(event: 'runEnd', results: Array<[TestInTestFile, TestResult]>): boolean;
+  on(
+    event: 'runEnd',
+    listener: (results: Array<[TestInTestFile, TestResult]>) => void
+  ): this;
+}
+
+export class Runner extends EventEmitter {
   async run(
-    config: Required<Config>,
+    testsInTestFiles: Array<TestInTestFile>,
     configFilePath: string
   ): Promise<Array<[TestInTestFile, TestResult]>> {
     return new Promise<Array<[TestInTestFile, TestResult]>>(
       async (resolve, reject) => {
-        const testsInTestFiles = await Config.getTestsInTestFiles(config);
-
-        for (const reporter of config.reporters) {
-          reporter.onRunStart(testsInTestFiles);
-        }
+        this.emit('runStart', testsInTestFiles);
 
         const workers: Array<Worker> = testsInTestFiles.map(testInTestFile => {
           /**
-           * Ensure test worker can import test file
+           * Ensure test worker can import test file.
            */
           const testInTestFileForWorker = {
             ...testInTestFile,
             testFilePath: join(process.cwd(), testInTestFile.testFilePath),
           };
 
-          return new Worker(`${__dirname}/TestWorker.js`, {
+          this.emit('testStart', testInTestFile);
+
+          return new Worker(__dirname + `/TestWorker.js`, {
             workerData: {
               testInTestFile: testInTestFileForWorker,
               configFilePath,
@@ -57,18 +85,14 @@ export class Runner {
               testName,
             };
 
-            for (const reporter of config.reporters) {
-              reporter.onTestEnd(fixedTestInTestFile, testResult);
-            }
+            this.emit('testEnd', fixedTestInTestFile, testResult);
 
             results.push([fixedTestInTestFile, testResult]);
           });
 
           worker.on('exit', () => {
             if (results.length === testsInTestFiles.length) {
-              for (const reporter of config.reporters) {
-                reporter.onRunEnd(results);
-              }
+              this.emit('runEnd', results);
 
               resolve(results);
             }

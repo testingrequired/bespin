@@ -16,12 +16,11 @@ export const run = async (toolbox: GluegunToolbox) => {
   }
 
   const config = await Config.load(configFilePath);
-
   config.reporters.push(new CLIReporter(toolbox));
 
-  const runner = new Runner();
-
-  const results = await runner.run(config, configFilePath);
+  const runner = initializeRunner(config);
+  const testsInTestFiles = await Config.getTestsInTestFiles(config);
+  const results = await runner.run(testsInTestFiles, configFilePath);
 
   const passingRun = results
     .map(([_, result]) => result)
@@ -29,3 +28,33 @@ export const run = async (toolbox: GluegunToolbox) => {
 
   process.exit(passingRun ? 0 : 1);
 };
+
+function initializeRunner(config: Required<Config>): Runner {
+  const runner = new Runner();
+
+  runner.on("runStart", (testsInTestFiles) => {
+    for (const reporter of config.reporters) {
+      reporter.onRunStart(testsInTestFiles);
+    }
+  });
+
+  runner.on("testStart", (testsInTestFile) => {
+    for (const reporter of config.reporters) {
+      reporter.onTestStart(testsInTestFile);
+    }
+  });
+
+  runner.on("testEnd", (testsInTestFile, result) => {
+    for (const reporter of config.reporters) {
+      reporter.onTestEnd(testsInTestFile, result);
+    }
+  });
+
+  runner.on("runEnd", (results) => {
+    for (const reporter of config.reporters) {
+      reporter.onRunEnd(results);
+    }
+  });
+
+  return runner;
+}
