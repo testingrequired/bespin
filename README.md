@@ -4,6 +4,12 @@ Another test framework.
 
 ![CI](https://github.com/testingrequired/bespin/workflows/CI/badge.svg)
 
+## Goals
+
+- Extendable
+- Easy to understand
+- Parallel test execution
+
 ## Packages
 
 - [cli](./packages/cli) Command line application to run tests
