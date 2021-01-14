@@ -1,22 +1,25 @@
 import { EventEmitter } from 'events';
 import { join } from 'path';
 import { TestResult } from './TestResult';
-import { Worker } from 'worker_threads';
 import { TestInTestFile } from './TestInTestFile';
+import { WorkerPool } from './WorkerPool';
 
 export class Runner extends EventEmitter {
   async run(
+    configFilePath: string,
     testsInTestFiles: Array<TestInTestFile>,
-    configFilePath: string
+    pool: WorkerPool<
+      { testInTestFile: TestInTestFile; configFilePath: string },
+      [TestInTestFile, TestResult]
+    >
   ): Promise<Array<[TestInTestFile, TestResult]>> {
-    return new Promise<Array<[TestInTestFile, TestResult]>>(
-      async (resolve, reject) => {
-        this.emit('runStart', testsInTestFiles);
+    this.emit('runStart', testsInTestFiles);
 
-        const workers: Array<Worker> = testsInTestFiles.map(testInTestFile => {
-          /**
-           * Ensure test worker can import test file.
-           */
+    const workers = testsInTestFiles.map(testInTestFile =>
+      pool
+        .run(() => {
+          this.emit('testStart', testInTestFile);
+
           const testFilePath = join(process.cwd(), testInTestFile.testFilePath);
 
           const testInTestFileForWorker = {
@@ -24,54 +27,38 @@ export class Runner extends EventEmitter {
             testFilePath,
           };
 
-          this.emit('testStart', testInTestFile);
+          const workerData = {
+            testInTestFile: testInTestFileForWorker,
+            configFilePath,
+          };
 
-          return new Worker(__dirname + `/TestWorker.js`, {
-            workerData: {
-              testInTestFile: testInTestFileForWorker,
-              configFilePath,
-            },
-          });
-        });
+          return workerData;
+        })
+        .then(testInTestFileResult => {
+          const [testInTestFile, result] = testInTestFileResult;
 
-        const results: Array<[TestInTestFile, TestResult]> = [];
+          /**
+           * Provide a cleaner test name in results
+           */
+          const fixedTestFilePath = testInTestFile.testFilePath
+            .replace(process.cwd(), '')
+            .slice(1);
 
-        for (const worker of workers) {
-          worker.on('error', err => {
-            reject(err);
-          });
+          const fixedTestInTestFile = {
+            testFilePath: fixedTestFilePath,
+            testName: testInTestFile.testName,
+          };
 
-          worker.on('message', (result: [TestInTestFile, TestResult]) => {
-            const [testInTestFile, testResult] = result;
-            const { testFilePath, testName } = testInTestFile;
-
-            /**
-             * Provide a cleaner test name in results
-             */
-            const fixedTestFilePath = testFilePath
-              .replace(process.cwd(), '')
-              .slice(1);
-
-            const fixedTestInTestFile = {
-              testFilePath: fixedTestFilePath,
-              testName,
-            };
-
-            this.emit('testEnd', fixedTestInTestFile, testResult);
-
-            results.push([fixedTestInTestFile, testResult]);
-          });
-
-          worker.on('exit', () => {
-            if (results.length === testsInTestFiles.length) {
-              this.emit('runEnd', results);
-
-              resolve(results);
-            }
-          });
-        }
-      }
+          this.emit('testEnd', fixedTestInTestFile, result);
+          return testInTestFileResult;
+        })
     );
+
+    const results = await Promise.all(workers);
+
+    this.emit('runEnd', results);
+
+    return results;
   }
 }
 

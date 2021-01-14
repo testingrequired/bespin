@@ -1,23 +1,23 @@
 import path from 'path';
-import { isMainThread, parentPort, workerData } from 'worker_threads';
+import { isMainThread, parentPort } from 'worker_threads';
 import { Config } from './Config';
 
 if (isMainThread) {
   throw new Error('Test worker can not run on main thread');
 }
 
-async function worker() {
-  const { testInTestFile, configFilePath } = workerData;
+parentPort?.on('message', async (data: any) => {
+  const { testInTestFile, configFilePath } = data;
   const { testFilePath, testName } = testInTestFile;
 
   const configFileCwd = path.join(process.cwd(), configFilePath);
   const configFile = await Config.load(configFileCwd);
+
+  delete require.cache[require.resolve(testFilePath)];
 
   const test = await configFile.parser.getTestFunction(testFilePath, testName);
 
   const result = await configFile.executor.executeTest(test);
 
   parentPort?.postMessage([testInTestFile, result]);
-}
-
-worker();
+});
