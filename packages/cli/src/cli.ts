@@ -12,11 +12,11 @@ function run(argv) {
     .help({
       name: "c",
       dashed: true,
-      description: "Path to config file",
+      description: "Path to config file"
     })
     .help({
       name: "workers",
-      description: "The number of workers to run test in parallel (default: 1)",
+      description: "The number of workers to run test in parallel (default: 1)"
     })
     .version()
     .create()

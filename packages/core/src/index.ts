@@ -18,5 +18,5 @@ export { DebugReporter } from './DebugReporter';
 export { Config } from './Config';
 export { Runner } from './Runner';
 export { WorkerPool } from './WorkerPool';
-
-export const workerPath = __dirname + `/TestWorker.js`;
+export { Runtime } from './Runtime';
+export { workerPath } from './workerPath';
