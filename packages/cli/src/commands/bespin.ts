@@ -13,7 +13,7 @@ import { CLIReporter } from "../CLIReporter";
 export const name = "bespin";
 
 export const run = async (toolbox: GluegunToolbox) => {
-  const { print, filesystem } = toolbox;
+  const { print, filesystem, parameters } = toolbox;
 
   const configFilePath = toolbox.parameters.options?.c || "bespin.config.js";
 
@@ -26,10 +26,12 @@ export const run = async (toolbox: GluegunToolbox) => {
   const config = await Config.load(configFilePath);
   config.reporters.push(new CLIReporter(toolbox));
 
+  const numberOfWorkers = parameters.options.workers || config.settings.workers;
+
   const pool = new WorkerPool<
     { testInTestFile: TestInTestFile; configFilePath: string },
     [TestInTestFile, TestResult]
-  >(workerPath, config.settings.workers);
+  >(workerPath, numberOfWorkers);
 
   const runner = initializeRunner(config);
   const testsInTestFiles = await Config.getTestsInTestFiles(config);
