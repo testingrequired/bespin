@@ -10,6 +10,11 @@ function run(argv) {
     .plugins("./node_modules", { matching: "bespin-*", hidden: true })
     .help()
     .help({
+      name: "c",
+      dashed: true,
+      description: "Path to config file",
+    })
+    .help({
       name: "workers",
       description: "The number of workers to run test in parallel (default: 1)",
     })
