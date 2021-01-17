@@ -1,3 +1,4 @@
+import { performance } from "perf_hooks";
 import { GluegunToolbox } from "gluegun";
 import {
   TestResultState,
@@ -7,6 +8,8 @@ import {
 } from "@testingrequired/bespin-core";
 
 export class CLIReporter extends Reporter {
+  private startTime: number;
+
   constructor(private toolbox: GluegunToolbox) {
     super();
   }
@@ -15,6 +18,8 @@ export class CLIReporter extends Reporter {
     const { print } = this.toolbox;
 
     print.info("bespin");
+
+    this.startTime = performance.now();
 
     const testFiles = Array.from(
       new Set(testsInTestFiles.map(x => x.testFilePath))
@@ -41,6 +46,12 @@ export class CLIReporter extends Reporter {
     const passingRun = results
       .map(([_, result]) => result)
       .every(({ state }) => state === TestResultState.PASS);
+
+    const endTime = performance.now();
+
+    const time = endTime - this.startTime;
+
+    print.info(`Run time: ${time.toFixed(0)}ms`);
 
     if (passingRun) {
       print.success("PASS");
