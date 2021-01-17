@@ -29,7 +29,7 @@ export const run = async (toolbox: GluegunToolbox) => {
   const pool = new WorkerPool<
     { testInTestFile: TestInTestFile; configFilePath: string },
     [TestInTestFile, TestResult]
-  >(workerPath, 10);
+  >(workerPath, config.settings.workers);
 
   const runner = initializeRunner(config);
   const testsInTestFiles = await Config.getTestsInTestFiles(config);

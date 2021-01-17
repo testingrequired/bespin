@@ -10,4 +10,7 @@ module.exports = new Config()
   .withReporter(new DebugReporter())
   .withLocator(new GlobTestFileLocator("**/*.test.js"))
   .withParser(new SpecTestFileParse())
-  .withExecutor(new DefaultTestExecutor());
+  .withExecutor(new DefaultTestExecutor())
+  .withSettings({
+    workers: 10,
+  });

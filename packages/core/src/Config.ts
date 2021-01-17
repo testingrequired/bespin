@@ -3,12 +3,21 @@ import { TestExecutor } from './TestExecutor';
 import { TestFileParser } from './TestFileParser';
 import { Reporter } from './Reporter';
 import { TestInTestFile } from './TestInTestFile';
+import { Settings } from './Settings';
 
 export class Config {
   public locator?: TestFileLocator;
   public parser?: TestFileParser;
   public executor?: TestExecutor;
   public reporters: Array<Reporter> = [];
+  public settings: Settings = {
+    workers: 1,
+  };
+
+  withSettings(settings: Settings): this {
+    this.settings = settings;
+    return this;
+  }
 
   withLocator(locator: TestFileLocator): this {
     this.locator = locator;
