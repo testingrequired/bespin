@@ -16,6 +16,10 @@ Another test framework.
 - [core](./packages/core) Core library for framework primitives
 - [example](./packages/example) An example integration project
 
+### Reporters
+
+- [junit-reporter](./packages/junit-reporter) Write test results to a JUnit file
+
 ## Development
 
 See [DEVELOPMENT.md](./DEVELOPMENT.md)
