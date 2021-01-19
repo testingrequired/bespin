@@ -16,8 +16,9 @@ Another test framework.
 - [core](./packages/core) Core library for framework primitives
 - [example](./packages/example) An example integration project
 
-### Reporters
+### Addons
 
+- [spec-test-file-parser](./packages/spec-test-file-parser) Parse test files with describe/it syntax
 - [junit-reporter](./packages/junit-reporter) Write test results to a JUnit file
 
 ## Development

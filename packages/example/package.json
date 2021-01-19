@@ -15,6 +15,7 @@
   "dependencies": {
     "@testingrequired/bespin-cli": "0.1.0",
     "@testingrequired/bespin-core": "0.1.0",
-    "@testingrequired/bespin-junit-reporter": "0.1.0"
+    "@testingrequired/bespin-junit-reporter": "0.1.0",
+    "@testingrequired/bespin-spec-test-file-parser": "0.1.0"
   }
 }

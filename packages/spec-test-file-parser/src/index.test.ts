@@ -1,5 +1,5 @@
-import { SpecTestFileParse } from './SpecTestFileParser';
-import { TestInTestFile } from './TestInTestFile';
+import { TestInTestFile } from '@testingrequired/bespin-core';
+import { SpecTestFileParse } from '.';
 
 const expectedTestPath = './testUtils/test.js';
 const mockTestPath = './testUtils/test.js';
