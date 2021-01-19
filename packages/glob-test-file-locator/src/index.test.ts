@@ -1,4 +1,4 @@
-import { GlobTestFileLocator } from './GlobTestFileLocator';
+import { GlobTestFileLocator } from '.';
 
 jest.mock('glob');
 

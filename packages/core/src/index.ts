@@ -11,7 +11,6 @@ export { DefaultTestExecutor } from './DefaultTestExecutor';
 export { TestFileParser } from './TestFileParser';
 export { ModuleTestFileParser } from './ModuleTestFileParser';
 export { TestFileLocator } from './TestFileLocator';
-export { GlobTestFileLocator } from './GlobTestFileLocator';
 export { Reporter } from './Reporter';
 export { DebugReporter } from './DebugReporter';
 export { Config } from './Config';
