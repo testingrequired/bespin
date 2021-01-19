@@ -15,6 +15,7 @@ export { Reporter } from './Reporter';
 export { DebugReporter } from './DebugReporter';
 export { Config } from './Config';
 export { Runner } from './Runner';
+export { ParallelRunner } from './ParallelRunner';
 export { WorkerPool } from './WorkerPool';
 export { Runtime } from './Runtime';
 export { workerPath } from './workerPath';
