@@ -14,6 +14,8 @@ export class Config {
     workers: 1,
   };
 
+  constructor(public readonly path: string) {}
+
   withSettings(settings: Settings): this {
     this.settings = settings;
     return this;
@@ -55,7 +57,12 @@ export class Config {
   }
 
   static isValidConfig(configFile: Config): configFile is Required<Config> {
-    if (!configFile.locator || !configFile.parser || !configFile.executor) {
+    if (
+      !configFile.path ||
+      !configFile.locator ||
+      !configFile.parser ||
+      !configFile.executor
+    ) {
       return false;
     }
 
