@@ -14,7 +14,7 @@ const {
 
 const { JUnitReporter } = require("@testingrequired/bespin-junit-reporter");
 
-module.exports = new Config()
+module.exports = new Config(__filename)
   .withLocator(new GlobTestFileLocator("**/*.test.js"))
   .withParser(new SpecTestFileParse())
   .withExecutor(new DefaultTestExecutor())
