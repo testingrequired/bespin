@@ -1,5 +1,4 @@
 import { Config } from './Config';
-import { TestExecutor } from './TestExecutor';
 import { TestFileLocator } from './TestFileLocator';
 import { TestFileParser } from './TestFileParser';
 
@@ -8,7 +7,6 @@ describe('Config', () => {
 
   let locator: TestFileLocator;
   let parser: TestFileParser;
-  let executor: TestExecutor;
 
   beforeEach(() => {
     locator = {
@@ -19,48 +17,27 @@ describe('Config', () => {
       getTests: jest.fn(),
       getTestFunction: jest.fn(),
     };
-
-    executor = {
-      executeTest: jest.fn(),
-    };
   });
 
   describe('isValidConfig', () => {
     it('should return true if all are defined', () => {
       expect(
         Config.isValidConfig(
-          new Config(expectedConfigPath)
-            .withLocator(locator)
-            .withParser(parser)
-            .withExecutor(executor)
+          new Config(expectedConfigPath).withLocator(locator).withParser(parser)
         )
       ).toBe(true);
     });
 
     it('should return false if locator not defined', () => {
       expect(
-        Config.isValidConfig(
-          new Config(expectedConfigPath)
-            .withParser(parser)
-            .withExecutor(executor)
-        )
+        Config.isValidConfig(new Config(expectedConfigPath).withParser(parser))
       ).toBe(false);
     });
 
     it('should return false if parser not defined', () => {
       expect(
         Config.isValidConfig(
-          new Config(expectedConfigPath)
-            .withLocator(locator)
-            .withExecutor(executor)
-        )
-      ).toBe(false);
-    });
-
-    it('should return false if executor not defined', () => {
-      expect(
-        Config.isValidConfig(
-          new Config(expectedConfigPath).withParser(parser).withLocator(locator)
+          new Config(expectedConfigPath).withLocator(locator)
         )
       ).toBe(false);
     });

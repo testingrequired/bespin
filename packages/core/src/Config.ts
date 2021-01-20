@@ -1,5 +1,4 @@
 import { TestFileLocator } from './TestFileLocator';
-import { TestExecutor } from './TestExecutor';
 import { TestFileParser } from './TestFileParser';
 import { Reporter } from './Reporter';
 import { TestInTestFile } from './TestInTestFile';
@@ -8,7 +7,6 @@ import { Settings } from './Settings';
 export class Config {
   public locator?: TestFileLocator;
   public parser?: TestFileParser;
-  public executor?: TestExecutor;
   public reporters: Array<Reporter> = [];
   public settings: Settings = {
     workers: 1,
@@ -28,11 +26,6 @@ export class Config {
 
   withParser(parser: TestFileParser): this {
     this.parser = parser;
-    return this;
-  }
-
-  withExecutor(executor: TestExecutor): this {
-    this.executor = executor;
     return this;
   }
 
@@ -57,12 +50,7 @@ export class Config {
   }
 
   static isValidConfig(configFile: Config): configFile is Required<Config> {
-    if (
-      !configFile.path ||
-      !configFile.locator ||
-      !configFile.parser ||
-      !configFile.executor
-    ) {
+    if (!configFile.path || !configFile.locator || !configFile.parser) {
       return false;
     }
 

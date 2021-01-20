@@ -1,6 +1,7 @@
 import path from 'path';
 import { isMainThread, parentPort } from 'worker_threads';
 import { Config } from './Config';
+import { DefaultTestExecutor } from './DefaultTestExecutor';
 
 if (isMainThread) {
   throw new Error('Test worker can not run on main thread');
@@ -17,7 +18,8 @@ parentPort?.on('message', async (data: any) => {
 
   const test = await configFile.parser.getTestFunction(testFilePath, testName);
 
-  const result = await configFile.executor.executeTest(test);
+  const executor = new DefaultTestExecutor();
+  const result = await executor.executeTest(test);
 
   parentPort?.postMessage([testInTestFile, result]);
 });
