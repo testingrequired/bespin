@@ -1,5 +1,5 @@
 import { performance } from 'perf_hooks';
-import { DefaultTestExecutor } from './DefaultTestExecutor';
+import { TestExecutor } from './TestExecutor';
 import { TestFunction } from './TestFunction';
 import { TestResultState } from './TestResult';
 
@@ -11,11 +11,11 @@ describe('DefaultTestExecutor', () => {
   const expectedTimeDelta = expectedEndTime - expectedStartTime;
 
   let testFunction: jest.MockedFunction<TestFunction>;
-  let executor: DefaultTestExecutor;
+  let executor: TestExecutor;
 
   beforeEach(() => {
     testFunction = jest.fn();
-    executor = new DefaultTestExecutor();
+    executor = new TestExecutor();
 
     (performance.now as jest.Mock).mockReturnValueOnce(expectedStartTime);
     (performance.now as jest.Mock).mockReturnValueOnce(expectedEndTime);
