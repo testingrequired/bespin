@@ -3,10 +3,12 @@ import { TestFileParser } from './TestFileParser';
 import { Reporter } from './Reporter';
 import { TestInTestFile } from './TestInTestFile';
 import { Settings } from './Settings';
+import { Runner } from './Runner';
 
 export class Config {
   public locator?: TestFileLocator;
   public parser?: TestFileParser;
+  public runner?: Runner;
   public reporters: Array<Reporter> = [];
   public settings: Settings = {
     workers: 1,
@@ -26,6 +28,11 @@ export class Config {
 
   withParser(parser: TestFileParser): this {
     this.parser = parser;
+    return this;
+  }
+
+  withRunner(runner: Runner): this {
+    this.runner = runner;
     return this;
   }
 
@@ -50,7 +57,12 @@ export class Config {
   }
 
   static isValidConfig(configFile: Config): configFile is Required<Config> {
-    if (!configFile.path || !configFile.locator || !configFile.parser) {
+    if (
+      !configFile.path ||
+      !configFile.locator ||
+      !configFile.parser ||
+      !configFile.runner
+    ) {
       return false;
     }
 

@@ -1,6 +1,5 @@
 import { Config } from './Config';
 import { Reporter } from './Reporter';
-import { ParallelRunner } from './ParallelRunner';
 import { TestInTestFile } from './TestInTestFile';
 import { TestResult } from './TestResult';
 import { Runner } from './Runner';
@@ -9,21 +8,16 @@ export class Runtime {
   constructor(private runTimeReporters: Array<Reporter> = []) {}
 
   async run(
-    configFilePath: string,
-    numberOfWorkers?: number
+    configFilePath: string
   ): Promise<Array<[TestInTestFile, TestResult]>> {
     const config = await Config.load(configFilePath);
 
     const testsInTestFiles = await Config.getTestsInTestFiles(config);
 
-    const runner = new ParallelRunner(
-      configFilePath,
-      numberOfWorkers ?? config.settings.workers
-    );
     const reporters = [...config.reporters, ...this.runTimeReporters];
-    this.registerReporters(runner, reporters);
+    this.registerReporters(config.runner, reporters);
 
-    const results = await runner.run(testsInTestFiles);
+    const results = await config.runner.run(testsInTestFiles);
 
     return results;
   }

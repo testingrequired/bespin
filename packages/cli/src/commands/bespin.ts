@@ -5,7 +5,7 @@ import { CLIReporter } from "../CLIReporter";
 export const name = "bespin";
 
 export const run = async (toolbox: GluegunToolbox) => {
-  const { print, filesystem, parameters } = toolbox;
+  const { print, filesystem } = toolbox;
 
   const configFilePath = toolbox.parameters.options?.c || "bespin.config.js";
 
@@ -17,7 +17,7 @@ export const run = async (toolbox: GluegunToolbox) => {
 
   const runtime = new Runtime([new CLIReporter(toolbox)]);
 
-  const results = await runtime.run(configFilePath, parameters.options.workers);
+  const results = await runtime.run(configFilePath);
 
   const passingRun = results
     .map(([_, result]) => result)
