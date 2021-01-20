@@ -3,16 +3,21 @@ import { TestResult } from './TestResult';
 import { TestInTestFile } from './TestInTestFile';
 import { WorkerPool } from './WorkerPool';
 import { Runner } from './Runner';
+import { workerPath } from './workerPath';
 
 export class ParallelRunner extends Runner {
-  constructor(
-    private configFilePath: string,
-    private pool: WorkerPool<
+  private pool: WorkerPool<
+    { testInTestFile: TestInTestFile; configFilePath: string },
+    [TestInTestFile, TestResult]
+  >;
+
+  constructor(private configFilePath: string, numberOfWorkers: number) {
+    super();
+
+    this.pool = new WorkerPool<
       { testInTestFile: TestInTestFile; configFilePath: string },
       [TestInTestFile, TestResult]
-    >
-  ) {
-    super();
+    >(workerPath, numberOfWorkers);
   }
 
   async run(

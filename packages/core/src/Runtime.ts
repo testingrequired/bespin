@@ -3,8 +3,6 @@ import { Reporter } from './Reporter';
 import { ParallelRunner } from './ParallelRunner';
 import { TestInTestFile } from './TestInTestFile';
 import { TestResult } from './TestResult';
-import { workerPath } from './workerPath';
-import { WorkerPool } from './WorkerPool';
 import { Runner } from './Runner';
 
 export class Runtime {
@@ -18,12 +16,10 @@ export class Runtime {
 
     const testsInTestFiles = await Config.getTestsInTestFiles(config);
 
-    const pool = new WorkerPool<
-      { testInTestFile: TestInTestFile; configFilePath: string },
-      [TestInTestFile, TestResult]
-    >(workerPath, numberOfWorkers ?? config.settings.workers);
-
-    const runner = new ParallelRunner(configFilePath, pool);
+    const runner = new ParallelRunner(
+      configFilePath,
+      numberOfWorkers ?? config.settings.workers
+    );
     const reporters = [...config.reporters, ...this.runTimeReporters];
     this.registerReporters(runner, reporters);
 
