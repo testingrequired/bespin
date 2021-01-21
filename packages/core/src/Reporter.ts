@@ -1,6 +1,6 @@
 import { Middleware } from './Middleware';
 import { TestInTestFile } from './TestInTestFile';
-import { TestResult } from './TestResult';
+import type { TestResult } from './TestResult';
 
 export abstract class Reporter extends Middleware {
   // @ts-ignore: unused argument/s

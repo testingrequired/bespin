@@ -1,11 +1,12 @@
-export { TestResult, TestResultState } from './TestResult';
+export type { TestResult } from './TestResult';
 export { TestInTestFile } from './TestInTestFile';
-export { TestExecutor } from './TestExecutor';
 export { TestFileParser } from './TestFileParser';
-export { ModuleTestFileParser } from './ModuleTestFileParser';
 export { TestFileLocator } from './TestFileLocator';
 export { Reporter } from './Reporter';
-export { DebugReporter } from './DebugReporter';
+export { TestResultState } from './TestResult';
 export { Config } from './Config';
 export { Runner } from './Runner';
 export { Runtime } from './Runtime';
+export { TestExecutor } from './TestExecutor';
+export { DebugReporter } from './DebugReporter';
+export { ModuleTestFileParser } from './ModuleTestFileParser';

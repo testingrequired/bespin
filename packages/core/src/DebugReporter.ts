@@ -1,6 +1,6 @@
 import { Reporter } from './Reporter';
 import { TestInTestFile } from './TestInTestFile';
-import { TestResult } from './TestResult';
+import type { TestResult } from './TestResult';
 
 /**
  * Debug your way through a reporter life cycle

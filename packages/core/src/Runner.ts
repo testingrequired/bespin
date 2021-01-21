@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { TestInTestFile } from './TestInTestFile';
-import { TestResult } from './TestResult';
+import type { TestResult } from './TestResult';
 
 export abstract class Runner extends EventEmitter {
   abstract run(

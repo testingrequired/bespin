@@ -1,7 +1,7 @@
 import { Config } from './Config';
 import { Reporter } from './Reporter';
 import { TestInTestFile } from './TestInTestFile';
-import { TestResult } from './TestResult';
+import type { TestResult } from './TestResult';
 import { Runner } from './Runner';
 
 export class Runtime {

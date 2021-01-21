@@ -1,5 +1,6 @@
 import { performance } from 'perf_hooks';
-import { TestResult, TestResultState } from './TestResult';
+import type { TestResult } from './TestResult';
+import {  TestResultState } from './TestResult';
 import { TestFunction } from './TestFunction';
 
 export class TestExecutor {
