@@ -1,15 +1,11 @@
-const {
-  Config,
-  DebugReporter,
-  ParallelRunner,
-} = require("@testingrequired/bespin-core");
+const { Config, DebugReporter } = require("@testingrequired/bespin-core");
 const {
   GlobTestFileLocator,
 } = require("@testingrequired/bespin-glob-test-file-locator");
 const {
   SpecTestFileParse,
 } = require("@testingrequired/bespin-spec-test-file-parser");
-
+const { ParallelRunner } = require("@testingrequired/bespin-parallel-runner");
 const { JUnitReporter } = require("@testingrequired/bespin-junit-reporter");
 
 module.exports = new Config(__filename)

@@ -1,6 +1,5 @@
 import { isMainThread, parentPort } from 'worker_threads';
-import { Config } from './Config';
-import { TestExecutor } from './TestExecutor';
+import { Config, TestExecutor } from '@testingrequired/bespin-core';
 
 if (isMainThread) {
   throw new Error('Test worker can not run on main thread');

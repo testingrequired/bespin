@@ -18,6 +18,7 @@ Another test framework.
 
 ### Addons
 
+- [parallel-runner](./packages/parallel-runner) Run tests in parallel using worker threads
 - [glob-test-file-locator](./packages/glob-test-file-locator) Locate test files using a glob pattern
 - [spec-test-file-parser](./packages/spec-test-file-parser) Parse test files with describe/it syntax
 - [junit-reporter](./packages/junit-reporter) Write test results to a JUnit file

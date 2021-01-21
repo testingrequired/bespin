@@ -2,7 +2,6 @@ import { TestFileLocator } from './TestFileLocator';
 import { TestFileParser } from './TestFileParser';
 import { Reporter } from './Reporter';
 import { TestInTestFile } from './TestInTestFile';
-import { Settings } from './Settings';
 import { Runner } from './Runner';
 
 export class Config {
@@ -10,16 +9,8 @@ export class Config {
   public parser?: TestFileParser;
   public runner?: Runner;
   public reporters: Array<Reporter> = [];
-  public settings: Settings = {
-    workers: 1,
-  };
 
   constructor(public readonly path: string) {}
-
-  withSettings(settings: Settings): this {
-    this.settings = settings;
-    return this;
-  }
 
   withLocator(locator: TestFileLocator): this {
     this.locator = locator;

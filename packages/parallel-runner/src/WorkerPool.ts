@@ -20,7 +20,7 @@ export class WorkerPool<TTaskData, TWorkerResult> {
     }
   }
 
-  get inactiveWorkers() {
+  getInactiveWorkers() {
     const inactiveWorkers = new Set(
       Array.from(this.workers).filter(x => !this.activeWorkers.has(x))
     );
@@ -43,7 +43,7 @@ export class WorkerPool<TTaskData, TWorkerResult> {
   private async runTask(
     task: WorkerTask<TTaskData, TWorkerResult>
   ): Promise<void> {
-    const { inactiveWorkers } = this;
+    const inactiveWorkers = this.getInactiveWorkers();
 
     if (inactiveWorkers.size === 0) {
       this.queue.push(task);

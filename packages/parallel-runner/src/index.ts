@@ -1,8 +1,10 @@
 import { join } from 'path';
-import { TestResult } from './TestResult';
-import { TestInTestFile } from './TestInTestFile';
+import {
+  Runner,
+  TestInTestFile,
+  TestResult,
+} from '@testingrequired/bespin-core';
 import { WorkerPool } from './WorkerPool';
-import { Runner } from './Runner';
 import { workerPath } from './workerPath';
 
 export class ParallelRunner extends Runner {
