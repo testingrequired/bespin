@@ -1,8 +1,7 @@
-import { Middleware } from './Middleware';
 import { TestFunction } from './TestFunction';
 import { TestInTestFile } from './TestInTestFile';
 
-export abstract class TestFileParser extends Middleware {
+export abstract class TestFileParser {
   abstract getTests(testFilePath: string): Promise<Array<TestInTestFile>>;
   abstract getTestFunction(
     testFilePath: string,

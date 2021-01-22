@@ -1,5 +1,3 @@
-import { Middleware } from './Middleware';
-
-export abstract class TestFileLocator extends Middleware {
+export abstract class TestFileLocator {
   abstract locateTestFilePaths(): Promise<Array<string>>;
 }

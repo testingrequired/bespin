@@ -1,8 +1,7 @@
-import { Middleware } from './Middleware';
 import { TestInTestFile } from './TestInTestFile';
 import type { TestResult } from './TestResult';
 
-export abstract class Reporter extends Middleware {
+export abstract class Reporter {
   // @ts-ignore: unused argument/s
   onTestStart(testInTestFile: TestInTestFile): void {}
 
