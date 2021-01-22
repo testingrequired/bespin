@@ -8,20 +8,19 @@ import { Runner } from './Runner';
 export class Runtime {
   public events: EventEmitter = new EventEmitter();
 
-  constructor(private runTimeReporters: Array<Reporter> = []) {}
+  constructor(
+    private config: Required<Config>,
+    private runTimeReporters: Array<Reporter> = []
+  ) {}
 
-  async run(
-    configFilePath: string
-  ): Promise<Array<[TestInTestFile, TestResult]>> {
-    const config = await Config.load(configFilePath);
+  async run(): Promise<Array<[TestInTestFile, TestResult]>> {
+    const testsInTestFiles = await Config.getTestsInTestFiles(this.config);
 
-    const testsInTestFiles = await Config.getTestsInTestFiles(config);
-
-    const reporters = [...config.reporters, ...this.runTimeReporters];
+    const reporters = [...this.config.reporters, ...this.runTimeReporters];
     this.registerReporters(reporters);
 
-    this.registerRunner(config.runner);
-    const results = await config.runner.run(testsInTestFiles);
+    this.registerRunner(this.config.runner);
+    const results = await this.config.runner.run(testsInTestFiles);
 
     return results;
   }
@@ -47,7 +46,7 @@ export class Runtime {
   private registerReporters(reporters: Array<Reporter>) {
     this.events.on('runStart', testsInTestFiles => {
       for (const reporter of reporters) {
-        reporter.onRunStart(testsInTestFiles);
+        reporter.onRunStart(this.config, testsInTestFiles);
       }
     });
 

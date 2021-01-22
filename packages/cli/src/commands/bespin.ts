@@ -1,5 +1,5 @@
 import { GluegunToolbox } from "gluegun";
-import { TestResultState, Runtime } from "@testingrequired/bespin-core";
+import { TestResultState, Runtime, Config } from "@testingrequired/bespin-core";
 import { CLIReporter } from "../CLIReporter";
 
 export const name = "bespin";
@@ -15,9 +15,11 @@ export const run = async (toolbox: GluegunToolbox) => {
     return;
   }
 
-  const runtime = new Runtime([new CLIReporter(toolbox)]);
+  const config = await Config.load(configFilePath);
 
-  const results = await runtime.run(configFilePath);
+  const runtime = new Runtime(config, [new CLIReporter(toolbox)]);
+
+  const results = await runtime.run();
 
   const passingRun = results
     .map(([_, result]) => result)

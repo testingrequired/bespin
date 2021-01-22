@@ -4,7 +4,8 @@ import {
   TestResultState,
   Reporter,
   TestInTestFile,
-  TestResult
+  TestResult,
+  Config,
 } from "@testingrequired/bespin-core";
 
 export class CLIReporter extends Reporter {
@@ -14,15 +15,25 @@ export class CLIReporter extends Reporter {
     super();
   }
 
-  onRunStart(testsInTestFiles: Array<TestInTestFile>) {
+  onRunStart(
+    config: Required<Config>,
+    testsInTestFiles: Array<TestInTestFile>
+  ) {
     const { print } = this.toolbox;
 
     print.info("bespin");
 
+    print.info(`Locator: ${config.locator.constructor.name}`);
+    print.info(`Parser: ${config.parser.constructor.name}`);
+    print.info(`Runner: ${config.runner.constructor.name}`);
+    print.info(
+      `Reporters: ${config.reporters.map((x) => x.constructor.name).join(", ")}`
+    );
+
     this.startTime = performance.now();
 
     const testFiles = Array.from(
-      new Set(testsInTestFiles.map(x => x.testFilePath))
+      new Set(testsInTestFiles.map((x) => x.testFilePath))
     );
 
     print.info(`Test Files: ${testFiles.length}`);

@@ -1,5 +1,6 @@
+import { Config } from './Config';
 import { TestInTestFile } from './TestInTestFile';
-import type { TestResult } from './TestResult';
+import { TestResult } from './TestResult';
 
 export abstract class Reporter {
   // @ts-ignore: unused argument/s
@@ -9,7 +10,7 @@ export abstract class Reporter {
   onTestEnd(testInTestFile: TestInTestFile, testResult: TestResult): void {}
 
   // @ts-ignore: unused argument/s
-  onRunStart(testsInTestFiles: Array<TestInTestFile>): void {}
+  onRunStart(config: Config, testsInTestFiles: Array<TestInTestFile>): void {}
 
   // @ts-ignore: unused argument/s
   onRunEnd(results: Array<[TestInTestFile, TestResult]>): void {}
