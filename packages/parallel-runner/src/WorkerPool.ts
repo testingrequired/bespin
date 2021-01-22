@@ -32,8 +32,15 @@ export class WorkerPool<TTaskData, TWorkerResult> {
     return new Promise(async (resolve, reject) => {
       const task: WorkerTask<TTaskData, TWorkerResult> = {
         getTaskData,
-        resultCallback: (error, result) =>
-          error ? reject(error) : resolve(result),
+        resultCallback: (error, result) => {
+          if (error) {
+            reject(error);
+          }
+
+          if (result) {
+            resolve(result);
+          }
+        },
       };
 
       this.runTask(task);
