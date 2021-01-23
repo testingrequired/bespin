@@ -40,7 +40,25 @@ export class Config {
     const configFile: Config = await import(configFilePath);
 
     if (!Config.isValidConfig(configFile)) {
-      throw new Error('Invalid config file');
+      let missing = [];
+
+      if (!configFile.path) {
+        missing.push('path');
+      }
+
+      if (!configFile.locator) {
+        missing.push('locator');
+      }
+
+      if (!configFile.parser) {
+        missing.push('parser');
+      }
+
+      if (!configFile.runner) {
+        missing.push('runner');
+      }
+
+      throw new Error(`Invalid config file. Missing: ${missing.join(', ')}`);
     }
 
     return configFile;
