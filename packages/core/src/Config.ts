@@ -1,7 +1,6 @@
 import { TestFileLocator } from './TestFileLocator';
 import { TestFileParser } from './TestFileParser';
 import { Reporter } from './Reporter';
-import { TestInTestFile } from './TestInTestFile';
 import { Runner } from './Runner';
 
 export class Config {
@@ -37,7 +36,7 @@ export class Config {
     return this;
   }
 
-  static async load(configFilePath: string): Promise<Required<Config>> {
+  static async load(configFilePath: string): Promise<ValidConfig> {
     const configFile: Config = await import(configFilePath);
 
     if (!Config.isValidConfig(configFile)) {
@@ -47,7 +46,7 @@ export class Config {
     return configFile;
   }
 
-  static isValidConfig(configFile: Config): configFile is Required<Config> {
+  static isValidConfig(configFile: Config): configFile is ValidConfig {
     if (
       !configFile.path ||
       !configFile.locator ||
@@ -59,16 +58,6 @@ export class Config {
 
     return true;
   }
-
-  static async getTestsInTestFiles(
-    config: Required<Config>
-  ): Promise<Array<TestInTestFile>> {
-    const testFilePaths = await config.locator.locateTestFilePaths();
-
-    const testsInTestFiles = (
-      await Promise.all(testFilePaths.map(path => config.parser.getTests(path)))
-    ).flat();
-
-    return testsInTestFiles;
-  }
 }
+
+export type ValidConfig = Required<Config>;

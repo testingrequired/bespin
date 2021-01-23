@@ -28,42 +28,7 @@ export class ParallelRunner extends Runner {
     this.emit('runStart', testsInTestFiles);
 
     const workers = testsInTestFiles.map(testInTestFile =>
-      this.pool
-        .run(() => {
-          this.emit('testStart', testInTestFile);
-
-          const testFilePath = join(process.cwd(), testInTestFile.testFilePath);
-
-          const testInTestFileForWorker = {
-            ...testInTestFile,
-            testFilePath,
-          };
-
-          const workerData = {
-            testInTestFile: testInTestFileForWorker,
-            configFilePath: this.configFilePath,
-          };
-
-          return workerData;
-        })
-        .then(testInTestFileResult => {
-          const [testInTestFile, result] = testInTestFileResult;
-
-          /**
-           * Provide a cleaner test name in results
-           */
-          const fixedTestFilePath = testInTestFile.testFilePath
-            .replace(process.cwd(), '')
-            .slice(1);
-
-          const fixedTestInTestFile = {
-            testFilePath: fixedTestFilePath,
-            testName: testInTestFile.testName,
-          };
-
-          this.emit('testEnd', fixedTestInTestFile, result);
-          return testInTestFileResult;
-        })
+      this.runTestInTestFile(testInTestFile)
     );
 
     const results = await Promise.all(workers);
@@ -71,5 +36,44 @@ export class ParallelRunner extends Runner {
     this.emit('runEnd', results);
 
     return results;
+  }
+
+  private runTestInTestFile(testInTestFile: TestInTestFile) {
+    return this.pool
+      .run(() => {
+        this.emit('testStart', testInTestFile);
+
+        const testFilePath = join(process.cwd(), testInTestFile.testFilePath);
+
+        const testInTestFileForWorker = {
+          ...testInTestFile,
+          testFilePath,
+        };
+
+        const workerData = {
+          testInTestFile: testInTestFileForWorker,
+          configFilePath: this.configFilePath,
+        };
+
+        return workerData;
+      })
+      .then(testInTestFileResult => {
+        const [testInTestFile, result] = testInTestFileResult;
+
+        /**
+         * Provide a cleaner test name in results
+         */
+        const fixedTestFilePath = testInTestFile.testFilePath
+          .replace(process.cwd(), '')
+          .slice(1);
+
+        const fixedTestInTestFile = {
+          testFilePath: fixedTestFilePath,
+          testName: testInTestFile.testName,
+        };
+
+        this.emit('testEnd', fixedTestInTestFile, result);
+        return testInTestFileResult;
+      });
   }
 }

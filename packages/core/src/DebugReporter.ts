@@ -1,4 +1,4 @@
-import { Config } from './Config';
+import { ValidConfig } from './Config';
 import { Reporter } from './Reporter';
 import { TestInTestFile } from './TestInTestFile';
 import type { TestResult } from './TestResult';
@@ -18,7 +18,7 @@ export class DebugReporter extends Reporter {
   }
 
   // @ts-ignore: Unused argument/s
-  onRunStart(config: Required<Config>, testsInTestFiles: TestInTestFile[]): void {
+  onRunStart(config: ValidConfig, testsInTestFiles: TestInTestFile[]): void {
     debugger;
   }
 

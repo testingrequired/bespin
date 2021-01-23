@@ -1,20 +1,26 @@
 import { EventEmitter } from 'events';
-import { Config } from './Config';
 import { Reporter } from './Reporter';
 import { TestInTestFile } from './TestInTestFile';
 import { TestResult } from './TestResult';
 import { Runner } from './Runner';
+import { ValidConfig } from './Config';
 
 export class Runtime {
   public events: EventEmitter = new EventEmitter();
 
   constructor(
-    private config: Required<Config>,
+    private config: ValidConfig,
     private runTimeReporters: Array<Reporter> = []
   ) {}
 
   async run(): Promise<Array<[TestInTestFile, TestResult]>> {
-    const testsInTestFiles = await Config.getTestsInTestFiles(this.config);
+    const testFilePaths = await this.config.locator.locateTestFilePaths();
+
+    const testsInTestFiles = (
+      await Promise.all(
+        testFilePaths.map(path => this.config.parser.getTests(path))
+      )
+    ).flat();
 
     const reporters = [...this.config.reporters, ...this.runTimeReporters];
     this.registerReporters(reporters);

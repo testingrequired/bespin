@@ -4,7 +4,7 @@ export { TestFileParser } from './TestFileParser';
 export { TestFileLocator } from './TestFileLocator';
 export { Reporter } from './Reporter';
 export { TestResultState } from './TestResult';
-export { Config } from './Config';
+export { Config, ValidConfig } from './Config';
 export { Runner } from './Runner';
 export { Runtime } from './Runtime';
 export { TestExecutor } from './TestExecutor';
