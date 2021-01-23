@@ -1,4 +1,3 @@
-const os = require("os");
 const { Config, DebugReporter } = require("@testingrequired/bespin-core");
 const {
   GlobTestFileLocator,
