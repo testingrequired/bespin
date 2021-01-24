@@ -7,5 +7,6 @@ export enum TestResultState {
 export interface TestResult {
   state: TestResultState;
   time: number;
+  error?: Error;
   message?: string;
 }

@@ -1,4 +1,5 @@
 import { performance } from 'perf_hooks';
+import { AssertionError } from 'assert';
 import { TestExecutor } from './TestExecutor';
 import { TestFunction } from './TestFunction';
 import { TestResultState } from './TestResult';
@@ -36,11 +37,13 @@ describe('DefaultTestExecutor', () => {
     });
   });
 
-  it('should return failing test result when test function throws error', async () => {
+  it('should return failing test result when test function throws assertion error', async () => {
     const expectedErrorMessage = 'expectedErrorMessage';
 
     (testFunction as jest.Mock).mockImplementation(() => {
-      throw new Error(expectedErrorMessage);
+      throw new AssertionError({
+        message: expectedErrorMessage,
+      });
     });
 
     const testResult = await executor.executeTest(testFunction);
@@ -48,6 +51,24 @@ describe('DefaultTestExecutor', () => {
     expect(testResult).toStrictEqual({
       state: TestResultState.FAIL,
       message: expectedErrorMessage,
+      time: expectedTimeDelta,
+    });
+  });
+
+  it('should return erroring test result when test function throws non assertion error', async () => {
+    const expectedErrorMessage = 'expectedErrorMessage';
+    const expectedError = new Error(expectedErrorMessage);
+
+    (testFunction as jest.Mock).mockImplementation(() => {
+      throw expectedError;
+    });
+
+    const testResult = await executor.executeTest(testFunction);
+
+    expect(testResult).toStrictEqual({
+      state: TestResultState.ERROR,
+      message: expectedErrorMessage,
+      error: expectedError,
       time: expectedTimeDelta,
     });
   });
