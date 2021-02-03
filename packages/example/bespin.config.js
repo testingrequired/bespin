@@ -13,4 +13,5 @@ module.exports = new Config(__filename)
   .withParser(new SpecTestFileParse())
   .withRunner(new ParallelRunner(__filename, 10))
   .withReporter(new DebugReporter())
-  .withReporter(new JUnitReporter("./junit.xml"));
+  .withReporter(new JUnitReporter("./junit.xml"))
+  .withSetting("randomizeTests", true);

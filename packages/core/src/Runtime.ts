@@ -4,6 +4,7 @@ import { TestInTestFile } from './TestInTestFile';
 import { TestResult } from './TestResult';
 import { Runner } from './Runner';
 import { ValidConfig } from './Config';
+import { randomizeArray } from './randomize';
 
 export class Runtime {
   public events: EventEmitter = new EventEmitter();
@@ -14,21 +15,21 @@ export class Runtime {
   ) {}
 
   async run(): Promise<Array<[TestInTestFile, TestResult]>> {
-    const testFilePaths = await this.config.locator.locateTestFilePaths();
+    const { reporters, locator, parser, settings, runner } = this.config;
 
-    const testsInTestFiles = (
-      await Promise.all(
-        testFilePaths.map(path => this.config.parser.getTests(path))
-      )
-    ).flat();
-
-    const reporters = [...this.config.reporters, ...this.runTimeReporters];
-    this.registerReporters(reporters);
-
+    this.registerReporters([...reporters, ...this.runTimeReporters]);
     this.registerRunner(this.config.runner);
-    const results = await this.config.runner.run(testsInTestFiles);
 
-    return results;
+    let testsInTestFiles = await locator
+      .locateTestFilePaths()
+      .then(paths => Promise.all(paths.map(path => parser.getTests(path))))
+      .then(files => files.flat());
+
+    if (settings.randomizeTests) {
+      testsInTestFiles = randomizeArray(testsInTestFiles);
+    }
+
+    return runner.run(testsInTestFiles);
   }
 
   private registerRunner(runner: Runner) {
