@@ -2,12 +2,16 @@ import { TestFileLocator } from './TestFileLocator';
 import { TestFileParser } from './TestFileParser';
 import { Reporter } from './Reporter';
 import { Runner } from './Runner';
+import { Settings } from './Settings';
 
 export class Config {
   public locator?: TestFileLocator;
   public parser?: TestFileParser;
   public runner?: Runner;
   public reporters: Array<Reporter> = [];
+  public settings: Settings = {
+    randomizeTests: false,
+  };
 
   constructor(public readonly path: string) {}
 
@@ -33,6 +37,16 @@ export class Config {
 
   withReporters(reporters: Array<Reporter>): this {
     this.reporters = reporters;
+    return this;
+  }
+
+  withSetting<K extends keyof Settings>(key: K, value: Settings[K]): this {
+    this.settings[key] = value;
+    return this;
+  }
+
+  withSettings(settings: Settings): this {
+    this.settings = Object.assign({}, this.settings, settings);
     return this;
   }
 
