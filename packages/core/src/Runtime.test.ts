@@ -1,5 +1,6 @@
 import { when } from 'jest-when';
 import { Config, ValidConfig } from './Config';
+import { Reporter } from './Reporter';
 import { Runner } from './Runner';
 import { Runtime } from './Runtime';
 import { TestFileLocator } from './TestFileLocator';
@@ -87,7 +88,6 @@ describe('Runtime', () => {
       config.withRunner(runner);
 
       jest.spyOn(runner, 'run');
-      jest.spyOn(runner, 'emit');
 
       (runner.run as jest.Mock).mockImplementation(() => {
         runner.emit('runStart', [expectedTestInTestFile]);
@@ -138,6 +138,58 @@ describe('Runtime', () => {
       await runtime.run();
 
       expect(runEndListener).toBeCalledWith([
+        [expectedTestInTestFile, expectedTestResult],
+      ]);
+    });
+  });
+
+  describe('Reporters', () => {
+    class TestReporter extends Reporter {}
+
+    let reporter: Reporter;
+
+    beforeEach(() => {
+      runner = new TestTestRunner();
+      config.withRunner(runner);
+      jest.spyOn(runner, 'run');
+      (runner.run as jest.Mock).mockImplementation(() => {
+        runner.emit('runStart', [expectedTestInTestFile]);
+        runner.emit('testStart', expectedTestInTestFile);
+        runner.emit('testEnd', expectedTestInTestFile, expectedTestResult);
+        runner.emit('runEnd', [[expectedTestInTestFile, expectedTestResult]]);
+      });
+
+      reporter = new TestReporter();
+      config.withReporter(reporter);
+      jest.spyOn(reporter, 'onRunStart');
+      jest.spyOn(reporter, 'onTestStart');
+      jest.spyOn(reporter, 'onTestEnd');
+      jest.spyOn(reporter, 'onRunEnd');
+    });
+
+    it('should call onRunStart', async () => {
+      await runtime.run();
+      expect(reporter.onRunStart).toBeCalledWith(config, [
+        expectedTestInTestFile,
+      ]);
+    });
+
+    it('should call onTestStart', async () => {
+      await runtime.run();
+      expect(reporter.onTestStart).toBeCalledWith(expectedTestInTestFile);
+    });
+
+    it('should call onTestEnd', async () => {
+      await runtime.run();
+      expect(reporter.onTestEnd).toBeCalledWith(
+        expectedTestInTestFile,
+        expectedTestResult
+      );
+    });
+
+    it('should call onRunEnd', async () => {
+      await runtime.run();
+      expect(reporter.onRunEnd).toBeCalledWith([
         [expectedTestInTestFile, expectedTestResult],
       ]);
     });
