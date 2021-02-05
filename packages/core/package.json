@@ -13,7 +13,7 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build --entry src/index.ts",
-    "test": "tsdx test --no-cache",
+    "test": "tsdx test --no-cache --coverage",
     "lint": "tsdx lint",
     "prepare": "tsdx build"
   },
@@ -42,5 +42,14 @@
   },
   "dependencies": {
     "glob": "^7.1.6"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "src/index.ts",
+      "src/TestFileLocator.ts",
+      "src/TestFileParser.ts",
+      "src/TestInTestFile.ts",
+      "src/DebugReporter.ts"
+    ]
   }
 }

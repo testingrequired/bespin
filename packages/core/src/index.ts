@@ -9,4 +9,3 @@ export { Runner } from './Runner';
 export { Runtime } from './Runtime';
 export { TestExecutor } from './TestExecutor';
 export { DebugReporter } from './DebugReporter';
-export { ModuleTestFileParser } from './ModuleTestFileParser';
