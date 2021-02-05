@@ -7,6 +7,9 @@ import { TestFileLocator } from './TestFileLocator';
 import { TestFileParser } from './TestFileParser';
 import { TestInTestFile } from './TestInTestFile';
 import { TestResult, TestResultState } from './TestResult';
+import { randomizeArray } from './randomize';
+
+jest.mock('./randomize');
 
 describe('Runtime', () => {
   const expectedPath = 'expectedPath';
@@ -82,6 +85,18 @@ describe('Runtime', () => {
     expect(results).toStrictEqual([expectedTestResult]);
   });
 
+  it('should not randomize tests if setting is false', async () => {
+    config.settings.randomizeTests = false;
+    await runtime.run();
+    expect(randomizeArray).not.toHaveBeenCalled();
+  });
+
+  it('should randomize tests if setting is true', async () => {
+    config.settings.randomizeTests = true;
+    await runtime.run();
+    expect(randomizeArray).toHaveBeenCalledWith([expectedTestInTestFile]);
+  });
+
   describe('Runner Events', () => {
     beforeEach(() => {
       runner = new TestTestRunner();
@@ -146,7 +161,8 @@ describe('Runtime', () => {
   describe('Reporters', () => {
     class TestReporter extends Reporter {}
 
-    let reporter: Reporter;
+    let reporterA: Reporter;
+    let reporterB: Reporter;
 
     beforeEach(() => {
       runner = new TestTestRunner();
@@ -159,29 +175,43 @@ describe('Runtime', () => {
         runner.emit('runEnd', [[expectedTestInTestFile, expectedTestResult]]);
       });
 
-      reporter = new TestReporter();
-      config.withReporter(reporter);
-      jest.spyOn(reporter, 'onRunStart');
-      jest.spyOn(reporter, 'onTestStart');
-      jest.spyOn(reporter, 'onTestEnd');
-      jest.spyOn(reporter, 'onRunEnd');
+      reporterA = new TestReporter();
+      config.withReporter(reporterA);
+      jest.spyOn(reporterA, 'onRunStart');
+      jest.spyOn(reporterA, 'onTestStart');
+      jest.spyOn(reporterA, 'onTestEnd');
+      jest.spyOn(reporterA, 'onRunEnd');
+
+      reporterB = new TestReporter();
+      config.withReporter(reporterB);
+      jest.spyOn(reporterB, 'onRunStart');
+      jest.spyOn(reporterB, 'onTestStart');
+      jest.spyOn(reporterB, 'onTestEnd');
+      jest.spyOn(reporterB, 'onRunEnd');
+
+      runtime = new Runtime(config as ValidConfig, [reporterB]);
     });
 
     it('should call onRunStart', async () => {
       await runtime.run();
-      expect(reporter.onRunStart).toBeCalledWith(config, [
+      expect(reporterA.onRunStart).toBeCalledWith(config, [
+        expectedTestInTestFile,
+      ]);
+
+      expect(reporterB.onRunStart).toBeCalledWith(config, [
         expectedTestInTestFile,
       ]);
     });
 
     it('should call onTestStart', async () => {
       await runtime.run();
-      expect(reporter.onTestStart).toBeCalledWith(expectedTestInTestFile);
+      expect(reporterA.onTestStart).toBeCalledWith(expectedTestInTestFile);
+      expect(reporterB.onTestStart).toBeCalledWith(expectedTestInTestFile);
     });
 
     it('should call onTestEnd', async () => {
       await runtime.run();
-      expect(reporter.onTestEnd).toBeCalledWith(
+      expect(reporterA.onTestEnd).toBeCalledWith(
         expectedTestInTestFile,
         expectedTestResult
       );
@@ -189,7 +219,10 @@ describe('Runtime', () => {
 
     it('should call onRunEnd', async () => {
       await runtime.run();
-      expect(reporter.onRunEnd).toBeCalledWith([
+      expect(reporterA.onRunEnd).toBeCalledWith([
+        [expectedTestInTestFile, expectedTestResult],
+      ]);
+      expect(reporterB.onRunEnd).toBeCalledWith([
         [expectedTestInTestFile, expectedTestResult],
       ]);
     });

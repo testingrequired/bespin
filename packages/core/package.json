@@ -46,9 +46,12 @@
   "jest": {
     "coveragePathIgnorePatterns": [
       "src/index.ts",
+      "src/Reporter.ts",
+      "src/Runner.ts",
       "src/TestFileLocator.ts",
       "src/TestFileParser.ts",
       "src/TestInTestFile.ts",
+      "src/TestResult.ts",
       "src/DebugReporter.ts"
     ]
   }
