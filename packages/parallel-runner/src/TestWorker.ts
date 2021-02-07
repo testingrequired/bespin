@@ -14,7 +14,11 @@ parentPort?.on('message', async (data: any) => {
   const configFile = await Config.load(configFilePath);
 
   delete require.cache[require.resolve(testFilePath)];
-  const test = await configFile.parser.getTestFunction(testFilePath, testName);
+  const test = await configFile.parser.getTestFunction(
+    testFilePath,
+    testName,
+    configFile.globals
+  );
 
   const result = await executor.executeTest(test);
 

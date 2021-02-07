@@ -12,6 +12,7 @@ export class Config {
   public settings: Settings = {
     randomizeTests: false,
   };
+  public globals: Record<string, any> = {};
 
   constructor(public readonly path: string) {}
 

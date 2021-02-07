@@ -9,6 +9,8 @@ describe('SpecTestFileParse', () => {
   let afterEachMockFn: () => void;
   let testMockFn: () => void;
 
+  let expectedGlobals: Record<string, any>;
+
   let parser: SpecTestFileParse;
 
   beforeEach(() => {
@@ -17,6 +19,8 @@ describe('SpecTestFileParse', () => {
     testMockFn = jest.fn();
 
     parser = new SpecTestFileParse();
+
+    expectedGlobals = {};
   });
 
   afterEach(() => {
@@ -118,7 +122,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -145,7 +150,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -170,7 +176,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -195,7 +202,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -222,7 +230,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -250,7 +259,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -281,7 +291,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -314,7 +325,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -349,7 +361,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -376,7 +389,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -399,7 +413,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -424,7 +439,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -451,7 +467,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -479,7 +496,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -510,7 +528,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -543,7 +562,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();
@@ -578,7 +598,8 @@ describe('SpecTestFileParse', () => {
         for (const test of tests) {
           const fn = await parser.getTestFunction(
             test.testFilePath,
-            test.testName
+            test.testName,
+            expectedGlobals
           );
 
           fn();

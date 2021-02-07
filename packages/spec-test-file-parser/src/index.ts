@@ -1,5 +1,8 @@
-import { TestFileParser, TestInTestFile } from '@testingrequired/bespin-core';
-import { TestFunction } from '@testingrequired/bespin-core/dist/TestFunction';
+import {
+  TestFileParser,
+  TestInTestFile,
+  TestFunction,
+} from '@testingrequired/bespin-core';
 
 declare var global: any;
 
@@ -63,7 +66,11 @@ export class SpecTestFileParse extends TestFileParser {
     return tests;
   }
 
-  async getTestFunction(path: string, name: string): Promise<TestFunction> {
+  async getTestFunction(
+    path: string,
+    name: string,
+    globals: Record<string, any>
+  ): Promise<TestFunction> {
     const tests: Map<string, TestFunction> = new Map();
     const descriptions: Array<string> = [];
     const beforeEachs: Array<Function> = [];
@@ -113,7 +120,18 @@ export class SpecTestFileParse extends TestFileParser {
 
       const fn: TestFunction = async () => {
         await Promise.all(testsBeforeEachs.map(fn => fn()));
+        global.globals = globals;
+
+        Object.entries(globals).forEach(([key, value]) => {
+          global[key] = value;
+        });
+
         await testFn();
+
+        Object.entries(globals).forEach(([key]) => {
+          delete global[key];
+        });
+
         await Promise.all(testsAfterEachs.map(fn => fn()));
       };
 

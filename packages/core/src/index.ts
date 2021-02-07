@@ -1,4 +1,4 @@
-export type { TestResult } from './TestResult';
+export { TestResult } from './TestResult';
 export { TestInTestFile } from './TestInTestFile';
 export { TestFileParser } from './TestFileParser';
 export { TestFileLocator } from './TestFileLocator';
@@ -9,3 +9,4 @@ export { Runner } from './Runner';
 export { Runtime } from './Runtime';
 export { TestExecutor } from './TestExecutor';
 export { DebugReporter } from './DebugReporter';
+export { TestFunction } from './TestFunction';

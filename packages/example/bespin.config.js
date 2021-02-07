@@ -8,10 +8,14 @@ const {
 const { ParallelRunner } = require("@testingrequired/bespin-parallel-runner");
 const { JUnitReporter } = require("@testingrequired/bespin-junit-reporter");
 
-module.exports = new Config(__filename)
+const config = new Config(__filename)
   .withLocator(new GlobTestFileLocator("**/*.test.js"))
   .withParser(new SpecTestFileParse())
   .withRunner(new ParallelRunner(__filename, 10))
-  .withReporter(new DebugReporter())
+  // .withReporter(new DebugReporter())
   .withReporter(new JUnitReporter("./junit.xml"))
   .withSetting("randomizeTests", false);
+
+config.globals.globalTestValue = "globalTestValueValue";
+
+module.exports = config;
