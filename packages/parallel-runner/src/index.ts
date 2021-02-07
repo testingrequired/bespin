@@ -43,7 +43,7 @@ export class ParallelRunner extends Runner {
       [TestInTestFile, TestResult]
     >,
     testInTestFile: TestInTestFile
-  ) {
+  ): Promise<[TestInTestFile, TestResult]> {
     return pool
       .run(() => {
         this.emit('testStart', testInTestFile);
@@ -78,7 +78,8 @@ export class ParallelRunner extends Runner {
         };
 
         this.emit('testEnd', fixedTestInTestFile, result);
-        return testInTestFileResult;
+
+        return [fixedTestInTestFile, result];
       });
   }
 }
