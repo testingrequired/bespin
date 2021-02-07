@@ -10,3 +10,4 @@ export { Runtime } from './Runtime';
 export { TestExecutor } from './TestExecutor';
 export { DebugReporter } from './DebugReporter';
 export { TestFunction } from './TestFunction';
+export { Plugin } from './Plugin';

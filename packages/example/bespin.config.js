@@ -7,15 +7,15 @@ const {
 } = require("@testingrequired/bespin-spec-test-file-parser");
 const { ParallelRunner } = require("@testingrequired/bespin-parallel-runner");
 const { JUnitReporter } = require("@testingrequired/bespin-junit-reporter");
+const { GlobalTestValuePlugin } = require("./src/GlobalTestValuePlugin");
 
 const config = new Config(__filename)
   .withLocator(new GlobTestFileLocator("**/*.test.js"))
   .withParser(new SpecTestFileParse())
   .withRunner(new ParallelRunner(__filename, 10))
-  // .withReporter(new DebugReporter())
+  .withReporter(new DebugReporter())
   .withReporter(new JUnitReporter("./junit.xml"))
-  .withSetting("randomizeTests", false);
-
-config.globals.globalTestValue = "globalTestValueValue";
+  .withSetting("randomizeTests", false)
+  .withPlugin(GlobalTestValuePlugin);
 
 module.exports = config;
