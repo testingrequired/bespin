@@ -11,11 +11,15 @@ import { randomizeArray } from './randomize';
 
 jest.mock('./randomize');
 
+type TestTestInTestFile = {
+  -readonly [K in keyof TestInTestFile]: TestInTestFile[K];
+};
+
 describe('Runtime', () => {
   const expectedPath = 'expectedPath';
   const expectedPaths = [expectedPath];
   const expectedTestName = 'expectedTestName';
-  const expectedTestInTestFile: TestInTestFile = {
+  const expectedTestInTestFile: TestTestInTestFile = {
     testFilePath: expectedPath,
     testName: expectedTestName,
   };
@@ -95,6 +99,70 @@ describe('Runtime', () => {
     config.settings.randomizeTests = true;
     await runtime.run();
     expect(randomizeArray).toHaveBeenCalledWith([expectedTestInTestFile]);
+  });
+
+  describe('settings.testFileFilter', () => {
+    const expectedTestInTestFileB: TestInTestFile = {
+      testFilePath: 'other/test/path.test.js',
+      testName: 'Other test',
+    };
+
+    beforeEach(() => {
+      config.settings.testFileFilter = 'example/**/*.test.js';
+
+      expectedTestInTestFile.testFilePath = 'example/test/path.test.js';
+
+      when(locator.locateTestFilePaths as jest.Mock)
+        .calledWith()
+        .mockResolvedValueOnce([
+          ...expectedPaths,
+          expectedTestInTestFileB.testFilePath,
+        ]);
+
+      when(parser.getTests as jest.Mock)
+        .calledWith(expectedPath)
+        .mockResolvedValueOnce([expectedTestInTestFile])
+        .calledWith(expectedTestInTestFileB.testFilePath)
+        .mockResolvedValueOnce([expectedTestInTestFileB]);
+    });
+
+    it('should filter test paths', async () => {
+      await runtime.run();
+
+      expect(runner.run).toBeCalledWith([expectedTestInTestFile]);
+    });
+  });
+
+  describe('settings.testNameFilter', () => {
+    const expectedTestInTestFileB: TestInTestFile = {
+      testFilePath: 'other/test/path.test.js',
+      testName: 'Other test',
+    };
+
+    beforeEach(() => {
+      config.settings.testNameFilter = 'Example';
+
+      expectedTestInTestFile.testName = 'Example';
+
+      when(locator.locateTestFilePaths as jest.Mock)
+        .calledWith()
+        .mockResolvedValueOnce([
+          ...expectedPaths,
+          expectedTestInTestFileB.testFilePath,
+        ]);
+
+      when(parser.getTests as jest.Mock)
+        .calledWith(expectedPath)
+        .mockResolvedValueOnce([expectedTestInTestFile])
+        .calledWith(expectedTestInTestFileB.testFilePath)
+        .mockResolvedValueOnce([expectedTestInTestFileB]);
+    });
+
+    it('should filter test paths', async () => {
+      await runtime.run();
+
+      expect(runner.run).toBeCalledWith([expectedTestInTestFile]);
+    });
   });
 
   describe('Runner Events', () => {

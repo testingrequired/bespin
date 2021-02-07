@@ -17,6 +17,14 @@ export const run = async (toolbox: GluegunToolbox) => {
 
   const config = await Config.load(configFilePath);
 
+  if (toolbox.parameters.options?.testFileFilter) {
+    config.settings.testFileFilter = toolbox.parameters.options?.testFileFilter;
+  }
+
+  if (toolbox.parameters.options?.testNameFilter) {
+    config.settings.testNameFilter = toolbox.parameters.options?.testNameFilter;
+  }
+
   const runtime = new Runtime(config, [new CLIReporter(toolbox)]);
 
   const results = await runtime.run();

@@ -5,6 +5,7 @@ import { TestResult } from './TestResult';
 import { Runner } from './Runner';
 import { ValidConfig } from './Config';
 import { randomizeArray } from './randomize';
+import minimatch from 'minimatch';
 
 export class Runtime {
   public events: EventEmitter = new EventEmitter();
@@ -27,6 +28,18 @@ export class Runtime {
 
     if (settings.randomizeTests) {
       testsInTestFiles = randomizeArray(testsInTestFiles);
+    }
+
+    if (settings.testFileFilter) {
+      testsInTestFiles = testsInTestFiles.filter(test =>
+        minimatch(test.testFilePath, settings.testFileFilter as string)
+      );
+    }
+
+    if (settings.testNameFilter) {
+      testsInTestFiles = testsInTestFiles.filter(test =>
+        test.testName.includes(settings.testNameFilter as string)
+      );
     }
 
     return runner.run(testsInTestFiles);

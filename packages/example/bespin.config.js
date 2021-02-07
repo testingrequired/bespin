@@ -14,4 +14,4 @@ module.exports = new Config(__filename)
   .withRunner(new ParallelRunner(__filename, 10))
   .withReporter(new DebugReporter())
   .withReporter(new JUnitReporter("./junit.xml"))
-  .withSetting("randomizeTests", true);
+  .withSetting("randomizeTests", false);
