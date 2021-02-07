@@ -3,6 +3,7 @@ import { TestFileParser } from './TestFileParser';
 import { Reporter } from './Reporter';
 import { Runner } from './Runner';
 import { Settings } from './Settings';
+import { Plugin } from './Plugin';
 
 export class Config {
   public locator?: TestFileLocator;
@@ -13,6 +14,7 @@ export class Config {
     randomizeTests: false,
   };
   public globals: Record<string, any> = {};
+  public plugins: Array<Plugin> = [];
 
   constructor(public readonly path: string) {}
 
@@ -48,6 +50,11 @@ export class Config {
 
   withSettings(settings: Settings): this {
     this.settings = Object.assign({}, this.settings, settings);
+    return this;
+  }
+
+  withPlugin(pluginClass: new (config: this) => Plugin): this {
+    this.plugins.push(new pluginClass(this));
     return this;
   }
 
