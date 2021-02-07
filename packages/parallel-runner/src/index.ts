@@ -8,27 +8,22 @@ import { WorkerPool } from './WorkerPool';
 import { workerPath } from './workerPath';
 
 export class ParallelRunner extends Runner {
-  private pool: WorkerPool<
-    { testInTestFile: TestInTestFile; configFilePath: string },
-    [TestInTestFile, TestResult]
-  >;
-
-  constructor(private configFilePath: string, numberOfWorkers: number) {
+  constructor(private configFilePath: string, private numberOfWorkers: number) {
     super();
-
-    this.pool = new WorkerPool<
-      { testInTestFile: TestInTestFile; configFilePath: string },
-      [TestInTestFile, TestResult]
-    >(workerPath, numberOfWorkers);
   }
 
   async run(
     testsInTestFiles: Array<TestInTestFile>
   ): Promise<Array<[TestInTestFile, TestResult]>> {
+    const pool = new WorkerPool<
+      { testInTestFile: TestInTestFile; configFilePath: string },
+      [TestInTestFile, TestResult]
+    >(workerPath, Math.min(testsInTestFiles.length, this.numberOfWorkers));
+
     this.emit('runStart', testsInTestFiles);
 
     const workers = testsInTestFiles.map(testInTestFile =>
-      this.runTestInTestFile(testInTestFile)
+      this.runTestInTestFile(pool, testInTestFile)
     );
 
     const results = await Promise.all(workers);
@@ -38,8 +33,14 @@ export class ParallelRunner extends Runner {
     return results;
   }
 
-  private runTestInTestFile(testInTestFile: TestInTestFile) {
-    return this.pool
+  private runTestInTestFile(
+    pool: WorkerPool<
+      { testInTestFile: TestInTestFile; configFilePath: string },
+      [TestInTestFile, TestResult]
+    >,
+    testInTestFile: TestInTestFile
+  ) {
+    return pool
       .run(() => {
         this.emit('testStart', testInTestFile);
 
