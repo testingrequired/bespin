@@ -1,3 +1,4 @@
+import os from 'os';
 import { join } from 'path';
 import {
   Runner,
@@ -18,7 +19,10 @@ export class ParallelRunner extends Runner {
     const pool = new WorkerPool<
       { testInTestFile: TestInTestFile; configFilePath: string },
       [TestInTestFile, TestResult]
-    >(workerPath, Math.min(testsInTestFiles.length, this.numberOfWorkers));
+    >(
+      workerPath,
+      Math.min(testsInTestFiles.length, os.cpus().length, this.numberOfWorkers)
+    );
 
     this.emit('runStart', testsInTestFiles);
 
