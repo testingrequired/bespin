@@ -257,7 +257,7 @@ describe('Runtime', () => {
       jest.spyOn(reporterB, 'onTestEnd');
       jest.spyOn(reporterB, 'onRunEnd');
 
-      runtime = new Runtime(config as ValidConfig, [reporterB]);
+      runtime = new Runtime(config as ValidConfig);
     });
 
     it('should call onRunStart', async () => {

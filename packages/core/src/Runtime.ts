@@ -10,16 +10,13 @@ import minimatch from 'minimatch';
 export class Runtime {
   public events: EventEmitter = new EventEmitter();
 
-  constructor(
-    private config: ValidConfig,
-    private runTimeReporters: Array<Reporter> = []
-  ) {}
+  constructor(private config: ValidConfig) {}
 
   async run(): Promise<Array<[TestInTestFile, TestResult]>> {
     const { reporters, locator, parser, settings, runner } = this.config;
 
-    this.registerReporters([...reporters, ...this.runTimeReporters]);
-    this.registerRunner(this.config.runner);
+    this.registerReporters(reporters);
+    this.registerRunner(runner);
 
     let testsInTestFiles = await locator
       .locateTestFilePaths()
