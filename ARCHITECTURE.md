@@ -10,7 +10,7 @@ These stages are executed in core framework functions calling configurable compo
 
 ## Entry Point
 
-The `Runtime` is the entry point to the framework.
+The [`Runtime`](packages/core/Runtime.ts) is the entry point to the framework.
 
 ```typescript
 import { Config, Runtime } from "@testingrequired/bespin-core";
@@ -51,6 +51,38 @@ module.exports = new Config(__filename)
   .withRunner(new SomeRunner())
   .withReporter(new SomeReporter())
   .withReporter(new AnotherReporter());
+```
+
+#### Settings
+
+Core framework settings are set in the config.
+
+```typescript
+const { Config } = require("@testingrequired/bespin-core");
+
+module.exports = new Config(__filename)
+  .withSetting("randomizeTests", true)
+  .withSettings({
+    testFileFilter: "",
+    testNameFilter: "",
+  });
+```
+
+```typescript
+interface Settings {
+  randomizeTests?: boolean;
+  testFileFilter?: string;
+  testNameFilter?: string;
+}
+```
+
+#### Globals
+
+```typescript
+const { Config } = require("@testingrequired/bespin-core");
+const someLib = require("someLib");
+
+module.exports = new Config(__filename).withGlobal("someLib", someLib);
 ```
 
 #### Load
@@ -125,6 +157,8 @@ The `getTests` method accepts a test file path and returns an array of `TestInTe
 
 The `getTestFunction` method accepts a `testFilePath` and `testName` to return a `TestFunction` or `() => Promise<void>;`.
 
+This method also accepts a `Record<string, any>` of global variables exposed to test functions. These globals are configured on the `Config`.
+
 ### Runner
 
 This component accepts an array of `TestInTestFile`, runs them using the `TestExecutor` and returns an array of corresponding `TestResult`.
@@ -152,6 +186,14 @@ enum TestResultState {
 
 #### Events
 
+#### runStart
+
+#### testStart
+
+#### testEnd
+
+#### runEnd
+
 ### Reporter
 
 #### Run Start
@@ -164,4 +206,4 @@ enum TestResultState {
 
 ## Plugins
 
-A `Plugin` is (currently) simply a class that is passed a `Config` in to it's constructor. This allows the plugin to configure components and settings.
+A `Plugin` is (currently) simply a class that is passed a `Config` in to it's constructor. This allows the plugin to configure components, settings and globals.
