@@ -16,9 +16,13 @@ Config ----`config`-----> Runtime
 
 ```
 
-## Entry Point
+## CLI
 
-The [`Runtime`](packages/core/src/Runtime.ts) is the entry point to the framework.
+The [CLI](packages/cli) is main consumer entry point for the framework. It's responsible for loading a `Config`, initializing the `Runtime` and reporting results using [it's own reporter](packages/cli/src/CLIReporter.ts) registered to the config.
+
+## Runtime
+
+The [`Runtime`](packages/core/src/Runtime.ts) is used by consumer implementations and contains all the frameworks core logic.
 
 ```typescript
 import { Config, Runtime } from "@testingrequired/bespin-core";
@@ -30,7 +34,7 @@ await runtime.run();
 
 ## Configuration
 
-The [`Config`](packages/core/src/Config.ts) is where the framework's behaviour is defined.
+The [`Config`](packages/core/src/Config.ts) is where the framework's behavior is defined. It's used by the `Runtime` to drive that behavior.
 
 ### Config File
 
