@@ -63,4 +63,5 @@ module.exports = new Config(__filename)
 
 ## Development
 
-See [DEVELOPMENT.md](./DEVELOPMENT.md)
+- [DEVELOPMENT.md](./DEVELOPMENT.md)
+- [ARCHITECTURE.md](./ARCHITECTURE.md)
