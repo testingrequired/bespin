@@ -10,7 +10,7 @@ These stages are executed in core framework functions calling configurable compo
 
 ## Entry Point
 
-The [`Runtime`](packages/core/Runtime.ts) is the entry point to the framework.
+The [`Runtime`](packages/core/src/Runtime.ts) is the entry point to the framework.
 
 ```typescript
 import { Config, Runtime } from "@testingrequired/bespin-core";
@@ -22,7 +22,7 @@ await runtime.run();
 
 ## Configuration
 
-The `Config` is where the framework's behaviour is defined.
+The [`Config`](packages/core/src/Config.ts) is where the framework's behaviour is defined.
 
 ### Config File
 
@@ -97,7 +97,7 @@ const config = await Config.load("bespin.config.js");
 
 ### ValidConfig
 
-A `ValidConfig` is a `Config` with `TestFileLocator`, `TestFileParser` and `Runner` set.
+A `ValidConfig` is a `Config` with [`TestFileLocator`](packages/core/src/TestFileLocator.ts), [`TestFileParser`](packages/core/src/TestFileParser.ts) and [`Runner`](packages/core/src/Runner.ts) set.
 
 ```typescript
 import { Config } from "@testingrequired/bespin-core";
@@ -116,7 +116,7 @@ An error will be thrown if the loaded config is not valid.
 
 ## Components
 
-There are four types of components that can be configured: `TestFileLocator`, `TestFileParser`, `Runner`, & `Reporter`.
+There are four types of components that can be configured: `TestFileLocator`, `TestFileParser`, `Runner`, & [`Reporter`](packages/core/src/Reporter.ts).
 
 ### TestFileLocator
 
@@ -151,17 +151,17 @@ This component parses a test file for tests. It works in two stages: `getTests` 
 
 #### getTests
 
-The `getTests` method accepts a test file path and returns an array of `TestInTestFile` which has two properties: `testFilePath` and `testName`.
+The `getTests` method accepts a test file path and returns an array of [`TestInTestFile`](packages/core/src/TestInTestFile.ts) which has two properties: `testFilePath` and `testName`.
 
 #### getTestFunction
 
-The `getTestFunction` method accepts a `testFilePath` and `testName` to return a `TestFunction` or `() => Promise<void>;`.
+The `getTestFunction` method accepts a `testFilePath` and `testName` to return a [`TestFunction`](packages/core/src/TestFunction.ts) or `() => Promise<void>;`.
 
 This method also accepts a `Record<string, any>` of global variables exposed to test functions. These globals are configured on the `Config`.
 
 ### Runner
 
-This component accepts an array of `TestInTestFile`, runs them using the `TestExecutor` and returns an array of corresponding `TestResult`.
+This component accepts an array of `TestInTestFile`, runs them using the [`TestExecutor`](packages/core/src/TestExecutor.ts) and returns an array of corresponding [`TestResult`](packages/core/src/TestResult.ts).
 
 #### TestExecutor
 
@@ -206,4 +206,4 @@ enum TestResultState {
 
 ## Plugins
 
-A `Plugin` is (currently) simply a class that is passed a `Config` in to it's constructor. This allows the plugin to configure components, settings and globals.
+A [`Plugin`](packages/core/src/Plugin.ts) is (currently) simply a class that is passed a `Config` in to it's constructor. This allows the plugin to configure components, settings and globals.
