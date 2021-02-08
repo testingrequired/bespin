@@ -5,15 +5,14 @@ This document describes the high level architecture of bespin.
 ## High Level
 
 ```
-Config ----`config`-----> Runtime
-|-> Components            |-> Locate Test Files (TestFileLocator)
-|   - TestFileLocator     |-> Parse Out Tests (TestFileParser)
-|   - TestFileParser      |-> Run Tests (Runner)
-|   - Runner              |-> Report Results (Reporter)
-|   - Reporter
-|-> Settings
-|-> Global
-
+CLI ----> Config ----`config`----> Runtime
+          |-> Components           |-> Locate Test Files (TestFileLocator)
+          |   - TestFileLocator    |-> Parse Out Tests (TestFileParser)
+          |   - TestFileParser     |-> Run Tests (Runner)
+          |   - Runner             |-> Report Results (Reporter/s)
+          |   - Reporter/s
+          |-> Settings
+          |-> Globals
 ```
 
 ## CLI
@@ -134,28 +133,9 @@ There are four types of components that can be configured: `TestFileLocator`, `T
 
 This component locates test files and returns an array of their paths.
 
-Example:
+#### Implementations
 
-```typescript
-import { promisify } from "util";
-import glob from "glob";
-import { TestFileLocator } from "@testingrequired/bespin-core";
-
-class GlobTestFileLocator extends TestFileLocator {
-  private pattern: string;
-
-  constructor(pattern = "**/*.test.js") {
-    super();
-
-    this.pattern = pattern;
-  }
-
-  locateTestFilePaths() {
-    const globPromise = promisify(glob);
-    return globPromise(this.pattern);
-  }
-}
-```
+- [GlobTestFileLocator](packages/glob-test-file-locator)
 
 ### TestFileParser
 
@@ -170,6 +150,10 @@ The `getTests` method accepts a test file path and returns an array of [`TestInT
 The `getTestFunction` method accepts a `testFilePath` and `testName` to return a [`TestFunction`](packages/core/src/TestFunction.ts) or `() => Promise<void>;`.
 
 This method also accepts a `Record<string, any>` of global variables exposed to test functions. These globals are configured on the `Config`.
+
+#### Implementations
+
+- [SpecTestFileParser](packages/spec-test-file-parser)
 
 ### Runner
 
@@ -198,13 +182,17 @@ enum TestResultState {
 
 #### Events
 
-#### runStart
+##### runStart
 
-#### testStart
+##### testStart
 
-#### testEnd
+##### testEnd
 
-#### runEnd
+##### runEnd
+
+#### Implementations
+
+- [ParallelRunner](packages/parallel-runner)
 
 ### Reporter
 
@@ -215,6 +203,12 @@ enum TestResultState {
 #### Test End
 
 #### Run End
+
+#### Implementations
+
+- [JUnitReporter](packages/junit-reporter)
+- [DebugReporter](packages/debug-reporter)
+- [CLIReporter](packages/cli/src/CLIReporter.ts)
 
 ## Plugins
 
