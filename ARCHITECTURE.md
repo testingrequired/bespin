@@ -17,18 +17,18 @@ CLI ----> Config ----`config`----> Runtime
 
 ## CLI
 
-The [CLI](packages/cli) is main consumer entry point for the framework. It's responsible for loading a `Config`, initializing the `Runtime` and reporting results using [it's own reporter](packages/cli/src/CLIReporter.ts) registered to the config.
+The [CLI](packages/cli) is main consumer entry point for the framework. It's responsible for loading a `Config`, initializing the `Runtime` and reporting results to the terminal using [it's own reporter](packages/cli/src/CLIReporter.ts).
 
 ## Runtime
 
-The [`Runtime`](packages/core/src/Runtime.ts) is used by consumer implementations and contains all the frameworks core logic.
+The [`Runtime`](packages/core/src/Runtime.ts) contains all the frameworks core logic and is used by consumer implementations (e.g. cli). The `run` method envokes the runtime and returns an array of `TestResult`.
 
 ```typescript
 import { Config, Runtime } from "@testingrequired/bespin-core";
 
 const config = await Config.load("bespin.config.js");
 const runtime = new Runtime(config);
-await runtime.run();
+const results = await runtime.run();
 ```
 
 ## Configuration
@@ -66,7 +66,7 @@ module.exports = new Config(__filename)
 
 #### Settings
 
-Core framework settings are set in the config.
+Settings affect core framework functionality.
 
 ```typescript
 const { Config } = require("@testingrequired/bespin-core");
@@ -88,6 +88,8 @@ interface Settings {
 ```
 
 #### Globals
+
+Globals registered are exposed to test functions at runtime.
 
 ```typescript
 const { Config } = require("@testingrequired/bespin-core");
@@ -195,6 +197,8 @@ enum TestResultState {
 - [ParallelRunner](packages/parallel-runner)
 
 ### Reporter
+
+One or more reporters can be registered to the config. They expose the following methods to implement reporting: `onRunStart`, `onTestStart`, `onTestEnd`, `onRunEnd`.
 
 #### Run Start
 
