@@ -9,11 +9,12 @@
   "name": "@testingrequired/bespin-example",
   "author": "Kylee Tilley",
   "scripts": {
-    "test": "bespin",
+    "test": "bespin2",
     "build": "echo 'No Build'"
   },
   "dependencies": {
     "@testingrequired/bespin-cli": "0.1.0",
+    "@testingrequired/bespin-cli2": "0.1.0",
     "@testingrequired/bespin-core": "0.1.0",
     "@testingrequired/bespin-junit-reporter": "0.1.0",
     "@testingrequired/bespin-spec-test-file-parser": "0.1.0",
