@@ -1,12 +1,16 @@
 # Architecture
 
-## Stages
+This document describes the high level architecture of bespin.
 
-The framework executes the following stages:
+## High Level
 
-> Locate Test Files -> Parse Out Tests -> Run Tests -> Report Results
-
-These stages are executed in core framework functions calling configurable components.
+```
+Config ----------> Runtime
+-> Components      -> Locate Test Files
+-> Settings        -> Parse Out Tests
+-> Global          -> Run Tests
+                   -> Report Results
+```
 
 ## Entry Point
 
