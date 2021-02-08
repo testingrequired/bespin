@@ -5,11 +5,15 @@ This document describes the high level architecture of bespin.
 ## High Level
 
 ```
-Config ----------> Runtime
--> Components      -> Locate Test Files
--> Settings        -> Parse Out Tests
--> Global          -> Run Tests
-                   -> Report Results
+Config ----`config`-----> Runtime
+|-> Components            |-> Locate Test Files (TestFileLocator)
+|   - TestFileLocator     |-> Parse Out Tests (TestFileParser)
+|   - TestFileParser      |-> Run Tests (Runner)
+|   - Runner              |-> Report Results (Reporter)
+|   - Reporter
+|-> Settings
+|-> Global
+
 ```
 
 ## Entry Point
