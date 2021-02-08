@@ -115,11 +115,40 @@ class GlobTestFileLocator extends TestFileLocator {
 
 ### TestFileParser
 
-#### TestInTestFile
+This component parses a test file for tests. It works in two stages: `getTests` and `getTestFunction`.
+
+#### getTests
+
+The `getTests` method accepts a test file path and returns an array of `TestInTestFile` which has two properties: `testFilePath` and `testName`.
+
+#### getTestFunction
+
+The `getTestFunction` method accepts a `testFilePath` and `testName` to return a `TestFunction` or `() => Promise<void>;`.
 
 ### Runner
 
+This component accepts an array of `TestInTestFile`, runs them using the `TestExecutor` and returns an array of corresponding `TestResult`.
+
+#### TestExecutor
+
+The `TestExecutor` is a core framework function that accepts a `TestFunction` and returns a `TestResult`.
+
 #### TestResult
+
+```typescript
+interface TestResult {
+  state: TestResultState;
+  time: number;
+  error?: Error;
+  message?: string;
+}
+
+enum TestResultState {
+  PASS = "PASS",
+  FAIL = "FAIL",
+  ERROR = "ERROR",
+}
+```
 
 #### Events
 
@@ -132,3 +161,7 @@ class GlobTestFileLocator extends TestFileLocator {
 #### Test End
 
 #### Run End
+
+## Plugins
+
+A `Plugin` is (currently) simply a class that is passed a `Config` in to it's constructor. This allows the plugin to configure components and settings.
