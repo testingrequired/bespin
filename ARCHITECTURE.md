@@ -5,14 +5,15 @@ This document describes the high level architecture of bespin.
 ## High Level
 
 ```
-CLI ----> Config ----`config`----> Runtime
-          |-> Components           |-> Locate Test Files (TestFileLocator)
-          |   - TestFileLocator    |-> Parse Out Tests (TestFileParser)
-          |   - TestFileParser     |-> Run Tests (Runner)
-          |   - Runner             |-> Report Results (Reporter/s)
-          |   - Reporter/s
-          |-> Settings
-          |-> Globals
+CLI
+|-> Config ----`config`----> Runtime
+    |-> Components           |-> Locate Test Files (TestFileLocator)
+    |   - TestFileLocator    |-> Parse Out Tests (TestFileParser)
+    |   - TestFileParser     |-> Run Tests (Runner)
+    |   - Runner             |-> Report Results (Reporter/s)
+    |   - Reporter/s
+    |-> Settings
+    |-> Globals
 ```
 
 ## CLI
