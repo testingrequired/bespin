@@ -1,5 +1,5 @@
 describe("Generated tests", () => {
-  const numberOfTests = 25;
+  const numberOfTests = 1000;
 
   for (let index = 0; index < numberOfTests; index++) {
     it(`should be test number ${index}`, async () => {
