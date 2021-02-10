@@ -8,12 +8,19 @@ import {
 import { WorkerPool } from './WorkerPool';
 import { workerPath } from './workerPath';
 
-type WorkerData = { testInTestFile: TestInTestFile; configFilePath: string };
-type WorkerResult = [TestInTestFile, TestResult];
+export type WorkerData = {
+  testInTestFile: TestInTestFile;
+  configFilePath: string;
+};
+export type WorkerResult = [TestInTestFile, TestResult];
 
 export class ParallelRunner extends Runner {
   constructor(private configFilePath: string, private numberOfWorkers: number) {
     super();
+
+    if (numberOfWorkers <= 0) {
+      throw Error('Number of workers must be 1 or more');
+    }
   }
 
   async run(
