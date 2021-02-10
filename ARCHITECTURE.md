@@ -195,6 +195,7 @@ enum TestResultState {
 
 #### Implementations
 
+- [AsyncRunner](packages/async-runner)
 - [ParallelRunner](packages/parallel-runner)
 
 ### Reporter

@@ -13,11 +13,16 @@
     "build": "echo 'No Build'"
   },
   "dependencies": {
+    "@testingrequired/bespin-async-runner": "0.1.0",
     "@testingrequired/bespin-cli": "0.1.0",
     "@testingrequired/bespin-core": "0.1.0",
-    "@testingrequired/bespin-junit-reporter": "0.1.0",
-    "@testingrequired/bespin-spec-test-file-parser": "0.1.0",
     "@testingrequired/bespin-glob-test-file-locator": "0.1.0",
-    "@testingrequired/bespin-parallel-runner": "0.1.0"
+    "@testingrequired/bespin-junit-reporter": "0.1.0",
+    "@testingrequired/bespin-parallel-runner": "0.1.0",
+    "@testingrequired/bespin-spec-test-file-parser": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/jest-when": "^2.7.2",
+    "jest-when": "^3.2.0"
   }
 }

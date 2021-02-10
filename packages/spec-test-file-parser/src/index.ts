@@ -140,6 +140,7 @@ export class SpecTestFileParse extends TestFileParser {
 
     global.test = global.it = test;
 
+    delete require.cache[require.resolve(path)];
     require(path);
 
     delete global.describe;
