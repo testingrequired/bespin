@@ -13,10 +13,20 @@ export class Runtime {
   constructor(private config: ValidConfig) {}
 
   async run(): Promise<Array<[TestInTestFile, TestResult]>> {
-    const { reporters, locator, parser, settings, runner } = this.config;
+    const { reporters, locator, parser, settings, runner, env } = this.config;
 
     this.registerReporters(reporters);
     this.registerRunner(runner);
+
+    const oldEnv: Record<string, string | undefined> = {};
+
+    Object.entries(env).forEach(([key, value]) => {
+      if (process.env[key]) {
+        oldEnv[key] = process.env[key];
+      }
+
+      process.env[key] = value;
+    });
 
     let testsInTestFiles = await locator
       .locateTestFilePaths()
@@ -39,7 +49,13 @@ export class Runtime {
       );
     }
 
-    return runner.run(testsInTestFiles);
+    const results = runner.run(testsInTestFiles);
+
+    Object.entries(oldEnv).forEach(([key, value]) => {
+      process.env[key] = value;
+    });
+
+    return results;
   }
 
   private registerRunner(runner: Runner) {

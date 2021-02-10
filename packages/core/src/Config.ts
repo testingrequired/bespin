@@ -14,6 +14,7 @@ export class Config {
     randomizeTests: false,
   };
   public globals: Record<string, any> = {};
+  public env: Record<string, string | undefined> = {};
   public plugins: Array<Plugin> = [];
 
   constructor(public readonly path: string) {}
