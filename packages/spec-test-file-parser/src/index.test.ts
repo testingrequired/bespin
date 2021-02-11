@@ -5,508 +5,290 @@ const expectedTestPath = './testUtils/test.js';
 const mockTestPath = './testUtils/test.js';
 
 describe('SpecTestFileParse', () => {
+  let describeMockFn: () => void;
   let beforeEachMockFn: () => void;
   let afterEachMockFn: () => void;
   let testMockFn: () => void;
 
-  let expectedGlobals: Record<string, any>;
+  const expectedGlobals: Record<string, any> = {};
 
   let parser: SpecTestFileParse;
 
   beforeEach(() => {
+    describeMockFn = jest.fn();
     beforeEachMockFn = jest.fn();
     afterEachMockFn = jest.fn();
     testMockFn = jest.fn();
 
     parser = new SpecTestFileParse();
-
-    expectedGlobals = {};
   });
 
   afterEach(() => {
     jest.resetModules();
   });
 
-  describe('describe', () => {
-    let describeMockFn: () => void;
+  it('should parse a test at top level', async () => {
+    const expectedTestName = 'expectedTestName';
 
-    beforeEach(() => {
-      describeMockFn = jest.fn();
+    jest.mock(mockTestPath, () => {
+      it(expectedTestName, testMockFn);
+    });
 
+    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+
+    expect(tests).toStrictEqual([
+      new TestInTestFile(
+        expectedTestPath,
+        expectedTestName,
+        expect.any(Function)
+      ),
+    ]);
+
+    await tests[0].testFn();
+
+    expect(testMockFn).toBeCalledTimes(1);
+  });
+
+  it('should parse a test in a describe', async () => {
+    const expectedDescribe = 'expectedDescribe';
+    const expectedTestName = 'expectedTestName';
+
+    jest.mock(mockTestPath, () => {
+      describe(expectedDescribe, () => {
+        it(expectedTestName, testMockFn);
+      });
+    });
+
+    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+
+    expect(tests).toStrictEqual([
+      new TestInTestFile(
+        expectedTestPath,
+        `${expectedDescribe} ${expectedTestName}`,
+        expect.any(Function)
+      ),
+    ]);
+
+    await tests[0].testFn();
+
+    expect(testMockFn).toBeCalledTimes(1);
+  });
+
+  it('should parse a test at the top level with beforeEach/afterEach', async () => {
+    const expectedTestName = 'expectedTestName';
+
+    jest.mock(mockTestPath, () => {
+      beforeEach(beforeEachMockFn);
+      afterEach(afterEachMockFn);
+      it(expectedTestName, testMockFn);
+    });
+
+    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+
+    expect(tests).toStrictEqual([
+      new TestInTestFile(
+        expectedTestPath,
+        expectedTestName,
+        expect.any(Function)
+      ),
+    ]);
+
+    await tests[0].testFn();
+
+    expect(testMockFn).toBeCalledTimes(1);
+    expect(beforeEachMockFn).toBeCalledTimes(1);
+    expect(afterEachMockFn).toBeCalledTimes(1);
+  });
+
+  it('should parse a test in a describe with beforeEach/afterEach', async () => {
+    const expectedDescribe = 'expectedDescribe';
+    const expectedTestName = 'expectedTestName';
+
+    jest.mock(mockTestPath, () => {
+      describe(expectedDescribe, () => {
+        beforeEach(beforeEachMockFn);
+        afterEach(afterEachMockFn);
+        it(expectedTestName, testMockFn);
+      });
+    });
+
+    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+
+    expect(tests).toStrictEqual([
+      new TestInTestFile(
+        expectedTestPath,
+        `${expectedDescribe} ${expectedTestName}`,
+        expect.any(Function)
+      ),
+    ]);
+
+    await tests[0].testFn();
+
+    expect(testMockFn).toBeCalledTimes(1);
+    expect(beforeEachMockFn).toBeCalledTimes(1);
+    expect(afterEachMockFn).toBeCalledTimes(1);
+  });
+
+  it('should parse a test in a nested describe with beforeEach/afterEach', async () => {
+    const expectedDescribeA = 'expectedDescribeA';
+    const expectedDescribeB = 'expectedDescribeB';
+    const expectedTestNameA = 'expectedTestNameA';
+    const expectedTestNameB = 'expectedTestNameB';
+
+    let beforeEachMockFnB = jest.fn();
+    let afterEachMockFnB = jest.fn();
+
+    jest.mock(mockTestPath, () => {
+      describe(expectedDescribeA, () => {
+        beforeEach(beforeEachMockFn);
+        afterEach(afterEachMockFn);
+        it(expectedTestNameA, testMockFn);
+
+        describe(expectedDescribeB, () => {
+          beforeEach(beforeEachMockFnB);
+          afterEach(afterEachMockFnB);
+          it(expectedTestNameB, testMockFn);
+        });
+      });
+    });
+
+    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+
+    expect(tests).toStrictEqual([
+      new TestInTestFile(
+        expectedTestPath,
+        `${expectedDescribeA} ${expectedTestNameA}`,
+        expect.any(Function)
+      ),
+      new TestInTestFile(
+        expectedTestPath,
+        `${expectedDescribeA} ${expectedDescribeB} ${expectedTestNameB}`,
+        expect.any(Function)
+      ),
+    ]);
+
+    await tests[0].testFn();
+    await tests[1].testFn();
+
+    expect(testMockFn).toBeCalledTimes(2);
+    expect(beforeEachMockFn).toBeCalledTimes(2);
+    expect(afterEachMockFn).toBeCalledTimes(2);
+    expect(beforeEachMockFnB).toBeCalledTimes(1);
+    expect(afterEachMockFnB).toBeCalledTimes(1);
+  });
+
+  it('should not run beforeEach or afterEach if defined after a test', async () => {
+    const expectedDescribe = 'expectedDescribe';
+    const expectedTestName = 'expectedTestName';
+
+    jest.mock(mockTestPath, () => {
+      describe(expectedDescribe, () => {
+        it(expectedTestName, testMockFn);
+        beforeEach(beforeEachMockFn);
+        afterEach(afterEachMockFn);
+      });
+    });
+
+    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+
+    await tests[0].testFn();
+
+    expect(beforeEachMockFn).toBeCalledTimes(0);
+    expect(afterEachMockFn).toBeCalledTimes(0);
+  });
+
+  it('should parse a test in a describe with multiple beforeEach/afterEach', async () => {
+    const expectedDescribe = 'expectedDescribe';
+    const expectedTestName = 'expectedTestName';
+
+    const beforeEachMockFnB = jest.fn();
+    const afterEachMockFnB = jest.fn();
+
+    jest.mock(mockTestPath, () => {
+      describe(expectedDescribe, () => {
+        beforeEach(beforeEachMockFn);
+        beforeEach(beforeEachMockFnB);
+        afterEach(afterEachMockFn);
+        afterEach(afterEachMockFnB);
+        it(expectedTestName, testMockFn);
+      });
+    });
+
+    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+
+    await tests[0].testFn();
+
+    expect(beforeEachMockFn).toBeCalledTimes(1);
+    expect(beforeEachMockFnB).toBeCalledTimes(1);
+    expect(afterEachMockFn).toBeCalledTimes(1);
+    expect(afterEachMockFnB).toBeCalledTimes(1);
+  });
+
+  it('should correctly set and increment value using beforeEach', async () => {
+    let baseValue: number = 0;
+
+    jest.mock(mockTestPath, () => {
+      describe('', () => {
+        beforeEach(() => {
+          baseValue = 7;
+        });
+
+        it('', testMockFn);
+
+        describe('', () => {
+          beforeEach(() => {
+            baseValue++;
+          });
+
+          it('', testMockFn);
+        });
+      });
+    });
+
+    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+
+    await tests[0].testFn();
+
+    expect(baseValue).toBe(7);
+
+    await tests[1].testFn();
+
+    expect(baseValue).toBe(8);
+  });
+
+  it('should parse nested describes describe without tests', async () => {
+    const expectedDescribe = 'expectedDescribe';
+
+    const describeMockFnB = jest.fn();
+
+    jest.mock(mockTestPath, () => {
+      describe(
+        expectedDescribe,
+        (describeMockFn as jest.Mock).mockImplementation(() => {
+          describe(expectedDescribe, describeMockFnB);
+        })
+      );
+    });
+
+    await parser.getTests(expectedTestPath, expectedGlobals);
+
+    expect(describeMockFn).toBeCalledTimes(1);
+    expect(describeMockFnB).toBeCalledTimes(1);
+  });
+
+  describe('Errors', () => {
+    it('should parse nested describes describe without tests', async () => {
       jest.mock(mockTestPath, () => {
-        describe('describe', describeMockFn);
-      });
-
-      parser.getTests(expectedTestPath, expectedGlobals);
-    });
-
-    it('should call describe function', () => {
-      expect(describeMockFn).toBeCalledTimes(1);
-    });
-  });
-
-  describe('it', () => {
-    let tests: Array<TestInTestFile>;
-
-    describe('when defined at top level', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          it('test', testMockFn);
-        });
-
-        tests = await parser.getTests(expectedTestPath, expectedGlobals);
-      });
-
-      it('should define a test', () => {
-        expect(tests).toHaveLength(1);
-      });
-
-      it('should set test description', () => {
-        expect(tests[0].testName).toEqual('test');
-      });
-
-      it('should set test path', () => {
-        expect(tests[0].testFilePath).toEqual(expectedTestPath);
-      });
-    });
-
-    describe('when defined in a describe', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          describe('describe', () => {
-            it('test', testMockFn);
-          });
-
-          it('test 2', testMockFn);
-        });
-
-        tests = await parser.getTests(expectedTestPath, expectedGlobals);
-      });
-
-      it('should prepend the describe description to test description', () => {
-        expect(tests[0].testName).toEqual('describe test');
-        expect(tests[1].testName).toEqual('test 2');
-      });
-    });
-
-    describe('when defined with a describe inside', () => {
-      beforeEach(() => {
-        jest.mock(mockTestPath, () => {
-          describe('describe', () => {
-            it('test', () => {
-              describe('', () => {});
-            });
+        describe('describe', () => {
+          it('test', () => {
+            describe('', () => {});
           });
         });
       });
 
-      it.skip('should throw reference error', async () => {
-        expect(
-          parser.getTests(expectedTestPath, expectedGlobals)
-        ).rejects.toThrow(ReferenceError);
-      });
-    });
-  });
-
-  describe('beforeEach', () => {
-    describe('when defined at top level', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          beforeEach(beforeEachMockFn);
-
-          it('', testMockFn);
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call before each hook once', () => {
-        expect(beforeEachMockFn).toBeCalledTimes(1);
-      });
-    });
-
-    describe('when defined at top level outside of a describe', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          beforeEach(beforeEachMockFn);
-
-          describe('', () => {
-            it('', testMockFn);
-          });
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call before each hook once', () => {
-        expect(beforeEachMockFn).toBeCalledTimes(1);
-      });
-    });
-
-    describe('when no tests defined', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          describe('', () => {
-            beforeEach(beforeEachMockFn);
-          });
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call before each hook zero times', () => {
-        expect(beforeEachMockFn).toBeCalledTimes(0);
-      });
-    });
-
-    describe('when defined after test', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          it('', testMockFn);
-
-          beforeEach(beforeEachMockFn);
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should not run before each hook for test', () => {
-        expect(beforeEachMockFn).toBeCalledTimes(0);
-      });
-    });
-
-    describe('when defined in a describe', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          describe('', () => {
-            beforeEach(beforeEachMockFn);
-
-            it('', testMockFn);
-          });
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call before each hook once', () => {
-        expect(beforeEachMockFn).toBeCalledTimes(1);
-      });
-    });
-
-    describe('when defined multiple times as same level', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          describe('', () => {
-            beforeEach(beforeEachMockFn);
-            beforeEach(beforeEachMockFn);
-
-            it('', testMockFn);
-          });
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call before each hook twice', () => {
-        expect(beforeEachMockFn).toBeCalledTimes(2);
-      });
-    });
-
-    describe('when defined at multiple levels', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          describe('', () => {
-            beforeEach(beforeEachMockFn);
-
-            describe('', () => {
-              beforeEach(beforeEachMockFn);
-
-              it('', testMockFn);
-            });
-          });
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call before each hook twice', () => {
-        expect(beforeEachMockFn).toBeCalledTimes(2);
-      });
-    });
-
-    describe('when defined at multiple levels with multiple tests', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          describe('', () => {
-            beforeEach(beforeEachMockFn);
-
-            it('', testMockFn);
-
-            describe('', () => {
-              beforeEach(beforeEachMockFn);
-
-              it('', testMockFn);
-            });
-          });
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call before each hook three times', () => {
-        expect(beforeEachMockFn).toBeCalledTimes(3);
-      });
-    });
-
-    describe('when defined after a describe', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          describe('', () => {
-            beforeEach(beforeEachMockFn);
-
-            it('', testMockFn);
-
-            describe('', () => {
-              beforeEach(beforeEachMockFn);
-
-              it('', testMockFn);
-            });
-
-            it('', testMockFn);
-          });
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call before each hook four times', () => {
-        expect(beforeEachMockFn).toBeCalledTimes(4);
-      });
-    });
-  });
-
-  describe('afterEach', () => {
-    describe('when defined at top level', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          afterEach(afterEachMockFn);
-
-          it('', testMockFn);
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call after each hook once', () => {
-        expect(afterEachMockFn).toBeCalledTimes(1);
-      });
-    });
-
-    describe('when no tests defined', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          afterEach(afterEachMockFn);
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call after each hook zero times', () => {
-        expect(afterEachMockFn).toBeCalledTimes(0);
-      });
-    });
-
-    describe('when defined after test', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          it('', testMockFn);
-
-          afterEach(afterEachMockFn);
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should not run after each hook for test', () => {
-        expect(afterEachMockFn).toBeCalledTimes(0);
-      });
-    });
-
-    describe('when defined in a describe', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          describe('', () => {
-            afterEach(afterEachMockFn);
-
-            it('', testMockFn);
-          });
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call after each hook once', () => {
-        expect(afterEachMockFn).toBeCalledTimes(1);
-      });
-    });
-
-    describe('when defined multiple times as same level', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          describe('', () => {
-            afterEach(afterEachMockFn);
-            afterEach(afterEachMockFn);
-
-            it('', testMockFn);
-          });
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call after each hook twice', () => {
-        expect(afterEachMockFn).toBeCalledTimes(2);
-      });
-    });
-
-    describe('when defined at multiple levels', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          describe('', () => {
-            afterEach(afterEachMockFn);
-
-            describe('', () => {
-              afterEach(afterEachMockFn);
-
-              it('', testMockFn);
-            });
-          });
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call after each hook twice', () => {
-        expect(afterEachMockFn).toBeCalledTimes(2);
-      });
-    });
-
-    describe('when defined at multiple levels with multiple tests', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          describe('', () => {
-            afterEach(afterEachMockFn);
-
-            it('', testMockFn);
-
-            describe('', () => {
-              afterEach(afterEachMockFn);
-
-              it('', testMockFn);
-            });
-          });
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call before each hook three times', () => {
-        expect(afterEachMockFn).toBeCalledTimes(3);
-      });
-    });
-
-    describe('when defined after a describe', () => {
-      beforeEach(async () => {
-        jest.mock(mockTestPath, () => {
-          describe('', () => {
-            afterEach(afterEachMockFn);
-
-            it('', testMockFn);
-
-            describe('', () => {
-              afterEach(afterEachMockFn);
-
-              it('', testMockFn);
-            });
-
-            it('', testMockFn);
-          });
-        });
-
-        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
-
-        for (const test of tests) {
-          test.testFn();
-        }
-      });
-
-      it('should call before each hook four times', () => {
-        expect(afterEachMockFn).toBeCalledTimes(4);
-      });
+      expect(
+        parser.getTests(expectedTestPath, expectedGlobals)
+      ).rejects.toThrow(ReferenceError);
     });
   });
 });

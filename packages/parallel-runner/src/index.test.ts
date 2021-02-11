@@ -50,6 +50,7 @@ describe('ParallelRunner', () => {
     const expectedTestInTestFile = {
       testFilePath: 'expectedFilePath',
       testName: 'expectedTestName',
+      testFn: jest.fn(),
     };
 
     const expectedTestInTestFiles: Array<TestInTestFile> = [

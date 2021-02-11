@@ -79,6 +79,7 @@ export class ParallelRunner extends Runner {
         const fixedTestInTestFile = {
           testFilePath: fixedTestFilePath,
           testName: testInTestFile.testName,
+          testFn: testInTestFile.testFn,
         };
 
         this.emit('testEnd', fixedTestInTestFile, result);
