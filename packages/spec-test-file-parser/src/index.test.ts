@@ -37,7 +37,7 @@ describe('SpecTestFileParse', () => {
         describe('describe', describeMockFn);
       });
 
-      parser.getTests(expectedTestPath);
+      parser.getTests(expectedTestPath, expectedGlobals);
     });
 
     it('should call describe function', () => {
@@ -54,7 +54,7 @@ describe('SpecTestFileParse', () => {
           it('test', testMockFn);
         });
 
-        tests = await parser.getTests(expectedTestPath);
+        tests = await parser.getTests(expectedTestPath, expectedGlobals);
       });
 
       it('should define a test', () => {
@@ -80,7 +80,7 @@ describe('SpecTestFileParse', () => {
           it('test 2', testMockFn);
         });
 
-        tests = await parser.getTests(expectedTestPath);
+        tests = await parser.getTests(expectedTestPath, expectedGlobals);
       });
 
       it('should prepend the describe description to test description', () => {
@@ -101,9 +101,9 @@ describe('SpecTestFileParse', () => {
       });
 
       it.skip('should throw reference error', async () => {
-        expect(parser.getTests(expectedTestPath)).rejects.toThrow(
-          ReferenceError
-        );
+        expect(
+          parser.getTests(expectedTestPath, expectedGlobals)
+        ).rejects.toThrow(ReferenceError);
       });
     });
   });
@@ -117,16 +117,10 @@ describe('SpecTestFileParse', () => {
           it('', testMockFn);
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -145,16 +139,10 @@ describe('SpecTestFileParse', () => {
           });
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -171,16 +159,10 @@ describe('SpecTestFileParse', () => {
           });
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -197,16 +179,10 @@ describe('SpecTestFileParse', () => {
           beforeEach(beforeEachMockFn);
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -225,16 +201,10 @@ describe('SpecTestFileParse', () => {
           });
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -254,16 +224,10 @@ describe('SpecTestFileParse', () => {
           });
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -286,16 +250,10 @@ describe('SpecTestFileParse', () => {
           });
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -320,16 +278,10 @@ describe('SpecTestFileParse', () => {
           });
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -356,16 +308,10 @@ describe('SpecTestFileParse', () => {
           });
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -384,16 +330,10 @@ describe('SpecTestFileParse', () => {
           it('', testMockFn);
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -408,16 +348,10 @@ describe('SpecTestFileParse', () => {
           afterEach(afterEachMockFn);
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -434,16 +368,10 @@ describe('SpecTestFileParse', () => {
           afterEach(afterEachMockFn);
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -462,16 +390,10 @@ describe('SpecTestFileParse', () => {
           });
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -491,16 +413,10 @@ describe('SpecTestFileParse', () => {
           });
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -523,16 +439,10 @@ describe('SpecTestFileParse', () => {
           });
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -557,16 +467,10 @@ describe('SpecTestFileParse', () => {
           });
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 
@@ -593,16 +497,10 @@ describe('SpecTestFileParse', () => {
           });
         });
 
-        const tests = await parser.getTests(expectedTestPath);
+        const tests = await parser.getTests(expectedTestPath, expectedGlobals);
 
         for (const test of tests) {
-          const fn = await parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            expectedGlobals
-          );
-
-          fn();
+          test.testFn();
         }
       });
 

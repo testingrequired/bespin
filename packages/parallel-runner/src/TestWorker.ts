@@ -13,14 +13,16 @@ parentPort?.on('message', async (data: any) => {
 
   const configFile = await Config.load(configFilePath);
 
-  delete require.cache[require.resolve(testFilePath)];
-  const test = await configFile.parser.getTestFunction(
+  const tests = await configFile.parser.getTests(
     testFilePath,
-    testName,
     configFile.globals
   );
 
-  const result = await executor.executeTest(test);
+  const test = tests.find(t => t.testName === testName);
 
-  parentPort?.postMessage([testInTestFile, result]);
+  if (test) {
+    const result = await executor.executeTest(test.testFn);
+
+    parentPort?.postMessage([testInTestFile, result]);
+  }
 });

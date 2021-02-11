@@ -7,7 +7,10 @@ import {
 declare var global: any;
 
 export class SpecTestFileParse extends TestFileParser {
-  async getTests(path: string): Promise<Array<TestInTestFile>> {
+  async getTests(
+    path: string,
+    globals: Record<string, any>
+  ): Promise<Array<TestInTestFile>> {
     const tests: Array<TestInTestFile> = [];
     const descriptions: Array<string> = [];
     const beforeEachs: Array<Function> = [];
@@ -48,14 +51,42 @@ export class SpecTestFileParse extends TestFileParser {
       afterEachs.push(fn);
     };
 
-    function test(testDescription: string) {
+    function test(testDescription: string, testFn: TestFunction) {
+      const describeDepth = descriptions.length;
+
+      const sliceEnd = describeDepth + 1;
+      const testsBeforeEachs = beforeEachs.slice(0, sliceEnd);
+      const testsAfterEachs = afterEachs.slice(0, sliceEnd);
+
+      const fn: TestFunction = async () => {
+        await Promise.all(testsBeforeEachs.map(fn => fn()));
+        global.globals = globals;
+
+        Object.entries(globals).forEach(([key, value]) => {
+          global[key] = value;
+        });
+
+        await testFn();
+
+        Object.entries(globals).forEach(([key]) => {
+          delete global[key];
+        });
+
+        await Promise.all(testsAfterEachs.map(fn => fn()));
+      };
+
       tests.push(
-        new TestInTestFile(path, [...descriptions, testDescription].join(' '))
+        new TestInTestFile(
+          path,
+          [...descriptions, testDescription].join(' '),
+          fn
+        )
       );
     }
 
     global.test = global.it = test;
 
+    delete require.cache[require.resolve(path)];
     require(path);
 
     delete global.describe;

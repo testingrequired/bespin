@@ -13,14 +13,23 @@ export class Runtime {
   constructor(private config: ValidConfig) {}
 
   async run(): Promise<Array<[TestInTestFile, TestResult]>> {
-    const { reporters, locator, parser, settings, runner } = this.config;
+    const {
+      reporters,
+      locator,
+      parser,
+      settings,
+      runner,
+      globals,
+    } = this.config;
 
     this.registerReporters(reporters);
     this.registerRunner(runner);
 
     let testsInTestFiles = await locator
       .locateTestFilePaths()
-      .then(paths => Promise.all(paths.map(path => parser.getTests(path))))
+      .then(paths =>
+        Promise.all(paths.map(path => parser.getTests(path, globals)))
+      )
       .then(files => files.flat());
 
     if (settings.randomizeTests) {

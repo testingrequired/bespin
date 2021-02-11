@@ -1,11 +1,8 @@
-import { TestFunction } from './TestFunction';
 import { TestInTestFile } from './TestInTestFile';
 
 export abstract class TestFileParser {
-  abstract getTests(testFilePath: string): Promise<Array<TestInTestFile>>;
-  abstract getTestFunction(
+  abstract getTests(
     testFilePath: string,
-    testName: string,
     globals: Record<string, any>
-  ): Promise<TestFunction>;
+  ): Promise<Array<TestInTestFile>>;
 }
