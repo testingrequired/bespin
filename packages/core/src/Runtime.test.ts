@@ -22,6 +22,7 @@ describe('Runtime', () => {
   const expectedTestInTestFile: TestTestInTestFile = {
     testFilePath: expectedPath,
     testName: expectedTestName,
+    testFn: jest.fn(),
   };
   const expectedTestResult: TestResult = {
     state: TestResultState.PASS,
@@ -41,7 +42,6 @@ describe('Runtime', () => {
 
     parser = {
       getTests: jest.fn(),
-      getTestFunction: jest.fn(),
     };
 
     runner = {
@@ -75,7 +75,7 @@ describe('Runtime', () => {
       .mockResolvedValueOnce(expectedPaths);
 
     when(parser.getTests as jest.Mock)
-      .calledWith(expectedPath)
+      .calledWith(expectedPath, config.globals)
       .mockResolvedValue([expectedTestInTestFile]);
 
     when(runner.run as jest.Mock)
@@ -105,6 +105,7 @@ describe('Runtime', () => {
     const expectedTestInTestFileB: TestInTestFile = {
       testFilePath: 'other/test/path.test.js',
       testName: 'Other test',
+      testFn: jest.fn(),
     };
 
     beforeEach(() => {
@@ -137,6 +138,7 @@ describe('Runtime', () => {
     const expectedTestInTestFileB: TestInTestFile = {
       testFilePath: 'other/test/path.test.js',
       testName: 'Other test',
+      testFn: jest.fn(),
     };
 
     beforeEach(() => {

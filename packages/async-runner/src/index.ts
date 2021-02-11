@@ -3,14 +3,9 @@ import {
   TestInTestFile,
   TestResult,
   TestExecutor,
-  Config,
 } from '@testingrequired/bespin-core';
 
 export class AsyncRunner extends Runner {
-  constructor(private configFilePath: string) {
-    super();
-  }
-
   async run(
     testsInTestFiles: TestInTestFile[]
   ): Promise<Array<[TestInTestFile, TestResult]>> {
@@ -18,20 +13,12 @@ export class AsyncRunner extends Runner {
 
     this.emit('runStart', testsInTestFiles);
 
-    const config = await Config.load(this.configFilePath);
-
     const results: Array<[TestInTestFile, TestResult]> = await Promise.all(
       testsInTestFiles.map(
         async (test): Promise<[TestInTestFile, TestResult]> => {
           this.emit('testStart', test);
 
-          const fn = await config.parser.getTestFunction(
-            test.testFilePath,
-            test.testName,
-            config.globals
-          );
-
-          const result = await executor.executeTest(fn);
+          const result = await executor.executeTest(test.testFn);
 
           this.emit('testEnd', test, result);
 

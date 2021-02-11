@@ -17,7 +17,6 @@ describe('Config', () => {
 
     parser = {
       getTests: jest.fn(),
-      getTestFunction: jest.fn(),
     };
 
     runner = {

@@ -12,7 +12,7 @@ describe("beforeEach", () => {
     assert.strictEqual(sum(1, baseValue), 8);
   });
 
-  context("nesting", () => {
+  describe("nesting", () => {
     beforeEach(() => {
       baseValue++;
     });
