@@ -2,7 +2,6 @@ import { TestInTestFile } from '@testingrequired/bespin-core';
 import { SpecTestFileParse } from '.';
 
 const expectedTestPath = './testUtils/test.js';
-const mockTestPath = './testUtils/test.js';
 
 describe('SpecTestFileParse', () => {
   let describeMockFn: () => void;
@@ -30,7 +29,7 @@ describe('SpecTestFileParse', () => {
   it('should parse a test at top level', async () => {
     const expectedTestName = 'expectedTestName';
 
-    jest.mock(mockTestPath, () => {
+    jest.mock(expectedTestPath, () => {
       it(expectedTestName, testMockFn);
     });
 
@@ -53,7 +52,7 @@ describe('SpecTestFileParse', () => {
     const expectedDescribe = 'expectedDescribe';
     const expectedTestName = 'expectedTestName';
 
-    jest.mock(mockTestPath, () => {
+    jest.mock(expectedTestPath, () => {
       describe(expectedDescribe, () => {
         it(expectedTestName, testMockFn);
       });
@@ -77,7 +76,7 @@ describe('SpecTestFileParse', () => {
   it('should parse a test at the top level with beforeEach/afterEach', async () => {
     const expectedTestName = 'expectedTestName';
 
-    jest.mock(mockTestPath, () => {
+    jest.mock(expectedTestPath, () => {
       beforeEach(beforeEachMockFn);
       afterEach(afterEachMockFn);
       it(expectedTestName, testMockFn);
@@ -104,7 +103,7 @@ describe('SpecTestFileParse', () => {
     const expectedDescribe = 'expectedDescribe';
     const expectedTestName = 'expectedTestName';
 
-    jest.mock(mockTestPath, () => {
+    jest.mock(expectedTestPath, () => {
       describe(expectedDescribe, () => {
         beforeEach(beforeEachMockFn);
         afterEach(afterEachMockFn);
@@ -138,7 +137,7 @@ describe('SpecTestFileParse', () => {
     let beforeEachMockFnB = jest.fn();
     let afterEachMockFnB = jest.fn();
 
-    jest.mock(mockTestPath, () => {
+    jest.mock(expectedTestPath, () => {
       describe(expectedDescribeA, () => {
         beforeEach(beforeEachMockFn);
         afterEach(afterEachMockFn);
@@ -181,7 +180,7 @@ describe('SpecTestFileParse', () => {
     const expectedDescribe = 'expectedDescribe';
     const expectedTestName = 'expectedTestName';
 
-    jest.mock(mockTestPath, () => {
+    jest.mock(expectedTestPath, () => {
       describe(expectedDescribe, () => {
         it(expectedTestName, testMockFn);
         beforeEach(beforeEachMockFn);
@@ -204,7 +203,7 @@ describe('SpecTestFileParse', () => {
     const beforeEachMockFnB = jest.fn();
     const afterEachMockFnB = jest.fn();
 
-    jest.mock(mockTestPath, () => {
+    jest.mock(expectedTestPath, () => {
       describe(expectedDescribe, () => {
         beforeEach(beforeEachMockFn);
         beforeEach(beforeEachMockFnB);
@@ -227,7 +226,7 @@ describe('SpecTestFileParse', () => {
   it('should correctly set and increment value using beforeEach', async () => {
     let baseValue: number = 0;
 
-    jest.mock(mockTestPath, () => {
+    jest.mock(expectedTestPath, () => {
       describe('', () => {
         beforeEach(() => {
           baseValue = 7;
@@ -261,7 +260,7 @@ describe('SpecTestFileParse', () => {
 
     const describeMockFnB = jest.fn();
 
-    jest.mock(mockTestPath, () => {
+    jest.mock(expectedTestPath, () => {
       describe(
         expectedDescribe,
         (describeMockFn as jest.Mock).mockImplementation(() => {
@@ -277,8 +276,8 @@ describe('SpecTestFileParse', () => {
   });
 
   describe('Errors', () => {
-    it('should parse nested describes describe without tests', async () => {
-      jest.mock(mockTestPath, () => {
+    it.skip('should throw when describe defined inside a test', async () => {
+      jest.mock(expectedTestPath, () => {
         describe('describe', () => {
           it('test', () => {
             describe('', () => {});

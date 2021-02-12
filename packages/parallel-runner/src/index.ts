@@ -9,7 +9,7 @@ import { WorkerPool } from './WorkerPool';
 import { workerPath } from './workerPath';
 
 export type WorkerData = {
-  testInTestFile: TestInTestFile;
+  testInTestFile: Pick<TestInTestFile, 'testFilePath' | 'testName'>;
   configFilePath: string;
 };
 export type WorkerResult = [TestInTestFile, TestResult];
