@@ -16,6 +16,7 @@ describe('junit', () => {
   const expectedTestInTestFile: TestInTestFile = {
     testFilePath: expectedFilePath,
     testName: expectedTestName,
+    testFn: jest.fn(),
   };
   const expectedTestResult: TestResult = {
     state: TestResultState.PASS,
