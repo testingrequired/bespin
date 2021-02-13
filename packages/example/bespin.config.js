@@ -1,25 +1,18 @@
-const { Config, DebugReporter } = require("@testingrequired/bespin-core");
+const { Config } = require("@testingrequired/bespin-core");
 const {
   GlobTestFileLocator,
 } = require("@testingrequired/bespin-glob-test-file-locator");
 const {
   SpecTestFileParse,
 } = require("@testingrequired/bespin-spec-test-file-parser");
-const { ParallelRunner } = require("@testingrequired/bespin-parallel-runner");
 const { AsyncRunner } = require("@testingrequired/bespin-async-runner");
 const { JUnitReporter } = require("@testingrequired/bespin-junit-reporter");
 const { GlobalTestValuePlugin } = require("./src/GlobalTestValuePlugin");
-const { SerialRunner } = require("@testingrequired/bespin-serial-runner");
 
-const config = new Config(__filename)
+module.exports = new Config(__filename)
   .withLocator(new GlobTestFileLocator("**/*.test.js"))
   .withParser(new SpecTestFileParse())
   .withRunner(new AsyncRunner())
-  // .withRunner(new SerialRunner())
-  // .withRunner(new ParallelRunner(__filename, 10))
-  // .withReporter(new DebugReporter())
-  .withReporter(new JUnitReporter("./junit.xml"))
+  .withReporters([new JUnitReporter("./junit.xml")])
   .withSetting("randomizeTests", true)
   .withPlugin(GlobalTestValuePlugin);
-
-module.exports = config;
