@@ -18,7 +18,15 @@ export class CLIReporter extends Reporter {
   onRunStart(config: ValidConfig, testsInTestFiles: Array<TestInTestFile>) {
     const { print } = this.toolbox;
 
-    print.info("bespin");
+    const { bold, underline, italic } = print.colors;
+
+    print.divider();
+
+    print.info(`${bold(italic("bespin"))}`);
+
+    print.divider();
+
+    print.info(`${underline("Config")}\n`);
 
     print.info(`Locator: ${config.locator.constructor.name}`);
     print.info(`Parser: ${config.parser.constructor.name}`);
@@ -37,34 +45,71 @@ export class CLIReporter extends Reporter {
     print.info(`Tests: ${testsInTestFiles.length}`);
   }
 
-  onRunEnd(results: [TestInTestFile, TestResult][]): void {
+  onRunEnd(results: Array<[TestInTestFile, TestResult]>): void {
     const { print } = this.toolbox;
 
-    results.forEach(([testInTestFile, { state, time, message }]) => {
-      const formattedTime = `${time.toFixed(2)}ms`;
-      const printMessage = `${testInTestFile.testFilePath}:${testInTestFile.testName} ${state} (${formattedTime})`;
+    const { bold, underline, italic } = print.colors;
 
-      if (state === TestResultState.PASS) {
-        print.success(printMessage);
-      } else {
-        print.error(`${printMessage}\nMessage:\n${message}`);
-      }
+    print.divider();
+
+    print.info(`${underline("Results")}\n`);
+
+    const groups = groupBy(results, "testFilePath");
+
+    Object.entries(groups).forEach(entry => {
+      const [testFilePath, results] = entry;
+
+      print.info(testFilePath);
+
+      results.forEach(([testInTestFile, { state, time, message }]) => {
+        const formattedTime = `${time.toFixed(2)}ms`;
+        const printMessage = `- ${testInTestFile.testName} ${state} (${formattedTime})`;
+
+        if (state === TestResultState.PASS) {
+          print.success(printMessage);
+        } else {
+          print.error(`${printMessage}\n\nMessage:\n\n${message}`);
+        }
+      });
     });
+
+    print.divider();
 
     const passingRun = results
       .map(([_, result]) => result)
       .every(({ state }) => state === TestResultState.PASS);
 
-    const endTime = performance.now();
-
-    const time = endTime - this.startTime;
-
-    print.info(`Run time: ${time.toFixed(0)}ms`);
-
     if (passingRun) {
-      print.success("PASS");
+      print.success(bold(italic("PASS")));
     } else {
-      print.error(`FAIL`);
+      print.error(bold(italic(`FAIL`)));
     }
+
+    const endTime = performance.now();
+    const time = (endTime - this.startTime) / 1000;
+    print.info(`Done in ${time.toFixed(2)}s`);
+
+    print.divider();
   }
+}
+
+function groupBy(
+  arr: Array<[TestInTestFile, TestResult]>,
+  key: number | string
+): Record<string, Array<[TestInTestFile, TestResult]>> {
+  return arr.reduce(function(
+    groups: Record<string, Array<[TestInTestFile, TestResult]>>,
+    item: [TestInTestFile, TestResult]
+  ) {
+    const [testInTestFile] = item as [TestInTestFile, TestResult];
+
+    if (!Array.isArray(groups[testInTestFile[key]])) {
+      groups[testInTestFile[key]] = [];
+    }
+
+    groups[testInTestFile[key]].push(item);
+
+    return groups;
+  },
+  {});
 }
