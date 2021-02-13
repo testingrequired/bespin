@@ -7,8 +7,9 @@ const {
 } = require("@testingrequired/bespin-spec-test-file-parser");
 const { AsyncRunner } = require("@testingrequired/bespin-async-runner");
 const { JUnitReporter } = require("@testingrequired/bespin-junit-reporter");
-const { GlobalTestValuePlugin } = require("./src/GlobalTestValuePlugin");
 const { HtmlReporter } = require("@testingrequired/bespin-html-report");
+
+const { GlobalTestValuePlugin } = require("./src/GlobalTestValuePlugin");
 
 module.exports = new Config(__filename)
   .withLocator(new GlobTestFileLocator("**/*.test.js"))
