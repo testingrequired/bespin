@@ -83,6 +83,16 @@ describe('Runtime', () => {
       .mockResolvedValueOnce([expectedTestResult]);
   });
 
+  it(`should error if any test files have no tests`, () => {
+    when(parser.getTests as jest.Mock)
+      .calledWith(expectedPath, config.globals)
+      .mockResolvedValue([]);
+
+    expect(() => runtime.run()).toThrowError(
+      `Test files without tests: ${expectedPath}`
+    );
+  });
+
   it('should locate, parse, run and report test results', async () => {
     const results = await runtime.run();
 

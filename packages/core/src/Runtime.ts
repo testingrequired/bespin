@@ -25,26 +25,41 @@ export class Runtime {
     this.registerReporters(reporters);
     this.registerRunner(runner);
 
-    let testsInTestFiles = await locator
-      .locateTestFilePaths()
-      .then(paths =>
-        Promise.all(paths.map(path => parser.getTests(path, globals)))
+    let testFilePaths = await locator.locateTestFilePaths();
+
+    if (settings.testFileFilter) {
+      testFilePaths = testFilePaths.filter(testFilePath =>
+        minimatch(testFilePath, settings.testFileFilter as string)
+      );
+    }
+
+    let testsInTestFiles = (
+      await Promise.all(
+        testFilePaths.map(path => parser.getTests(path, globals))
       )
-      .then(files => files.flat());
+    ).flat();
 
     if (settings.randomizeTests) {
       testsInTestFiles = randomizeArray(testsInTestFiles);
     }
 
-    if (settings.testFileFilter) {
-      testsInTestFiles = testsInTestFiles.filter(test =>
-        minimatch(test.testFilePath, settings.testFileFilter as string)
-      );
-    }
-
     if (settings.testNameFilter) {
       testsInTestFiles = testsInTestFiles.filter(test =>
         test.testName.includes(settings.testNameFilter as string)
+      );
+    }
+
+    const testFilesWithTests = Array.from(
+      new Set(testsInTestFiles.map(x => x.testFilePath))
+    );
+
+    const testFilesWithoutTests = testFilePaths.filter(
+      x => !testFilesWithTests.includes(x)
+    );
+
+    if (testFilesWithoutTests.length > 0) {
+      throw Error(
+        `Test files without tests: ${testFilesWithoutTests.join(', ')}`
       );
     }
 
