@@ -14,9 +14,10 @@ const config = new Config(__filename)
   .withLocator(new GlobTestFileLocator("**/*.test.js"))
   .withParser(new SpecTestFileParse())
   .withRunner(new AsyncRunner(__filename))
+  // .withRunner(new ParallelRunner(__filename, 10))
   // .withReporter(new DebugReporter())
   .withReporter(new JUnitReporter("./junit.xml"))
-  .withSetting("randomizeTests", false)
+  .withSetting("randomizeTests", true)
   .withPlugin(GlobalTestValuePlugin);
 
 module.exports = config;
