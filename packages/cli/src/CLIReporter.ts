@@ -5,58 +5,71 @@ import {
   Reporter,
   TestInTestFile,
   TestResult,
-  ValidConfig
+  ValidConfig,
 } from "@testingrequired/bespin-core";
 
 export class CLIReporter extends Reporter {
   private startTime: number;
+  private spinner: any;
 
   constructor(private toolbox: GluegunToolbox) {
     super();
   }
 
   onRunStart(config: ValidConfig, testsInTestFiles: Array<TestInTestFile>) {
-    const { print } = this.toolbox;
+    const { print, meta } = this.toolbox;
 
     const { bold, underline, italic } = print.colors;
 
     print.divider();
 
-    print.info(`${bold(italic("bespin"))}`);
+    print.info(`${bold(italic("bespin"))} v${meta.version()}`);
 
     print.divider();
 
     print.info(`${underline("Config")}\n`);
 
-    print.info(`Locator: ${config.locator.constructor.name}`);
-    print.info(`Parser: ${config.parser.constructor.name}`);
-    print.info(`Runner: ${config.runner.constructor.name}`);
-    print.info(
-      `Reporters: ${config.reporters.map(x => x.constructor.name).join(", ")}`
+    const testFiles = Array.from(
+      new Set(testsInTestFiles.map((x) => x.testFilePath))
+    );
+
+    print.table(
+      [
+        ["Field", "Value"],
+        ["Locator", config.locator.constructor.name],
+        ["Parser", config.parser.constructor.name],
+        ["Runner", config.runner.constructor.name],
+        [
+          "Reporters",
+          config.reporters.map((x) => x.constructor.name).join(", "),
+        ],
+        ["Test Files", testFiles.length.toString()],
+        ["Tests", testsInTestFiles.length.toString()],
+      ],
+      {
+        format: "markdown",
+      }
     );
 
     this.startTime = performance.now();
 
-    const testFiles = Array.from(
-      new Set(testsInTestFiles.map(x => x.testFilePath))
-    );
+    print.divider();
 
-    print.info(`Test Files: ${testFiles.length}`);
-    print.info(`Tests: ${testsInTestFiles.length}`);
+    this.spinner = print.spin("Running tests...");
   }
 
   onRunEnd(results: Array<[TestInTestFile, TestResult]>): void {
+    this.spinner.stop();
+
     const { print } = this.toolbox;
 
     const { bold, underline, italic } = print.colors;
-
-    print.divider();
 
     print.info(`${underline("Results")}\n`);
 
     const groups = groupBy(results, "testFilePath");
 
-    Object.entries(groups).forEach(entry => {
+    Object.entries(groups).forEach((entry) => {
       const [testFilePath, results] = entry;
 
       print.info(testFilePath);
