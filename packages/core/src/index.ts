@@ -11,3 +11,4 @@ export { TestExecutor } from './TestExecutor';
 export { DebugReporter } from './DebugReporter';
 export { TestFunction } from './TestFunction';
 export { Plugin } from './Plugin';
+export * as testUtils from './TestUtils'
