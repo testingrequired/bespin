@@ -14,7 +14,7 @@ const { SerialRunner } = require("@testingrequired/bespin-serial-runner");
 const config = new Config(__filename)
   .withLocator(new GlobTestFileLocator("**/*.test.js"))
   .withParser(new SpecTestFileParse())
-  .withRunner(new AsyncRunner(__filename))
+  .withRunner(new AsyncRunner())
   // .withRunner(new SerialRunner())
   // .withRunner(new ParallelRunner(__filename, 10))
   // .withReporter(new DebugReporter())
