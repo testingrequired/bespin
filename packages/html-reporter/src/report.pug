@@ -1,18 +1,26 @@
 doctype html
 
-h1 Test Report 
+head
+  title Test Report
+  style
+      include report.css
 
-table 
-  thead 
-    tr 
-      th Path 
-      th Name 
-      th Result
-      th Time (ms)
-  tbody
-    each result in results
-      tr
-        td=result[0].testFilePath
-        td=result[0].testName
-        td=result[1].state
-        td=result[1].time.toFixed(2)
+body
+  h1 Test Report 
+
+  table 
+    thead 
+      tr 
+        th Path 
+        th Name 
+        th Result
+        th Message?
+        th Time (ms)
+    tbody
+      each result in results
+        tr
+          td=result[0].testFilePath
+          td=result[0].testName
+          td=result[1].state
+          td=result[1].message
+          td=result[1].time.toFixed(2)

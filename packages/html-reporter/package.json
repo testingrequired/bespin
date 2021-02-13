@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "tsdx build && cp src/report.pug dist/report.pug",
+    "build": "tsdx build && cp src/report.pug dist/report.pug && cp src/report.css dist/report.css",
     "test": "tsdx test",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
