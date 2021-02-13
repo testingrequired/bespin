@@ -17,7 +17,7 @@ Another test framework.
 The first step is installing the core library and cli application
 
 ```bash
-$ npm install -D @testingrequired/bespin-core @testingrequired/bespin-cli
+$ npm install -D @testingrequired/bespin-cli
 ```
 
 ### Config File

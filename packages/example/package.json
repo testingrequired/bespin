@@ -15,7 +15,6 @@
   "dependencies": {
     "@testingrequired/bespin-async-runner": "0.1.0",
     "@testingrequired/bespin-cli": "0.1.0",
-    "@testingrequired/bespin-core": "0.1.0",
     "@testingrequired/bespin-glob-test-file-locator": "0.1.0",
     "@testingrequired/bespin-junit-reporter": "0.1.0",
     "@testingrequired/bespin-parallel-runner": "0.1.0",
