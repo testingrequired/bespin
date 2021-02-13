@@ -16,7 +16,7 @@ type TestTestInTestFile = {
 };
 
 describe('Runtime', () => {
-  const expectedPath = 'expectedPath';
+  const expectedPath = 'example/test/path.test.js';
   const expectedPaths = [expectedPath];
   const expectedTestName = 'expectedTestName';
   const expectedTestInTestFile: TestTestInTestFile = {
@@ -110,8 +110,6 @@ describe('Runtime', () => {
 
     beforeEach(() => {
       config.settings.testFileFilter = 'example/**/*.test.js';
-
-      expectedTestInTestFile.testFilePath = 'example/test/path.test.js';
 
       when(locator.locateTestFilePaths as jest.Mock)
         .calledWith()

@@ -25,27 +25,26 @@ export class Runtime {
     this.registerReporters(reporters);
     this.registerRunner(runner);
 
-    let testsInTestFiles = await locator
-      .locateTestFilePaths()
-      .then(paths =>
-        Promise.all(paths.map(path => parser.getTests(path, globals)))
-      )
-      .then(files => files.flat());
-
-    if (settings.randomizeTests) {
-      testsInTestFiles = randomizeArray(testsInTestFiles);
-    }
+    let testFilePaths = await locator.locateTestFilePaths();
 
     if (settings.testFileFilter) {
-      testsInTestFiles = testsInTestFiles.filter(test =>
-        minimatch(test.testFilePath, settings.testFileFilter as string)
+      testFilePaths = testFilePaths.filter(testFilePath =>
+        minimatch(testFilePath, settings.testFileFilter as string)
       );
     }
+
+    let testsInTestFiles = await Promise.all(
+      testFilePaths.map(path => parser.getTests(path, globals))
+    ).then(files => files.flat());
 
     if (settings.testNameFilter) {
       testsInTestFiles = testsInTestFiles.filter(test =>
         test.testName.includes(settings.testNameFilter as string)
       );
+    }
+
+    if (settings.randomizeTests) {
+      testsInTestFiles = randomizeArray(testsInTestFiles);
     }
 
     return runner.run(testsInTestFiles);
