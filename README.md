@@ -57,6 +57,7 @@ module.exports = new Config(__filename)
 ### Addons
 
 - [@testingrequired/bespin-async-runner](./packages/async-runner) Run tests asynchronously using promises
+- [@testingrequired/bespin-serial-runner](./packages/async-runner) Run tests in serial order
 - [@testingrequired/bespin-parallel-runner](./packages/parallel-runner) Run tests asynchronously using worker threads
 - [@testingrequired/bespin-glob-test-file-locator](./packages/glob-test-file-locator) Locate test files using a glob pattern
 - [@testingrequired/bespin-spec-test-file-parser](./packages/spec-test-file-parser) Parse test files with describe/it syntax
