@@ -220,6 +220,7 @@ One or more reporters can be registered to the config. They expose the following
 #### Implementations
 
 - [JUnitReporter](packages/junit-reporter)
+- [HtmlReporter](packages/html-reporter)
 - [DebugReporter](packages/debug-reporter)
 - [CLIReporter](packages/cli/src/CLIReporter.ts)
 
