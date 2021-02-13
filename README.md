@@ -58,10 +58,6 @@ module.exports = new Config(__filename)
 ```javascript
 const assert = require("assert");
 
-function sum(a, b) {
-  return a + b;
-}
-
 describe("beforeEach", () => {
   let baseValue;
 
@@ -70,7 +66,7 @@ describe("beforeEach", () => {
   });
 
   it("should sum with base value", async () => {
-    assert.strictEqual(sum(1, baseValue), 8);
+    assert.strictEqual(baseValue, 8);
   });
 
   describe("nesting", () => {
@@ -79,7 +75,7 @@ describe("beforeEach", () => {
     });
 
     it("should sum with incremented base value", async () => {
-      assert.strictEqual(sum(1, baseValue), 9);
+      assert.strictEqual(baseValue, 9);
     });
   });
 });
