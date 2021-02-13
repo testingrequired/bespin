@@ -10,6 +10,10 @@ Another test framework.
 - Easy to understand
 - Parallel test execution
 
+## Architecture
+
+- [ARCHITECTURE.md](./ARCHITECTURE.md)
+
 ## Usage
 
 ### Install
@@ -67,4 +71,3 @@ module.exports = new Config(__filename)
 ## Development
 
 - [DEVELOPMENT.md](./DEVELOPMENT.md)
-- [ARCHITECTURE.md](./ARCHITECTURE.md)
