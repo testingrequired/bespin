@@ -14,6 +14,10 @@ export class WorkerPool<TTaskData, TWorkerResult> {
     public workerPath: string,
     public numberOfWorkers: number = 1
   ) {
+    if (numberOfWorkers <= 0) {
+      throw Error('numberOfWorkers must be 1 or more');
+    }
+
     for (let i = 0; i < this.numberOfWorkers; i += 1) {
       const worker = new Worker(this.workerPath);
       this.workers.add(worker);
