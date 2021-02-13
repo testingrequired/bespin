@@ -2,7 +2,7 @@
 
 Another test framework.
 
-![CI](https://github.com/testingrequired/bespin/workflows/CI/badge.svg)
+<a href="https://github.com/testingrequired/bespin/actions?query=workflow%3ACI">![CI](https://github.com/testingrequired/bespin/workflows/CI/badge.svg)</a>
 
 ## Goals
 
