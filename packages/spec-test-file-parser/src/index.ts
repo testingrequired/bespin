@@ -6,7 +6,7 @@ import {
 
 declare var global: any;
 
-export class SpecTestFileParse extends TestFileParser {
+export class SpecTestFileParser extends TestFileParser {
   async getTests(
     path: string,
     globals: Record<string, any>

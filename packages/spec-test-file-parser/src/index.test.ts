@@ -1,5 +1,5 @@
 import { TestInTestFile } from '@testingrequired/bespin-core';
-import { SpecTestFileParse } from '.';
+import { SpecTestFileParser } from '.';
 
 const expectedTestPath = './testUtils/test.js';
 
@@ -11,7 +11,7 @@ describe('SpecTestFileParse', () => {
 
   const expectedGlobals: Record<string, any> = {};
 
-  let parser: SpecTestFileParse;
+  let parser: SpecTestFileParser;
 
   beforeEach(() => {
     describeMockFn = jest.fn();
@@ -19,7 +19,7 @@ describe('SpecTestFileParse', () => {
     afterEachMockFn = jest.fn();
     testMockFn = jest.fn();
 
-    parser = new SpecTestFileParse();
+    parser = new SpecTestFileParser();
   });
 
   afterEach(() => {
