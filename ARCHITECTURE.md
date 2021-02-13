@@ -142,17 +142,23 @@ This component locates test files and returns an array of their paths.
 
 ### TestFileParser
 
-This component parses a test file for tests. It works in two stages: `getTests` and `getTestFunction`.
+This component parses a test file for tests.
 
 #### getTests
 
-The `getTests` method accepts a test file path and returns an array of [`TestInTestFile`](packages/core/src/TestInTestFile.ts) which has two properties: `testFilePath` and `testName`.
+The `getTests` method accepts a test file path and returns an array of [`TestInTestFile`](packages/core/src/TestInTestFile.ts) which has two properties: `testFilePath` and `testName`. This method also accepts a `Record<string, any>` of global variables exposed to test functions. These globals are configured on the `Config`.
 
-#### getTestFunction
+#### TestInTestFile
 
-The `getTestFunction` method accepts a `testFilePath` and `testName` to return a [`TestFunction`](packages/core/src/TestFunction.ts) or `() => Promise<void>;`.
+```typescript
+interface TestInTestFile {
+  public readonly testFilePath: string;
+  public readonly testName: string;
+  public readonly testFn: TestFunction;
+}
 
-This method also accepts a `Record<string, any>` of global variables exposed to test functions. These globals are configured on the `Config`.
+type TestFunction = () => Promise<void>;
+```
 
 #### Implementations
 
