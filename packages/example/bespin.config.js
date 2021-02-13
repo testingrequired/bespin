@@ -9,11 +9,13 @@ const { ParallelRunner } = require("@testingrequired/bespin-parallel-runner");
 const { AsyncRunner } = require("@testingrequired/bespin-async-runner");
 const { JUnitReporter } = require("@testingrequired/bespin-junit-reporter");
 const { GlobalTestValuePlugin } = require("./src/GlobalTestValuePlugin");
+const { SerialRunner } = require("@testingrequired/bespin-serial-runner");
 
 const config = new Config(__filename)
   .withLocator(new GlobTestFileLocator("**/*.test.js"))
   .withParser(new SpecTestFileParse())
   .withRunner(new AsyncRunner(__filename))
+  // .withRunner(new SerialRunner())
   // .withRunner(new ParallelRunner(__filename, 10))
   // .withReporter(new DebugReporter())
   .withReporter(new JUnitReporter("./junit.xml"))
