@@ -8,10 +8,13 @@ import {
 import { WorkerPool } from './WorkerPool';
 import { workerPath } from './workerPath';
 
+type WorkerTestInTestFile = Pick<TestInTestFile, 'testFilePath' | 'testName'>;
+
 export type WorkerData = {
-  testInTestFile: Pick<TestInTestFile, 'testFilePath' | 'testName'>;
+  testInTestFile: WorkerTestInTestFile;
   configFilePath: string;
 };
+
 export type WorkerResult = [TestInTestFile, TestResult];
 
 export class ParallelRunner extends Runner {
