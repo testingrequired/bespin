@@ -3,7 +3,7 @@ import { SpecTestFileParser } from '.';
 
 const expectedTestPath = './testUtils/test.js';
 
-describe('SpecTestFileParse', () => {
+describe('SpecTestFileParser', () => {
   let describeMockFn: () => void;
   let beforeEachMockFn: () => void;
   let afterEachMockFn: () => void;
