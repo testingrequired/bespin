@@ -25,7 +25,7 @@ $ npm install -D @testingrequired/bespin-core @testingrequired/bespin-cli
 This provides the foundation for the framework but it still needs to know how to locate test files, parse them and run them.
 
 ```bash
-$ npm install -D @testingrequired/bespin-glob-test-file-locator @testingrequired/bespin-spec-test-file-parser @testingrequired/bespin-parallel-runner
+$ npm install -D @testingrequired/bespin-glob-test-file-locator @testingrequired/bespin-spec-test-file-parser @testingrequired/bespin-serial-runner
 ```
 
 These will provide finding test files using a glob pattern (e.g. `**/*.test.js`), parse test files with a `describe`/`it`/`beforeEach` syntax and execute the tests in parallel.
@@ -40,12 +40,13 @@ const {
 const {
   SpecTestFileParse,
 } = require("@testingrequired/bespin-spec-test-file-parser");
-const { ParallelRunner } = require("@testingrequired/bespin-parallel-runner");
+const { AsyncRunner } = require("@testingrequired/bespin-async-runner");
 
 module.exports = new Config(__filename)
   .withLocator(new GlobTestFileLocator("**/*.test.js"))
   .withParser(new SpecTestFileParse())
-  .withRunner(new ParallelRunner(__filename, 10));
+  .withRunner(new AsyncRunner())
+  .withSetting("randomizeTests", true);
 ```
 
 ## Packages
