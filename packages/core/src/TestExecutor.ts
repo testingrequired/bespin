@@ -1,8 +1,8 @@
-import { AssertionError } from 'assert';
-import { performance } from 'perf_hooks';
-import { TestResult } from './TestResult';
-import { TestResultState } from './TestResult';
-import { TestFunction } from './TestFunction';
+import { AssertionError } from "assert";
+import { performance } from "perf_hooks";
+import { TestResult } from "./TestResult";
+import { TestResultState } from "./TestResult";
+import { TestFunction } from "./TestFunction";
 
 export class TestExecutor {
   async executeTest(test: TestFunction): Promise<TestResult> {
@@ -16,7 +16,7 @@ export class TestExecutor {
 
       return {
         state: TestResultState.PASS,
-        time,
+        time
       };
     } catch (e) {
       const t1 = performance.now();
@@ -31,7 +31,7 @@ export class TestExecutor {
       const result: TestResult = {
         state,
         time,
-        message: e.message,
+        message: e.message
       };
 
       if (!isAssertionError) {

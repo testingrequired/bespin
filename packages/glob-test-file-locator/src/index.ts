@@ -1,12 +1,12 @@
-import { promisify } from 'util';
-import { TestFileLocator } from '@testingrequired/bespin-core';
+import { promisify } from "util";
+import { TestFileLocator } from "@testingrequired/bespin-core";
 
-const glob = require('glob');
+const glob = require("glob");
 
 export class GlobTestFileLocator extends TestFileLocator {
   private pattern: string;
 
-  constructor(pattern = '**/*.test.js') {
+  constructor(pattern = "**/*.test.js") {
     super();
 
     this.pattern = pattern;

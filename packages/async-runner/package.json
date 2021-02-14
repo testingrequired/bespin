@@ -27,12 +27,6 @@
       "pre-commit": "tsdx lint"
     }
   },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
   "name": "@testingrequired/bespin-async-runner",
   "author": "Kylee Tilley",
   "module": "dist/async-runner.esm.js",

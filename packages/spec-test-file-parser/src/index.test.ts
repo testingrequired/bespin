@@ -1,9 +1,9 @@
-import { TestInTestFile } from '@testingrequired/bespin-core';
-import { SpecTestFileParser } from '.';
+import { TestInTestFile } from "@testingrequired/bespin-core";
+import { SpecTestFileParser } from ".";
 
-const expectedTestPath = './testUtils/test.js';
+const expectedTestPath = "./testUtils/test.js";
 
-describe('SpecTestFileParser', () => {
+describe("SpecTestFileParser", () => {
   let describeMockFn: () => void;
   let beforeEachMockFn: () => void;
   let afterEachMockFn: () => void;
@@ -24,8 +24,8 @@ describe('SpecTestFileParser', () => {
     jest.resetModules();
   });
 
-  it('should parse a test at top level', async () => {
-    const expectedTestName = 'expectedTestName';
+  it("should parse a test at top level", async () => {
+    const expectedTestName = "expectedTestName";
 
     jest.mock(expectedTestPath, () => {
       it(expectedTestName, testMockFn);
@@ -38,7 +38,7 @@ describe('SpecTestFileParser', () => {
         expectedTestPath,
         expectedTestName,
         expect.any(Function)
-      ),
+      )
     ]);
 
     await tests[0].testFn();
@@ -46,9 +46,9 @@ describe('SpecTestFileParser', () => {
     expect(testMockFn).toBeCalledTimes(1);
   });
 
-  it('should parse a test in a describe', async () => {
-    const expectedDescribe = 'expectedDescribe';
-    const expectedTestName = 'expectedTestName';
+  it("should parse a test in a describe", async () => {
+    const expectedDescribe = "expectedDescribe";
+    const expectedTestName = "expectedTestName";
 
     jest.mock(expectedTestPath, () => {
       describe(expectedDescribe, () => {
@@ -63,7 +63,7 @@ describe('SpecTestFileParser', () => {
         expectedTestPath,
         `${expectedDescribe} ${expectedTestName}`,
         expect.any(Function)
-      ),
+      )
     ]);
 
     await tests[0].testFn();
@@ -71,8 +71,8 @@ describe('SpecTestFileParser', () => {
     expect(testMockFn).toBeCalledTimes(1);
   });
 
-  it('should parse a test at the top level with beforeEach/afterEach', async () => {
-    const expectedTestName = 'expectedTestName';
+  it("should parse a test at the top level with beforeEach/afterEach", async () => {
+    const expectedTestName = "expectedTestName";
 
     jest.mock(expectedTestPath, () => {
       beforeEach(beforeEachMockFn);
@@ -87,7 +87,7 @@ describe('SpecTestFileParser', () => {
         expectedTestPath,
         expectedTestName,
         expect.any(Function)
-      ),
+      )
     ]);
 
     await tests[0].testFn();
@@ -97,9 +97,9 @@ describe('SpecTestFileParser', () => {
     expect(afterEachMockFn).toBeCalledTimes(1);
   });
 
-  it('should parse a test in a describe with beforeEach/afterEach', async () => {
-    const expectedDescribe = 'expectedDescribe';
-    const expectedTestName = 'expectedTestName';
+  it("should parse a test in a describe with beforeEach/afterEach", async () => {
+    const expectedDescribe = "expectedDescribe";
+    const expectedTestName = "expectedTestName";
 
     jest.mock(expectedTestPath, () => {
       describe(expectedDescribe, () => {
@@ -116,7 +116,7 @@ describe('SpecTestFileParser', () => {
         expectedTestPath,
         `${expectedDescribe} ${expectedTestName}`,
         expect.any(Function)
-      ),
+      )
     ]);
 
     await tests[0].testFn();
@@ -126,11 +126,11 @@ describe('SpecTestFileParser', () => {
     expect(afterEachMockFn).toBeCalledTimes(1);
   });
 
-  it('should parse a test in a nested describe with beforeEach/afterEach', async () => {
-    const expectedDescribeA = 'expectedDescribeA';
-    const expectedDescribeB = 'expectedDescribeB';
-    const expectedTestNameA = 'expectedTestNameA';
-    const expectedTestNameB = 'expectedTestNameB';
+  it("should parse a test in a nested describe with beforeEach/afterEach", async () => {
+    const expectedDescribeA = "expectedDescribeA";
+    const expectedDescribeB = "expectedDescribeB";
+    const expectedTestNameA = "expectedTestNameA";
+    const expectedTestNameB = "expectedTestNameB";
 
     let beforeEachMockFnB = jest.fn();
     let afterEachMockFnB = jest.fn();
@@ -161,7 +161,7 @@ describe('SpecTestFileParser', () => {
         expectedTestPath,
         `${expectedDescribeA} ${expectedDescribeB} ${expectedTestNameB}`,
         expect.any(Function)
-      ),
+      )
     ]);
 
     await tests[0].testFn();
@@ -174,9 +174,9 @@ describe('SpecTestFileParser', () => {
     expect(afterEachMockFnB).toBeCalledTimes(1);
   });
 
-  it('should not run beforeEach or afterEach if defined after a test', async () => {
-    const expectedDescribe = 'expectedDescribe';
-    const expectedTestName = 'expectedTestName';
+  it("should not run beforeEach or afterEach if defined after a test", async () => {
+    const expectedDescribe = "expectedDescribe";
+    const expectedTestName = "expectedTestName";
 
     jest.mock(expectedTestPath, () => {
       describe(expectedDescribe, () => {
@@ -194,9 +194,9 @@ describe('SpecTestFileParser', () => {
     expect(afterEachMockFn).toBeCalledTimes(0);
   });
 
-  it('should parse a test in a describe with multiple beforeEach/afterEach', async () => {
-    const expectedDescribe = 'expectedDescribe';
-    const expectedTestName = 'expectedTestName';
+  it("should parse a test in a describe with multiple beforeEach/afterEach", async () => {
+    const expectedDescribe = "expectedDescribe";
+    const expectedTestName = "expectedTestName";
 
     const beforeEachMockFnB = jest.fn();
     const afterEachMockFnB = jest.fn();
@@ -221,23 +221,23 @@ describe('SpecTestFileParser', () => {
     expect(afterEachMockFnB).toBeCalledTimes(1);
   });
 
-  it('should correctly set and increment value using beforeEach', async () => {
+  it("should correctly set and increment value using beforeEach", async () => {
     let baseValue: number = 0;
 
     jest.mock(expectedTestPath, () => {
-      describe('', () => {
+      describe("", () => {
         beforeEach(() => {
           baseValue = 7;
         });
 
-        it('', testMockFn);
+        it("", testMockFn);
 
-        describe('', () => {
+        describe("", () => {
           beforeEach(() => {
             baseValue++;
           });
 
-          it('', testMockFn);
+          it("", testMockFn);
         });
       });
     });
@@ -253,8 +253,8 @@ describe('SpecTestFileParser', () => {
     expect(baseValue).toBe(8);
   });
 
-  it('should parse nested describes describe without tests', async () => {
-    const expectedDescribe = 'expectedDescribe';
+  it("should parse nested describes describe without tests", async () => {
+    const expectedDescribe = "expectedDescribe";
 
     const describeMockFnB = jest.fn();
 
@@ -273,12 +273,12 @@ describe('SpecTestFileParser', () => {
     expect(describeMockFnB).toBeCalledTimes(1);
   });
 
-  describe('Errors', () => {
-    it.skip('should throw when describe defined inside a test', async () => {
+  describe("Errors", () => {
+    it.skip("should throw when describe defined inside a test", async () => {
       jest.mock(expectedTestPath, () => {
-        describe('describe', () => {
-          it('test', () => {
-            describe('', () => {});
+        describe("describe", () => {
+          it("test", () => {
+            describe("", () => {});
           });
         });
       });

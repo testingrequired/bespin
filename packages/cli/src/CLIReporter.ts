@@ -5,7 +5,7 @@ import {
   Reporter,
   TestInTestFile,
   TestResult,
-  ValidConfig,
+  ValidConfig
 } from "@testingrequired/bespin-core";
 
 export class CLIReporter extends Reporter {
@@ -30,7 +30,7 @@ export class CLIReporter extends Reporter {
     print.info(`${underline("Config")}\n`);
 
     const testFiles = Array.from(
-      new Set(testsInTestFiles.map((x) => x.testFilePath))
+      new Set(testsInTestFiles.map(x => x.testFilePath))
     );
 
     print.table(
@@ -39,15 +39,12 @@ export class CLIReporter extends Reporter {
         ["Locator", config.locator.constructor.name],
         ["Parser", config.parser.constructor.name],
         ["Runner", config.runner.constructor.name],
-        [
-          "Reporters",
-          config.reporters.map((x) => x.constructor.name).join(", "),
-        ],
+        ["Reporters", config.reporters.map(x => x.constructor.name).join(", ")],
         ["Test Files", testFiles.length.toString()],
-        ["Tests", testsInTestFiles.length.toString()],
+        ["Tests", testsInTestFiles.length.toString()]
       ],
       {
-        format: "markdown",
+        format: "markdown"
       }
     );
 
@@ -69,7 +66,7 @@ export class CLIReporter extends Reporter {
 
     const groups = groupBy(results, "testFilePath");
 
-    Object.entries(groups).forEach((entry) => {
+    Object.entries(groups).forEach(entry => {
       const [testFilePath, results] = entry;
 
       print.info(testFilePath);

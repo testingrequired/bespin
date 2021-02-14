@@ -22,12 +22,6 @@
   "peerDependencies": {
     "@testingrequired/bespin-core": "0.1.0"
   },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
   "name": "@testingrequired/bespin-html-report",
   "author": "Kylee Tilley",
   "module": "dist/html-reporter.esm.js",

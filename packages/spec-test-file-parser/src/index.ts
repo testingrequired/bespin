@@ -1,5 +1,5 @@
-import { TestFileParser, TestInTestFile } from '@testingrequired/bespin-core';
-import { Spec } from './Spec';
+import { TestFileParser, TestInTestFile } from "@testingrequired/bespin-core";
+import { Spec } from "./Spec";
 
 declare var global: any;
 

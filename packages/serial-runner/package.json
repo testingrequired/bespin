@@ -27,12 +27,6 @@
       "pre-commit": "tsdx lint"
     }
   },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
   "name": "@testingrequired/bespin-serial-runner",
   "author": "Kylee Tilley",
   "module": "dist/serial-runner.esm.js",

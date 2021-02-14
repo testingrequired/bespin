@@ -1,9 +1,9 @@
-import { TestFileLocator } from './TestFileLocator';
-import { TestFileParser } from './TestFileParser';
-import { Reporter } from './Reporter';
-import { Runner } from './Runner';
-import { Settings } from './Settings';
-import { Plugin } from './Plugin';
+import { TestFileLocator } from "./TestFileLocator";
+import { TestFileParser } from "./TestFileParser";
+import { Reporter } from "./Reporter";
+import { Runner } from "./Runner";
+import { Settings } from "./Settings";
+import { Plugin } from "./Plugin";
 
 export class Config {
   public locator?: TestFileLocator;
@@ -11,7 +11,7 @@ export class Config {
   public runner?: Runner;
   public reporters: Array<Reporter> = [];
   public settings: Settings = {
-    randomizeTests: false,
+    randomizeTests: false
   };
   public globals: Record<string, any> = {};
   public plugins: Array<Plugin> = [];
@@ -65,22 +65,22 @@ export class Config {
       let missing = [];
 
       if (!configFile.path) {
-        missing.push('path');
+        missing.push("path");
       }
 
       if (!configFile.locator) {
-        missing.push('locator');
+        missing.push("locator");
       }
 
       if (!configFile.parser) {
-        missing.push('parser');
+        missing.push("parser");
       }
 
       if (!configFile.runner) {
-        missing.push('runner');
+        missing.push("runner");
       }
 
-      throw new Error(`Invalid config file. Missing: ${missing.join(', ')}`);
+      throw new Error(`Invalid config file. Missing: ${missing.join(", ")}`);
     }
 
     return configFile;

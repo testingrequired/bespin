@@ -1,13 +1,13 @@
-import { isMainThread, parentPort } from 'worker_threads';
-import { Config, TestExecutor } from '@testingrequired/bespin-core';
+import { isMainThread, parentPort } from "worker_threads";
+import { Config, TestExecutor } from "@testingrequired/bespin-core";
 
 if (isMainThread) {
-  throw new Error('Test worker can not run on main thread');
+  throw new Error("Test worker can not run on main thread");
 }
 
 const executor = new TestExecutor();
 
-parentPort?.on('message', async (data: any) => {
+parentPort?.on("message", async (data: any) => {
   const { testInTestFile, configFilePath } = data;
   const { testFilePath, testName } = testInTestFile;
 

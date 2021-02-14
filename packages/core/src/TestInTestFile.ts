@@ -1,4 +1,4 @@
-import { TestFunction } from './TestFunction';
+import { TestFunction } from "./TestFunction";
 
 export class TestInTestFile {
   constructor(

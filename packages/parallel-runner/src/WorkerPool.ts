@@ -1,4 +1,4 @@
-import { Worker } from 'worker_threads';
+import { Worker } from "worker_threads";
 
 interface WorkerTask<TTaskData, TWorkerResult> {
   getTaskData: () => TTaskData;
@@ -15,7 +15,7 @@ export class WorkerPool<TTaskData, TWorkerResult> {
     public numberOfWorkers: number = 1
   ) {
     if (numberOfWorkers <= 0) {
-      throw Error('numberOfWorkers must be 1 or more');
+      throw Error("numberOfWorkers must be 1 or more");
     }
 
     for (let i = 0; i < this.numberOfWorkers; i += 1) {
@@ -44,7 +44,7 @@ export class WorkerPool<TTaskData, TWorkerResult> {
           if (result) {
             resolve(result);
           }
-        },
+        }
       };
 
       this.runTask(task);
@@ -78,8 +78,8 @@ export class WorkerPool<TTaskData, TWorkerResult> {
     }
 
     const cleanUp = () => {
-      nextWorker.removeAllListeners('message');
-      nextWorker.removeAllListeners('error');
+      nextWorker.removeAllListeners("message");
+      nextWorker.removeAllListeners("error");
       this.activeWorkers.delete(nextWorker);
     };
 
@@ -94,8 +94,8 @@ export class WorkerPool<TTaskData, TWorkerResult> {
       }
     };
 
-    nextWorker.once('message', onMessage);
-    nextWorker.once('error', onError);
+    nextWorker.once("message", onMessage);
+    nextWorker.once("error", onError);
     nextWorker.postMessage(await task.getTaskData());
   }
 }
