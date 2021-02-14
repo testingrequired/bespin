@@ -15,6 +15,8 @@ type TestTestInTestFile = {
   -readonly [K in keyof TestInTestFile]: TestInTestFile[K];
 };
 
+declare var global: any;
+
 describe("Runtime", () => {
   const expectedPath = "example/test/path.test.js";
   const expectedPaths = [expectedPath];
@@ -79,13 +81,13 @@ describe("Runtime", () => {
     when(parser.getTests as jest.Mock)
       .calledWith(expectedPath)
       .mockResolvedValue([expectedTestInTestFile]);
-
-    when(runner.run as jest.Mock)
-      .calledWith([expectedTestInTestFile], expectedTestTimeout)
-      .mockResolvedValueOnce([expectedTestResult]);
   });
 
   it("should locate, parse, run and report test results", async () => {
+    when(runner.run as jest.Mock)
+      .calledWith([expectedTestInTestFile], expectedTestTimeout)
+      .mockResolvedValueOnce([expectedTestResult]);
+
     const results = await runtime.run();
 
     expect(results).toStrictEqual([expectedTestResult]);
@@ -101,6 +103,34 @@ describe("Runtime", () => {
     config.settings.randomizeTests = true;
     await runtime.run();
     expect(randomizeArray).toHaveBeenCalledWith([expectedTestInTestFile]);
+  });
+
+  describe("globals", () => {
+    it("should set globals during test parsing", async () => {
+      const expectedValue = "testGlobalValue";
+      config.globals.testGlobal = expectedValue;
+
+      when(parser.getTests as jest.Mock)
+        .calledWith(expectedPath)
+        .mockImplementation(() => {
+          expect(global.testGlobal).toEqual(expectedValue);
+        });
+
+      await runtime.run();
+    });
+
+    it("should set globals during test execution", async () => {
+      const expectedValue = "testGlobalValue";
+      config.globals.testGlobal = expectedValue;
+
+      when(runner.run as jest.Mock)
+        .calledWith([expectedTestInTestFile], expectedTestTimeout)
+        .mockImplementation(() => {
+          expect(global.testGlobal).toEqual(expectedValue);
+        });
+
+      await runtime.run();
+    });
   });
 
   describe("settings.testFileFilter", () => {

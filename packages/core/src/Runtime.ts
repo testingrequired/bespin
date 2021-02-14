@@ -35,6 +35,10 @@ export class Runtime {
       );
     }
 
+    Object.entries(globals).forEach(([key, value]) => {
+      global[key] = value;
+    });
+
     let testsInTestFiles = await Promise.all(
       testFilePaths.map((path) => parser.getTests(path))
     ).then((files) => files.flat());
@@ -48,10 +52,6 @@ export class Runtime {
     if (settings.randomizeTests) {
       testsInTestFiles = randomizeArray(testsInTestFiles);
     }
-
-    Object.entries(globals).forEach(([key, value]) => {
-      global[key] = value;
-    });
 
     const results = runner.run(testsInTestFiles, settings.testTimeout);
 
