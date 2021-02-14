@@ -12,11 +12,11 @@ describe("Config", () => {
 
   beforeEach(() => {
     locator = {
-      locateTestFilePaths: jest.fn()
+      locateTestFilePaths: jest.fn(),
     };
 
     parser = {
-      getTests: jest.fn()
+      getTests: jest.fn(),
     };
 
     runner = {
@@ -35,7 +35,7 @@ describe("Config", () => {
       listenerCount: jest.fn(),
       prependListener: jest.fn(),
       prependOnceListener: jest.fn(),
-      eventNames: jest.fn()
+      eventNames: jest.fn(),
     };
   });
 

@@ -7,7 +7,8 @@ import {
 
 export class AsyncRunner extends Runner {
   async run(
-    testsInTestFiles: TestInTestFile[]
+    testsInTestFiles: TestInTestFile[],
+    testTimeout: number
   ): Promise<Array<[TestInTestFile, TestResult]>> {
     const executor = new TestExecutor();
 
@@ -18,7 +19,7 @@ export class AsyncRunner extends Runner {
         async (test): Promise<[TestInTestFile, TestResult]> => {
           this.emit("testStart", test);
 
-          const result = await executor.executeTest(test.testFn);
+          const result = await executor.executeTest(test.testFn, testTimeout);
 
           this.emit("testEnd", test, result);
 

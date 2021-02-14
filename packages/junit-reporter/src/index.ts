@@ -3,10 +3,10 @@ import {
   TestInTestFile,
   TestResult,
   TestResultState,
-} from '@testingrequired/bespin-core';
+} from "@testingrequired/bespin-core";
 
 //@ts-ignore
-import junit from 'junit-report-builder';
+import junit from "junit-report-builder";
 
 export class JUnitReporter extends Reporter {
   constructor(private filePath: string) {
@@ -16,7 +16,7 @@ export class JUnitReporter extends Reporter {
   onRunEnd(results: Array<[TestInTestFile, TestResult]>) {
     const suites: Record<string, any> = {};
 
-    results.forEach(result => {
+    results.forEach((result) => {
       const [testInTestFile, testResult] = result;
       const { testFilePath, testName } = testInTestFile;
       const { time, state, message } = testResult;

@@ -3,17 +3,17 @@ import {
   TestInTestFile,
   TestResult,
   TestResultState,
-} from '@testingrequired/bespin-core';
+} from "@testingrequired/bespin-core";
 // @ts-ignore
-import pug from 'pug';
-import { HtmlReporter } from '../src/index';
+import pug from "pug";
+import { HtmlReporter } from "../src/index";
 
-jest.mock('pug');
-jest.mock('fs');
+jest.mock("pug");
+jest.mock("fs");
 
-describe('HtmlReporter', () => {
-  const expectedFilePath = 'expected file path';
-  const expectedTestName = 'expectedTestName';
+describe("HtmlReporter", () => {
+  const expectedFilePath = "expected file path";
+  const expectedTestName = "expectedTestName";
   const expectedTestInTestFile: TestInTestFile = {
     testFilePath: expectedFilePath,
     testName: expectedTestName,
@@ -33,11 +33,11 @@ describe('HtmlReporter', () => {
     reporter = new HtmlReporter(expectedFilePath);
   });
 
-  it('should pass results to pug render', () => {
+  it("should pass results to pug render", () => {
     reporter.onRunEnd(expectedResults);
 
     expect(
-      pug.compileFile('template.pug', {
+      pug.compileFile("template.pug", {
         results: expectedResults,
       } as any)
     );

@@ -1,13 +1,13 @@
 import {
   TestInTestFile,
   TestResult,
-  TestResultState
+  TestResultState,
 } from "@testingrequired/bespin-core";
 import { ParallelRunner } from ".";
 
 const poolRunMockPromise = jest.fn();
 
-const poolRunMock = jest.fn().mockImplementation(async fn => {
+const poolRunMock = jest.fn().mockImplementation(async (fn) => {
   fn();
 
   return poolRunMockPromise();
@@ -17,9 +17,9 @@ jest.mock("./WorkerPool", () => {
   return {
     WorkerPool: function() {
       return {
-        run: poolRunMock
+        run: poolRunMock,
       };
-    }
+    },
   };
 });
 
@@ -50,16 +50,16 @@ describe("ParallelRunner", () => {
     const expectedTestInTestFile = {
       testFilePath: "expectedFilePath",
       testName: "expectedTestName",
-      testFn: jest.fn()
+      testFn: jest.fn(),
     };
 
     const expectedTestInTestFiles: Array<TestInTestFile> = [
-      expectedTestInTestFile
+      expectedTestInTestFile,
     ];
 
     const expectedTestResult: TestResult = {
       state: TestResultState.PASS,
-      time: 1
+      time: 1,
     };
 
     beforeEach(() => {
@@ -95,7 +95,7 @@ describe("ParallelRunner", () => {
       expect(event).toBeCalledWith(
         {
           ...expectedTestInTestFile,
-          testFilePath: expectedTestInTestFile.testFilePath.slice(1)
+          testFilePath: expectedTestInTestFile.testFilePath.slice(1),
         },
         expectedTestResult
       );
@@ -111,10 +111,10 @@ describe("ParallelRunner", () => {
         [
           {
             ...expectedTestInTestFile,
-            testFilePath: expectedTestInTestFile.testFilePath.slice(1)
+            testFilePath: expectedTestInTestFile.testFilePath.slice(1),
           },
-          expectedTestResult
-        ]
+          expectedTestResult,
+        ],
       ]);
     });
 
@@ -125,10 +125,10 @@ describe("ParallelRunner", () => {
         [
           {
             ...expectedTestInTestFile,
-            testFilePath: expectedTestInTestFile.testFilePath.slice(1)
+            testFilePath: expectedTestInTestFile.testFilePath.slice(1),
           },
-          expectedTestResult
-        ]
+          expectedTestResult,
+        ],
       ]);
     });
   });

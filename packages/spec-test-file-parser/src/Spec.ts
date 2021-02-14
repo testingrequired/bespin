@@ -1,4 +1,4 @@
-import { TestFunction } from '@testingrequired/bespin-core';
+import { TestFunction } from "@testingrequired/bespin-core";
 
 export class Spec {
   private tests: Array<[string, TestFunction]> = [];
@@ -78,7 +78,7 @@ export class Spec {
       }
     };
 
-    const description = [...this.descriptions, should].join(' ');
+    const description = [...this.descriptions, should].join(" ");
 
     this.tests.push([description, testFn]);
   }

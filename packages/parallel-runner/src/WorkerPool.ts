@@ -26,7 +26,7 @@ export class WorkerPool<TTaskData, TWorkerResult> {
 
   getInactiveWorkers() {
     const inactiveWorkers = new Set(
-      Array.from(this.workers).filter(x => !this.activeWorkers.has(x))
+      Array.from(this.workers).filter((x) => !this.activeWorkers.has(x))
     );
 
     return inactiveWorkers;
@@ -44,7 +44,7 @@ export class WorkerPool<TTaskData, TWorkerResult> {
           if (result) {
             resolve(result);
           }
-        }
+        },
       };
 
       this.runTask(task);

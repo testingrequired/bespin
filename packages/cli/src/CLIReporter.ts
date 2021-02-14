@@ -71,14 +71,16 @@ export class CLIReporter extends Reporter {
 
       print.info(testFilePath);
 
-      results.forEach(([testInTestFile, { state, time, message }]) => {
+      results.forEach(([testInTestFile, { state, time, message, error }]) => {
         const formattedTime = `${time.toFixed(2)}ms`;
         const printMessage = `- ${testInTestFile.testName} ${state} (${formattedTime})`;
 
         if (state === TestResultState.PASS) {
           print.success(printMessage);
         } else {
-          print.error(`${printMessage}\n\nMessage:\n\n${message}`);
+          print.error(
+            `${printMessage}\n\nMessage:\n\n${message ?? ""}\n${error}`
+          );
         }
       });
     });

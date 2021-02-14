@@ -1,7 +1,7 @@
 export enum TestResultState {
   PASS = "PASS",
   FAIL = "FAIL",
-  ERROR = "ERROR"
+  ERROR = "ERROR",
 }
 
 export interface TestResult {

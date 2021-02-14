@@ -25,18 +25,18 @@ export function testRunner<T extends Runner>(
         createTestInTestFile("tests/1", "Test 1 B"),
         createTestInTestFile("tests/2", "Test 2 A"),
         createTestInTestFile("tests/2", "Test 2 B"),
-        createTestInTestFile("tests/3", "Test 3 A")
+        createTestInTestFile("tests/3", "Test 3 A"),
       ];
 
       runner = new runnerClass(...args);
     });
 
     it("should not throw an error", () => {
-      expect(() => runner.run(testsInTestFiles)).not.toThrowError();
+      expect(() => runner.run(testsInTestFiles, 1000)).not.toThrowError();
     });
 
     it("should execute all test functions", async () => {
-      await runner.run(testsInTestFiles);
+      await runner.run(testsInTestFiles, 1000);
 
       for (const testInTestFile of testsInTestFiles) {
         expect(testInTestFile.testFn).toHaveBeenCalledTimes(1);
@@ -48,7 +48,7 @@ export function testRunner<T extends Runner>(
 
       runner.on("runStart", event);
 
-      await runner.run(testsInTestFiles);
+      await runner.run(testsInTestFiles, 1000);
 
       expect(event).toHaveBeenCalledTimes(1);
       expect(event).toHaveBeenCalledWith(testsInTestFiles);
@@ -59,7 +59,7 @@ export function testRunner<T extends Runner>(
 
       runner.on("testStart", event);
 
-      await runner.run(testsInTestFiles);
+      await runner.run(testsInTestFiles, 1000);
 
       expect(event).toHaveBeenCalledTimes(testsInTestFiles.length);
 
@@ -73,7 +73,7 @@ export function testRunner<T extends Runner>(
 
       runner.on("runEnd", event);
 
-      await runner.run(testsInTestFiles);
+      await runner.run(testsInTestFiles, 1000);
 
       expect(event).toHaveBeenCalledTimes(1);
       expect(event).toHaveBeenCalledWith([
@@ -81,37 +81,37 @@ export function testRunner<T extends Runner>(
           testsInTestFiles[0],
           {
             state: TestResultState.PASS,
-            time: expect.any(Number)
-          } as TestResult
+            time: expect.any(Number),
+          } as TestResult,
         ],
         [
           testsInTestFiles[1],
           {
             state: TestResultState.PASS,
-            time: expect.any(Number)
-          } as TestResult
+            time: expect.any(Number),
+          } as TestResult,
         ],
         [
           testsInTestFiles[2],
           {
             state: TestResultState.PASS,
-            time: expect.any(Number)
-          } as TestResult
+            time: expect.any(Number),
+          } as TestResult,
         ],
         [
           testsInTestFiles[3],
           {
             state: TestResultState.PASS,
-            time: expect.any(Number)
-          } as TestResult
+            time: expect.any(Number),
+          } as TestResult,
         ],
         [
           testsInTestFiles[4],
           {
             state: TestResultState.PASS,
-            time: expect.any(Number)
-          } as TestResult
-        ]
+            time: expect.any(Number),
+          } as TestResult,
+        ],
       ]);
     });
   });

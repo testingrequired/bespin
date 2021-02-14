@@ -15,10 +15,13 @@ parentPort?.on("message", async (data: any) => {
 
   const tests = await configFile.parser.getTests(testFilePath);
 
-  const test = tests.find(t => t.testName === testName);
+  const test = tests.find((t) => t.testName === testName);
 
   if (test) {
-    const result = await executor.executeTest(test.testFn);
+    const result = await executor.executeTest(
+      test.testFn,
+      configFile.settings.testTimeout
+    );
 
     parentPort?.postMessage([testInTestFile, result]);
   }
