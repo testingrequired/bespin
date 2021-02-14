@@ -10,12 +10,14 @@ describe("DefaultTestExecutor", () => {
   const expectedStartTime = 1;
   const expectedEndTime = 5;
   const expectedTimeDelta = expectedEndTime - expectedStartTime;
+  const expectedTimeout = 250;
 
   let testFunction: jest.MockedFunction<TestFunction>;
   let executor: TestExecutor;
 
   beforeEach(() => {
     testFunction = jest.fn();
+
     executor = new TestExecutor();
 
     (performance.now as jest.Mock).mockReturnValueOnce(expectedStartTime);
@@ -23,13 +25,50 @@ describe("DefaultTestExecutor", () => {
   });
 
   it("should call test function", async () => {
-    await executor.executeTest(testFunction);
+    await executor.executeTest(testFunction, expectedTimeout);
 
     expect(testFunction).toHaveBeenCalledWith();
   });
 
+  it("should timeout if test runs longer than timeout", async () => {
+    testFunction.mockImplementation(async () => {
+      await sleep(expectedTimeout * 2);
+    });
+
+    const testResult = await executor.executeTest(
+      testFunction,
+      expectedTimeout
+    );
+
+    expect(testResult).toStrictEqual({
+      state: TestResultState.ERROR,
+      time: expectedTimeDelta,
+      message: undefined,
+      error: `Test timed out after ${expectedTimeout}ms`,
+    });
+  });
+
+  it("should not timeout if test runs less than timeout", async () => {
+    testFunction.mockImplementation(async () => {
+      await sleep(expectedTimeout * 0.5);
+    });
+
+    const testResult = await executor.executeTest(
+      testFunction,
+      expectedTimeout
+    );
+
+    expect(testResult).toStrictEqual({
+      state: TestResultState.PASS,
+      time: expectedTimeDelta,
+    });
+  });
+
   it("should return passing test result when test function does not throw error", async () => {
-    const testResult = await executor.executeTest(testFunction);
+    const testResult = await executor.executeTest(
+      testFunction,
+      expectedTimeout
+    );
 
     expect(testResult).toStrictEqual({
       state: TestResultState.PASS,
@@ -46,7 +85,10 @@ describe("DefaultTestExecutor", () => {
       });
     });
 
-    const testResult = await executor.executeTest(testFunction);
+    const testResult = await executor.executeTest(
+      testFunction,
+      expectedTimeout
+    );
 
     expect(testResult).toStrictEqual({
       state: TestResultState.FAIL,
@@ -63,7 +105,10 @@ describe("DefaultTestExecutor", () => {
       throw expectedError;
     });
 
-    const testResult = await executor.executeTest(testFunction);
+    const testResult = await executor.executeTest(
+      testFunction,
+      expectedTimeout
+    );
 
     expect(testResult).toStrictEqual({
       state: TestResultState.ERROR,
@@ -73,3 +118,7 @@ describe("DefaultTestExecutor", () => {
     });
   });
 });
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

@@ -4,7 +4,8 @@ import type { TestResult } from './TestResult';
 
 export abstract class Runner extends EventEmitter {
   abstract run(
-    testsInTestFiles: Array<TestInTestFile>
+    testsInTestFiles: Array<TestInTestFile>,
+    testTimeout: number
   ): Promise<Array<[TestInTestFile, TestResult]>>;
 }
 

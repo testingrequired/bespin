@@ -53,7 +53,7 @@ export class Runtime {
       global[key] = value;
     });
 
-    const results = runner.run(testsInTestFiles);
+    const results = runner.run(testsInTestFiles, settings.testTimeout);
 
     Object.entries(globals).forEach(([key]) => {
       delete global[key];

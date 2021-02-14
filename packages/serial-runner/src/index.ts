@@ -7,7 +7,8 @@ import {
 
 export class SerialRunner extends Runner {
   async run(
-    testsInTestFiles: TestInTestFile[]
+    testsInTestFiles: TestInTestFile[],
+    testTimeout: number
   ): Promise<[TestInTestFile, TestResult][]> {
     const executor = new TestExecutor();
 
@@ -18,7 +19,7 @@ export class SerialRunner extends Runner {
     for (const test of testsInTestFiles) {
       this.emit("testStart", test);
 
-      const result = await executor.executeTest(test.testFn);
+      const result = await executor.executeTest(test.testFn, testTimeout);
 
       this.emit("testEnd", test, result);
 

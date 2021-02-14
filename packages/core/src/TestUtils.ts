@@ -32,11 +32,11 @@ export function testRunner<T extends Runner>(
     });
 
     it("should not throw an error", () => {
-      expect(() => runner.run(testsInTestFiles)).not.toThrowError();
+      expect(() => runner.run(testsInTestFiles, 1000)).not.toThrowError();
     });
 
     it("should execute all test functions", async () => {
-      await runner.run(testsInTestFiles);
+      await runner.run(testsInTestFiles, 1000);
 
       for (const testInTestFile of testsInTestFiles) {
         expect(testInTestFile.testFn).toHaveBeenCalledTimes(1);
@@ -48,7 +48,7 @@ export function testRunner<T extends Runner>(
 
       runner.on("runStart", event);
 
-      await runner.run(testsInTestFiles);
+      await runner.run(testsInTestFiles, 1000);
 
       expect(event).toHaveBeenCalledTimes(1);
       expect(event).toHaveBeenCalledWith(testsInTestFiles);
@@ -59,7 +59,7 @@ export function testRunner<T extends Runner>(
 
       runner.on("testStart", event);
 
-      await runner.run(testsInTestFiles);
+      await runner.run(testsInTestFiles, 1000);
 
       expect(event).toHaveBeenCalledTimes(testsInTestFiles.length);
 
@@ -73,7 +73,7 @@ export function testRunner<T extends Runner>(
 
       runner.on("runEnd", event);
 
-      await runner.run(testsInTestFiles);
+      await runner.run(testsInTestFiles, 1000);
 
       expect(event).toHaveBeenCalledTimes(1);
       expect(event).toHaveBeenCalledWith([

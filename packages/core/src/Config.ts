@@ -12,6 +12,7 @@ export class Config {
   public reporters: Array<Reporter> = [];
   public settings: Settings = {
     randomizeTests: false,
+    testTimeout: 5000,
   };
   public globals: Record<string, any> = {};
   public plugins: Array<Plugin> = [];

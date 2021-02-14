@@ -28,6 +28,7 @@ describe("Runtime", () => {
     state: TestResultState.PASS,
     time: 1,
   };
+  const expectedTestTimeout = 1000;
 
   let config: Config;
   let runtime: Runtime;
@@ -66,7 +67,8 @@ describe("Runtime", () => {
     config = new Config("")
       .withLocator(locator)
       .withParser(parser)
-      .withRunner(runner);
+      .withRunner(runner)
+      .withSetting("testTimeout", expectedTestTimeout);
 
     runtime = new Runtime(config as ValidConfig);
 
@@ -79,7 +81,7 @@ describe("Runtime", () => {
       .mockResolvedValue([expectedTestInTestFile]);
 
     when(runner.run as jest.Mock)
-      .calledWith([expectedTestInTestFile])
+      .calledWith([expectedTestInTestFile], expectedTestTimeout)
       .mockResolvedValueOnce([expectedTestResult]);
   });
 
@@ -128,7 +130,10 @@ describe("Runtime", () => {
     it("should filter test paths", async () => {
       await runtime.run();
 
-      expect(runner.run).toBeCalledWith([expectedTestInTestFile]);
+      expect(runner.run).toBeCalledWith(
+        [expectedTestInTestFile],
+        expectedTestTimeout
+      );
     });
   });
 
@@ -161,7 +166,10 @@ describe("Runtime", () => {
     it("should filter test paths", async () => {
       await runtime.run();
 
-      expect(runner.run).toBeCalledWith([expectedTestInTestFile]);
+      expect(runner.run).toBeCalledWith(
+        [expectedTestInTestFile],
+        expectedTestTimeout
+      );
     });
   });
 

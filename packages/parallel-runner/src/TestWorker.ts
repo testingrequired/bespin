@@ -18,7 +18,10 @@ parentPort?.on("message", async (data: any) => {
   const test = tests.find((t) => t.testName === testName);
 
   if (test) {
-    const result = await executor.executeTest(test.testFn);
+    const result = await executor.executeTest(
+      test.testFn,
+      configFile.settings.testTimeout
+    );
 
     parentPort?.postMessage([testInTestFile, result]);
   }

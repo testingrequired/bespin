@@ -5,12 +5,24 @@ import { TestResultState } from "./TestResult";
 import { TestFunction } from "./TestFunction";
 
 export class TestExecutor {
-  async executeTest(test: TestFunction): Promise<TestResult> {
+  async executeTest(
+    test: TestFunction,
+    timeoutMs: number
+  ): Promise<TestResult> {
     let t0;
 
     try {
       t0 = performance.now();
-      await test.apply(null);
+
+      const testTimeout = new Promise((_, reject) => {
+        let id = setTimeout(() => {
+          clearTimeout(id);
+          reject(`Test timed out after ${timeoutMs}ms`);
+        }, timeoutMs);
+      });
+
+      await Promise.race([test.apply(null), testTimeout]);
+
       const t1 = performance.now();
       const time = t1 - t0;
 
