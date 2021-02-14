@@ -7,6 +7,8 @@ import { ValidConfig } from './Config';
 import { randomizeArray } from './randomize';
 import minimatch from 'minimatch';
 
+declare var global: any;
+
 export class Runtime {
   public events: EventEmitter = new EventEmitter();
 
@@ -34,7 +36,7 @@ export class Runtime {
     }
 
     let testsInTestFiles = await Promise.all(
-      testFilePaths.map(path => parser.getTests(path, globals))
+      testFilePaths.map(path => parser.getTests(path))
     ).then(files => files.flat());
 
     if (settings.testNameFilter) {
@@ -47,7 +49,17 @@ export class Runtime {
       testsInTestFiles = randomizeArray(testsInTestFiles);
     }
 
-    return runner.run(testsInTestFiles);
+    Object.entries(globals).forEach(([key, value]) => {
+      global[key] = value;
+    });
+
+    const results = runner.run(testsInTestFiles);
+
+    Object.entries(globals).forEach(([key]) => {
+      delete global[key];
+    });
+
+    return results;
   }
 
   private registerRunner(runner: Runner) {

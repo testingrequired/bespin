@@ -9,8 +9,6 @@ describe('SpecTestFileParser', () => {
   let afterEachMockFn: () => void;
   let testMockFn: () => void;
 
-  const expectedGlobals: Record<string, any> = {};
-
   let parser: SpecTestFileParser;
 
   beforeEach(() => {
@@ -33,7 +31,7 @@ describe('SpecTestFileParser', () => {
       it(expectedTestName, testMockFn);
     });
 
-    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+    const tests = await parser.getTests(expectedTestPath);
 
     expect(tests).toStrictEqual([
       new TestInTestFile(
@@ -58,7 +56,7 @@ describe('SpecTestFileParser', () => {
       });
     });
 
-    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+    const tests = await parser.getTests(expectedTestPath);
 
     expect(tests).toStrictEqual([
       new TestInTestFile(
@@ -82,7 +80,7 @@ describe('SpecTestFileParser', () => {
       it(expectedTestName, testMockFn);
     });
 
-    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+    const tests = await parser.getTests(expectedTestPath);
 
     expect(tests).toStrictEqual([
       new TestInTestFile(
@@ -111,7 +109,7 @@ describe('SpecTestFileParser', () => {
       });
     });
 
-    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+    const tests = await parser.getTests(expectedTestPath);
 
     expect(tests).toStrictEqual([
       new TestInTestFile(
@@ -151,7 +149,7 @@ describe('SpecTestFileParser', () => {
       });
     });
 
-    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+    const tests = await parser.getTests(expectedTestPath);
 
     expect(tests).toStrictEqual([
       new TestInTestFile(
@@ -188,7 +186,7 @@ describe('SpecTestFileParser', () => {
       });
     });
 
-    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+    const tests = await parser.getTests(expectedTestPath);
 
     await tests[0].testFn();
 
@@ -213,7 +211,7 @@ describe('SpecTestFileParser', () => {
       });
     });
 
-    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+    const tests = await parser.getTests(expectedTestPath);
 
     await tests[0].testFn();
 
@@ -244,7 +242,7 @@ describe('SpecTestFileParser', () => {
       });
     });
 
-    const tests = await parser.getTests(expectedTestPath, expectedGlobals);
+    const tests = await parser.getTests(expectedTestPath);
 
     await tests[0].testFn();
 
@@ -269,7 +267,7 @@ describe('SpecTestFileParser', () => {
       );
     });
 
-    await parser.getTests(expectedTestPath, expectedGlobals);
+    await parser.getTests(expectedTestPath);
 
     expect(describeMockFn).toBeCalledTimes(1);
     expect(describeMockFnB).toBeCalledTimes(1);
@@ -285,9 +283,7 @@ describe('SpecTestFileParser', () => {
         });
       });
 
-      expect(
-        parser.getTests(expectedTestPath, expectedGlobals)
-      ).rejects.toThrow(ReferenceError);
+      expect(parser.getTests(expectedTestPath)).rejects.toThrow(ReferenceError);
     });
   });
 });

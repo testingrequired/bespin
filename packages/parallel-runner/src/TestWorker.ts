@@ -13,10 +13,7 @@ parentPort?.on('message', async (data: any) => {
 
   const configFile = await Config.load(configFilePath);
 
-  const tests = await configFile.parser.getTests(
-    testFilePath,
-    configFile.globals
-  );
+  const tests = await configFile.parser.getTests(testFilePath);
 
   const test = tests.find(t => t.testName === testName);
 

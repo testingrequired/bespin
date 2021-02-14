@@ -75,7 +75,7 @@ describe('Runtime', () => {
       .mockResolvedValueOnce(expectedPaths);
 
     when(parser.getTests as jest.Mock)
-      .calledWith(expectedPath, config.globals)
+      .calledWith(expectedPath)
       .mockResolvedValue([expectedTestInTestFile]);
 
     when(runner.run as jest.Mock)
