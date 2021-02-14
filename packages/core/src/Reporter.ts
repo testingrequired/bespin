@@ -1,6 +1,6 @@
-import { ValidConfig } from './Config';
-import { TestInTestFile } from './TestInTestFile';
-import { TestResult } from './TestResult';
+import { ValidConfig } from "./Config";
+import { TestInTestFile } from "./TestInTestFile";
+import { TestResult } from "./TestResult";
 
 export abstract class Reporter {
   // @ts-ignore: unused argument/s

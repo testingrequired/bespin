@@ -25,7 +25,7 @@ export function testRunner<T extends Runner>(
         createTestInTestFile("tests/1", "Test 1 B"),
         createTestInTestFile("tests/2", "Test 2 A"),
         createTestInTestFile("tests/2", "Test 2 B"),
-        createTestInTestFile("tests/3", "Test 3 A")
+        createTestInTestFile("tests/3", "Test 3 A"),
       ];
 
       runner = new runnerClass(...args);
@@ -81,37 +81,37 @@ export function testRunner<T extends Runner>(
           testsInTestFiles[0],
           {
             state: TestResultState.PASS,
-            time: expect.any(Number)
-          } as TestResult
+            time: expect.any(Number),
+          } as TestResult,
         ],
         [
           testsInTestFiles[1],
           {
             state: TestResultState.PASS,
-            time: expect.any(Number)
-          } as TestResult
+            time: expect.any(Number),
+          } as TestResult,
         ],
         [
           testsInTestFiles[2],
           {
             state: TestResultState.PASS,
-            time: expect.any(Number)
-          } as TestResult
+            time: expect.any(Number),
+          } as TestResult,
         ],
         [
           testsInTestFiles[3],
           {
             state: TestResultState.PASS,
-            time: expect.any(Number)
-          } as TestResult
+            time: expect.any(Number),
+          } as TestResult,
         ],
         [
           testsInTestFiles[4],
           {
             state: TestResultState.PASS,
-            time: expect.any(Number)
-          } as TestResult
-        ]
+            time: expect.any(Number),
+          } as TestResult,
+        ],
       ]);
     });
   });

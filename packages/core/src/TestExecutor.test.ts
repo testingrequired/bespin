@@ -33,7 +33,7 @@ describe("DefaultTestExecutor", () => {
 
     expect(testResult).toStrictEqual({
       state: TestResultState.PASS,
-      time: expectedTimeDelta
+      time: expectedTimeDelta,
     });
   });
 
@@ -42,7 +42,7 @@ describe("DefaultTestExecutor", () => {
 
     (testFunction as jest.Mock).mockImplementation(() => {
       throw new AssertionError({
-        message: expectedErrorMessage
+        message: expectedErrorMessage,
       });
     });
 
@@ -51,7 +51,7 @@ describe("DefaultTestExecutor", () => {
     expect(testResult).toStrictEqual({
       state: TestResultState.FAIL,
       message: expectedErrorMessage,
-      time: expectedTimeDelta
+      time: expectedTimeDelta,
     });
   });
 
@@ -69,7 +69,7 @@ describe("DefaultTestExecutor", () => {
       state: TestResultState.ERROR,
       message: expectedErrorMessage,
       error: expectedError,
-      time: expectedTimeDelta
+      time: expectedTimeDelta,
     });
   });
 });

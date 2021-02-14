@@ -1,14 +1,14 @@
-import os from 'os';
-import { join } from 'path';
+import os from "os";
+import { join } from "path";
 import {
   Runner,
   TestInTestFile,
   TestResult,
-} from '@testingrequired/bespin-core';
-import { WorkerPool } from './WorkerPool';
-import { workerPath } from './workerPath';
+} from "@testingrequired/bespin-core";
+import { WorkerPool } from "./WorkerPool";
+import { workerPath } from "./workerPath";
 
-type WorkerTestInTestFile = Pick<TestInTestFile, 'testFilePath' | 'testName'>;
+type WorkerTestInTestFile = Pick<TestInTestFile, "testFilePath" | "testName">;
 
 export type WorkerData = {
   testInTestFile: WorkerTestInTestFile;
@@ -22,7 +22,7 @@ export class ParallelRunner extends Runner {
     super();
 
     if (numberOfWorkers <= 0) {
-      throw Error('Number of workers must be 1 or more');
+      throw Error("Number of workers must be 1 or more");
     }
   }
 
@@ -34,15 +34,15 @@ export class ParallelRunner extends Runner {
       Math.min(testsInTestFiles.length, os.cpus().length, this.numberOfWorkers)
     );
 
-    this.emit('runStart', testsInTestFiles);
+    this.emit("runStart", testsInTestFiles);
 
-    const workers = testsInTestFiles.map(testInTestFile =>
+    const workers = testsInTestFiles.map((testInTestFile) =>
       this.runTestInTestFile(pool, testInTestFile)
     );
 
     const results = await Promise.all(workers);
 
-    this.emit('runEnd', results);
+    this.emit("runEnd", results);
 
     return results;
   }
@@ -53,7 +53,7 @@ export class ParallelRunner extends Runner {
   ): Promise<WorkerResult> {
     return pool
       .run(() => {
-        this.emit('testStart', testInTestFile);
+        this.emit("testStart", testInTestFile);
 
         const testFilePath = join(process.cwd(), testInTestFile.testFilePath);
 
@@ -69,14 +69,14 @@ export class ParallelRunner extends Runner {
 
         return workerData;
       })
-      .then(testInTestFileResult => {
+      .then((testInTestFileResult) => {
         const [testInTestFile, result] = testInTestFileResult;
 
         /**
          * Provide a cleaner test name in results
          */
         const fixedTestFilePath = testInTestFile.testFilePath
-          .replace(process.cwd(), '')
+          .replace(process.cwd(), "")
           .slice(1);
 
         const fixedTestInTestFile = {
@@ -85,7 +85,7 @@ export class ParallelRunner extends Runner {
           testFn: testInTestFile.testFn,
         };
 
-        this.emit('testEnd', fixedTestInTestFile, result);
+        this.emit("testEnd", fixedTestInTestFile, result);
 
         return [fixedTestInTestFile, result];
       });

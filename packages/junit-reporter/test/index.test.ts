@@ -3,16 +3,16 @@ import {
   TestInTestFile,
   TestResult,
   TestResultState,
-} from '@testingrequired/bespin-core';
+} from "@testingrequired/bespin-core";
 // @ts-ignore
-import junit from 'junit-report-builder';
-import { JUnitReporter } from '../src/index';
+import junit from "junit-report-builder";
+import { JUnitReporter } from "../src/index";
 
-jest.mock('junit-report-builder');
+jest.mock("junit-report-builder");
 
-describe('junit', () => {
-  const expectedFilePath = 'expected file path';
-  const expectedTestName = 'expectedTestName';
+describe("junit", () => {
+  const expectedFilePath = "expected file path";
+  const expectedTestName = "expectedTestName";
   const expectedTestInTestFile: TestInTestFile = {
     testFilePath: expectedFilePath,
     testName: expectedTestName,
@@ -54,30 +54,30 @@ describe('junit', () => {
     junit.testSuite.mockReset();
   });
 
-  describe('when state is passing', () => {
+  describe("when state is passing", () => {
     beforeEach(() => {
       junitReporter.onRunEnd(expectedResults);
     });
 
-    it('should set test suite name to test file path', () => {
+    it("should set test suite name to test file path", () => {
       expect(testSuite.name).toBeCalledWith(expectedFilePath);
     });
 
-    it('should set test case to test description', () => {
+    it("should set test case to test description", () => {
       expect(testCase.name).toBeCalledWith(expectedTestName);
     });
 
-    it('should set test case time to test time', () => {
+    it("should set test case time to test time", () => {
       expect(testCase.time).toBeCalledWith(expectedTestResult.time);
     });
 
-    it('should write to file', () => {
+    it("should write to file", () => {
       expect(junit.writeTo).toBeCalledWith(expectedFilePath);
     });
   });
 
-  describe('when state is failed', () => {
-    const expectedErrorMessage = 'expected error message';
+  describe("when state is failed", () => {
+    const expectedErrorMessage = "expected error message";
 
     beforeEach(() => {
       expectedTestResult.state = TestResultState.FAIL;
@@ -86,12 +86,12 @@ describe('junit', () => {
       junitReporter.onRunEnd(expectedResults);
     });
 
-    it('should set test case failure to test case error message', () => {
+    it("should set test case failure to test case error message", () => {
       expect(testCase.failure).toBeCalledWith(expectedErrorMessage);
     });
   });
 
-  describe('when multiple results in same test suite', () => {
+  describe("when multiple results in same test suite", () => {
     beforeEach(() => {
       const testResult: TestResult = {
         state: TestResultState.PASS,
@@ -103,7 +103,7 @@ describe('junit', () => {
       junitReporter.onRunEnd(expectedResults);
     });
 
-    it('should not create test suites', () => {
+    it("should not create test suites", () => {
       expect(junit.testSuite).toBeCalledTimes(1);
     });
   });

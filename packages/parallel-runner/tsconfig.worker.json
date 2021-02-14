@@ -1,6 +1,8 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/TestWorker.ts"],
+  "include": [
+    "src/TestWorker.ts"
+  ],
   "compilerOptions": {
     "module": "CommonJS",
     "outDir": "dist"

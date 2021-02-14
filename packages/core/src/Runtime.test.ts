@@ -1,24 +1,24 @@
-import { when } from 'jest-when';
-import { Config, ValidConfig } from './Config';
-import { Reporter } from './Reporter';
-import { Runner } from './Runner';
-import { Runtime } from './Runtime';
-import { TestFileLocator } from './TestFileLocator';
-import { TestFileParser } from './TestFileParser';
-import { TestInTestFile } from './TestInTestFile';
-import { TestResult, TestResultState } from './TestResult';
-import { randomizeArray } from './randomize';
+import { when } from "jest-when";
+import { Config, ValidConfig } from "./Config";
+import { Reporter } from "./Reporter";
+import { Runner } from "./Runner";
+import { Runtime } from "./Runtime";
+import { TestFileLocator } from "./TestFileLocator";
+import { TestFileParser } from "./TestFileParser";
+import { TestInTestFile } from "./TestInTestFile";
+import { TestResult, TestResultState } from "./TestResult";
+import { randomizeArray } from "./randomize";
 
-jest.mock('./randomize');
+jest.mock("./randomize");
 
 type TestTestInTestFile = {
   -readonly [K in keyof TestInTestFile]: TestInTestFile[K];
 };
 
-describe('Runtime', () => {
-  const expectedPath = 'example/test/path.test.js';
+describe("Runtime", () => {
+  const expectedPath = "example/test/path.test.js";
   const expectedPaths = [expectedPath];
-  const expectedTestName = 'expectedTestName';
+  const expectedTestName = "expectedTestName";
   const expectedTestInTestFile: TestTestInTestFile = {
     testFilePath: expectedPath,
     testName: expectedTestName,
@@ -63,7 +63,7 @@ describe('Runtime', () => {
       eventNames: jest.fn(),
     };
 
-    config = new Config('')
+    config = new Config("")
       .withLocator(locator)
       .withParser(parser)
       .withRunner(runner);
@@ -83,33 +83,33 @@ describe('Runtime', () => {
       .mockResolvedValueOnce([expectedTestResult]);
   });
 
-  it('should locate, parse, run and report test results', async () => {
+  it("should locate, parse, run and report test results", async () => {
     const results = await runtime.run();
 
     expect(results).toStrictEqual([expectedTestResult]);
   });
 
-  it('should not randomize tests if setting is false', async () => {
+  it("should not randomize tests if setting is false", async () => {
     config.settings.randomizeTests = false;
     await runtime.run();
     expect(randomizeArray).not.toHaveBeenCalled();
   });
 
-  it('should randomize tests if setting is true', async () => {
+  it("should randomize tests if setting is true", async () => {
     config.settings.randomizeTests = true;
     await runtime.run();
     expect(randomizeArray).toHaveBeenCalledWith([expectedTestInTestFile]);
   });
 
-  describe('settings.testFileFilter', () => {
+  describe("settings.testFileFilter", () => {
     const expectedTestInTestFileB: TestInTestFile = {
-      testFilePath: 'other/test/path.test.js',
-      testName: 'Other test',
+      testFilePath: "other/test/path.test.js",
+      testName: "Other test",
       testFn: jest.fn(),
     };
 
     beforeEach(() => {
-      config.settings.testFileFilter = 'example/**/*.test.js';
+      config.settings.testFileFilter = "example/**/*.test.js";
 
       when(locator.locateTestFilePaths as jest.Mock)
         .calledWith()
@@ -125,24 +125,24 @@ describe('Runtime', () => {
         .mockResolvedValueOnce([expectedTestInTestFileB]);
     });
 
-    it('should filter test paths', async () => {
+    it("should filter test paths", async () => {
       await runtime.run();
 
       expect(runner.run).toBeCalledWith([expectedTestInTestFile]);
     });
   });
 
-  describe('settings.testNameFilter', () => {
+  describe("settings.testNameFilter", () => {
     const expectedTestInTestFileB: TestInTestFile = {
-      testFilePath: 'other/test/path.test.js',
-      testName: 'Other test',
+      testFilePath: "other/test/path.test.js",
+      testName: "Other test",
       testFn: jest.fn(),
     };
 
     beforeEach(() => {
-      config.settings.testNameFilter = 'Example';
+      config.settings.testNameFilter = "Example";
 
-      expectedTestInTestFile.testName = 'Example';
+      expectedTestInTestFile.testName = "Example";
 
       when(locator.locateTestFilePaths as jest.Mock)
         .calledWith()
@@ -158,52 +158,52 @@ describe('Runtime', () => {
         .mockResolvedValueOnce([expectedTestInTestFileB]);
     });
 
-    it('should filter test paths', async () => {
+    it("should filter test paths", async () => {
       await runtime.run();
 
       expect(runner.run).toBeCalledWith([expectedTestInTestFile]);
     });
   });
 
-  describe('Runner Events', () => {
+  describe("Runner Events", () => {
     beforeEach(() => {
       runner = new TestTestRunner();
       config.withRunner(runner);
 
-      jest.spyOn(runner, 'run');
+      jest.spyOn(runner, "run");
 
       (runner.run as jest.Mock).mockImplementation(() => {
-        runner.emit('runStart', [expectedTestInTestFile]);
-        runner.emit('testStart', expectedTestInTestFile);
-        runner.emit('testEnd', expectedTestInTestFile, expectedTestResult);
-        runner.emit('runEnd', [[expectedTestInTestFile, expectedTestResult]]);
+        runner.emit("runStart", [expectedTestInTestFile]);
+        runner.emit("testStart", expectedTestInTestFile);
+        runner.emit("testEnd", expectedTestInTestFile, expectedTestResult);
+        runner.emit("runEnd", [[expectedTestInTestFile, expectedTestResult]]);
       });
     });
 
-    it('reemits runner runStart event', async () => {
+    it("reemits runner runStart event", async () => {
       const runStartListener = jest.fn();
 
-      runtime.events.on('runStart', runStartListener);
+      runtime.events.on("runStart", runStartListener);
 
       await runtime.run();
 
       expect(runStartListener).toBeCalledWith([expectedTestInTestFile]);
     });
 
-    it('reemits runner startStart events', async () => {
+    it("reemits runner startStart events", async () => {
       const testStartListener = jest.fn();
 
-      runtime.events.on('testStart', testStartListener);
+      runtime.events.on("testStart", testStartListener);
 
       await runtime.run();
 
       expect(testStartListener).toBeCalledWith(expectedTestInTestFile);
     });
 
-    it('reemits runner testEnd events', async () => {
+    it("reemits runner testEnd events", async () => {
       const testEndListener = jest.fn();
 
-      runtime.events.on('testEnd', testEndListener);
+      runtime.events.on("testEnd", testEndListener);
 
       await runtime.run();
 
@@ -213,10 +213,10 @@ describe('Runtime', () => {
       );
     });
 
-    it('reemits runner events', async () => {
+    it("reemits runner events", async () => {
       const runEndListener = jest.fn();
 
-      runtime.events.on('runEnd', runEndListener);
+      runtime.events.on("runEnd", runEndListener);
 
       await runtime.run();
 
@@ -226,7 +226,7 @@ describe('Runtime', () => {
     });
   });
 
-  describe('Reporters', () => {
+  describe("Reporters", () => {
     class TestReporter extends Reporter {}
 
     let reporterA: Reporter;
@@ -235,32 +235,32 @@ describe('Runtime', () => {
     beforeEach(() => {
       runner = new TestTestRunner();
       config.withRunner(runner);
-      jest.spyOn(runner, 'run');
+      jest.spyOn(runner, "run");
       (runner.run as jest.Mock).mockImplementation(() => {
-        runner.emit('runStart', [expectedTestInTestFile]);
-        runner.emit('testStart', expectedTestInTestFile);
-        runner.emit('testEnd', expectedTestInTestFile, expectedTestResult);
-        runner.emit('runEnd', [[expectedTestInTestFile, expectedTestResult]]);
+        runner.emit("runStart", [expectedTestInTestFile]);
+        runner.emit("testStart", expectedTestInTestFile);
+        runner.emit("testEnd", expectedTestInTestFile, expectedTestResult);
+        runner.emit("runEnd", [[expectedTestInTestFile, expectedTestResult]]);
       });
 
       reporterA = new TestReporter();
       config.withReporter(reporterA);
-      jest.spyOn(reporterA, 'onRunStart');
-      jest.spyOn(reporterA, 'onTestStart');
-      jest.spyOn(reporterA, 'onTestEnd');
-      jest.spyOn(reporterA, 'onRunEnd');
+      jest.spyOn(reporterA, "onRunStart");
+      jest.spyOn(reporterA, "onTestStart");
+      jest.spyOn(reporterA, "onTestEnd");
+      jest.spyOn(reporterA, "onRunEnd");
 
       reporterB = new TestReporter();
       config.withReporter(reporterB);
-      jest.spyOn(reporterB, 'onRunStart');
-      jest.spyOn(reporterB, 'onTestStart');
-      jest.spyOn(reporterB, 'onTestEnd');
-      jest.spyOn(reporterB, 'onRunEnd');
+      jest.spyOn(reporterB, "onRunStart");
+      jest.spyOn(reporterB, "onTestStart");
+      jest.spyOn(reporterB, "onTestEnd");
+      jest.spyOn(reporterB, "onRunEnd");
 
       runtime = new Runtime(config as ValidConfig);
     });
 
-    it('should call onRunStart', async () => {
+    it("should call onRunStart", async () => {
       await runtime.run();
       expect(reporterA.onRunStart).toBeCalledWith(config, [
         expectedTestInTestFile,
@@ -271,13 +271,13 @@ describe('Runtime', () => {
       ]);
     });
 
-    it('should call onTestStart', async () => {
+    it("should call onTestStart", async () => {
       await runtime.run();
       expect(reporterA.onTestStart).toBeCalledWith(expectedTestInTestFile);
       expect(reporterB.onTestStart).toBeCalledWith(expectedTestInTestFile);
     });
 
-    it('should call onTestEnd', async () => {
+    it("should call onTestEnd", async () => {
       await runtime.run();
       expect(reporterA.onTestEnd).toBeCalledWith(
         expectedTestInTestFile,
@@ -285,7 +285,7 @@ describe('Runtime', () => {
       );
     });
 
-    it('should call onRunEnd', async () => {
+    it("should call onRunEnd", async () => {
       await runtime.run();
       expect(reporterA.onRunEnd).toBeCalledWith([
         [expectedTestInTestFile, expectedTestResult],
@@ -299,6 +299,6 @@ describe('Runtime', () => {
 
 class TestTestRunner extends Runner {
   run(_: TestInTestFile[]): Promise<[TestInTestFile, TestResult][]> {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 }

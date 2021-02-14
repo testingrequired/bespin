@@ -38,7 +38,7 @@ describe("SpecTestFileParser", () => {
         expectedTestPath,
         expectedTestName,
         expect.any(Function)
-      )
+      ),
     ]);
 
     await tests[0].testFn();
@@ -63,7 +63,7 @@ describe("SpecTestFileParser", () => {
         expectedTestPath,
         `${expectedDescribe} ${expectedTestName}`,
         expect.any(Function)
-      )
+      ),
     ]);
 
     await tests[0].testFn();
@@ -87,7 +87,7 @@ describe("SpecTestFileParser", () => {
         expectedTestPath,
         expectedTestName,
         expect.any(Function)
-      )
+      ),
     ]);
 
     await tests[0].testFn();
@@ -116,7 +116,7 @@ describe("SpecTestFileParser", () => {
         expectedTestPath,
         `${expectedDescribe} ${expectedTestName}`,
         expect.any(Function)
-      )
+      ),
     ]);
 
     await tests[0].testFn();
@@ -161,7 +161,7 @@ describe("SpecTestFileParser", () => {
         expectedTestPath,
         `${expectedDescribeA} ${expectedDescribeB} ${expectedTestNameB}`,
         expect.any(Function)
-      )
+      ),
     ]);
 
     await tests[0].testFn();

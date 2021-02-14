@@ -11,7 +11,7 @@ export class Config {
   public runner?: Runner;
   public reporters: Array<Reporter> = [];
   public settings: Settings = {
-    randomizeTests: false
+    randomizeTests: false,
   };
   public globals: Record<string, any> = {};
   public plugins: Array<Plugin> = [];
