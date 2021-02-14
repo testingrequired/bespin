@@ -2,30 +2,22 @@ import { EventEmitter } from "events";
 import { Reporter } from "./Reporter";
 import { TestInTestFile } from "./TestInTestFile";
 import { TestResult } from "./TestResult";
-import { Runner } from "./Runner";
 import { ValidConfig } from "./Config";
 import { randomizeArray } from "./randomize";
 import minimatch from "minimatch";
+import { RuntimeEventEmitter } from "./RuntimeEventEmitter";
 
 declare var global: any;
 
 export class Runtime {
-  public events: EventEmitter = new EventEmitter();
+  public events: EventEmitter = new RuntimeEventEmitter();
 
-  constructor(private config: ValidConfig) {}
+  constructor(private config: ValidConfig) {
+    this.registerReporters(config.reporters);
+  }
 
   async run(): Promise<Array<[TestInTestFile, TestResult]>> {
-    const {
-      reporters,
-      locator,
-      parser,
-      settings,
-      runner,
-      globals,
-    } = this.config;
-
-    this.registerReporters(reporters);
-    this.registerRunner(runner);
+    const { locator, parser, settings, runner, globals } = this.config;
 
     let testFilePaths = await locator.locateTestFilePaths();
 
@@ -53,31 +45,17 @@ export class Runtime {
       testsInTestFiles = randomizeArray(testsInTestFiles);
     }
 
-    const results = runner.run(testsInTestFiles, settings.testTimeout);
+    const results = runner.run(
+      testsInTestFiles,
+      settings.testTimeout,
+      this.events
+    );
 
     Object.entries(globals).forEach(([key]) => {
       delete global[key];
     });
 
     return results;
-  }
-
-  private registerRunner(runner: Runner) {
-    runner.on("runStart", (testsInTestFiles) => {
-      this.events.emit("runStart", testsInTestFiles);
-    });
-
-    runner.on("testStart", (testsInTestFile) => {
-      this.events.emit("testStart", testsInTestFile);
-    });
-
-    runner.on("testEnd", (testsInTestFile, result) => {
-      this.events.emit("testEnd", testsInTestFile, result);
-    });
-
-    runner.on("runEnd", (results) => {
-      this.events.emit("runEnd", results);
-    });
   }
 
   private registerReporters(reporters: Array<Reporter>) {

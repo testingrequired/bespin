@@ -21,21 +21,6 @@ describe("Config", () => {
 
     runner = {
       run: jest.fn(),
-      on: jest.fn(),
-      emit: jest.fn(),
-      addListener: jest.fn(),
-      once: jest.fn(),
-      removeListener: jest.fn(),
-      off: jest.fn(),
-      removeAllListeners: jest.fn(),
-      setMaxListeners: jest.fn(),
-      getMaxListeners: jest.fn(),
-      listeners: jest.fn(),
-      rawListeners: jest.fn(),
-      listenerCount: jest.fn(),
-      prependListener: jest.fn(),
-      prependOnceListener: jest.fn(),
-      eventNames: jest.fn(),
     };
   });
 

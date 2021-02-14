@@ -8,6 +8,7 @@ import { TestFileParser } from "./TestFileParser";
 import { TestInTestFile } from "./TestInTestFile";
 import { TestResult, TestResultState } from "./TestResult";
 import { randomizeArray } from "./randomize";
+import { RuntimeEventEmitter } from "./RuntimeEventEmitter";
 
 jest.mock("./randomize");
 
@@ -49,21 +50,6 @@ describe("Runtime", () => {
 
     runner = {
       run: jest.fn(),
-      off: jest.fn(),
-      on: jest.fn(),
-      once: jest.fn(),
-      emit: jest.fn(),
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      removeAllListeners: jest.fn(),
-      setMaxListeners: jest.fn(),
-      getMaxListeners: jest.fn(),
-      listeners: jest.fn(),
-      rawListeners: jest.fn(),
-      listenerCount: jest.fn(),
-      prependListener: jest.fn(),
-      prependOnceListener: jest.fn(),
-      eventNames: jest.fn(),
     };
 
     config = new Config("")
@@ -85,7 +71,7 @@ describe("Runtime", () => {
 
   it("should locate, parse, run and report test results", async () => {
     when(runner.run as jest.Mock)
-      .calledWith([expectedTestInTestFile], expectedTestTimeout)
+      .calledWith([expectedTestInTestFile], expectedTestTimeout, runtime.events)
       .mockResolvedValueOnce([expectedTestResult]);
 
     const results = await runtime.run();
@@ -124,7 +110,11 @@ describe("Runtime", () => {
       config.globals.testGlobal = expectedValue;
 
       when(runner.run as jest.Mock)
-        .calledWith([expectedTestInTestFile], expectedTestTimeout)
+        .calledWith(
+          [expectedTestInTestFile],
+          expectedTestTimeout,
+          runtime.events
+        )
         .mockImplementation(() => {
           expect(global.testGlobal).toEqual(expectedValue);
         });
@@ -162,7 +152,8 @@ describe("Runtime", () => {
 
       expect(runner.run).toBeCalledWith(
         [expectedTestInTestFile],
-        expectedTestTimeout
+        expectedTestTimeout,
+        runtime.events
       );
     });
   });
@@ -193,12 +184,13 @@ describe("Runtime", () => {
         .mockResolvedValueOnce([expectedTestInTestFileB]);
     });
 
-    it("should filter test paths", async () => {
+    it("should filter test names", async () => {
       await runtime.run();
 
       expect(runner.run).toBeCalledWith(
         [expectedTestInTestFile],
-        expectedTestTimeout
+        expectedTestTimeout,
+        runtime.events
       );
     });
   });
@@ -210,12 +202,14 @@ describe("Runtime", () => {
 
       jest.spyOn(runner, "run");
 
-      (runner.run as jest.Mock).mockImplementation(() => {
-        runner.emit("runStart", [expectedTestInTestFile]);
-        runner.emit("testStart", expectedTestInTestFile);
-        runner.emit("testEnd", expectedTestInTestFile, expectedTestResult);
-        runner.emit("runEnd", [[expectedTestInTestFile, expectedTestResult]]);
-      });
+      (runner.run as jest.Mock).mockImplementation(
+        (_: any, __: any, events: RuntimeEventEmitter) => {
+          events.emit("runStart", [expectedTestInTestFile]);
+          events.emit("testStart", expectedTestInTestFile);
+          events.emit("testEnd", expectedTestInTestFile, expectedTestResult);
+          events.emit("runEnd", [[expectedTestInTestFile, expectedTestResult]]);
+        }
+      );
     });
 
     it("reemits runner runStart event", async () => {
@@ -274,12 +268,6 @@ describe("Runtime", () => {
       runner = new TestTestRunner();
       config.withRunner(runner);
       jest.spyOn(runner, "run");
-      (runner.run as jest.Mock).mockImplementation(() => {
-        runner.emit("runStart", [expectedTestInTestFile]);
-        runner.emit("testStart", expectedTestInTestFile);
-        runner.emit("testEnd", expectedTestInTestFile, expectedTestResult);
-        runner.emit("runEnd", [[expectedTestInTestFile, expectedTestResult]]);
-      });
 
       reporterA = new TestReporter();
       config.withReporter(reporterA);
@@ -296,6 +284,17 @@ describe("Runtime", () => {
       jest.spyOn(reporterB, "onRunEnd");
 
       runtime = new Runtime(config as ValidConfig);
+
+      runtime.events.emit("runStart", [expectedTestInTestFile]);
+      runtime.events.emit("testStart", expectedTestInTestFile);
+      runtime.events.emit(
+        "testEnd",
+        expectedTestInTestFile,
+        expectedTestResult
+      );
+      runtime.events.emit("runEnd", [
+        [expectedTestInTestFile, expectedTestResult],
+      ]);
     });
 
     it("should call onRunStart", async () => {
@@ -336,7 +335,7 @@ describe("Runtime", () => {
 });
 
 class TestTestRunner extends Runner {
-  run(_: TestInTestFile[]): Promise<[TestInTestFile, TestResult][]> {
-    throw new Error("Method not implemented.");
+  async run(): Promise<[TestInTestFile, TestResult][]> {
+    return [];
   }
 }

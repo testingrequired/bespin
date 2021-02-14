@@ -3,32 +3,34 @@ import {
   TestInTestFile,
   TestResult,
   TestExecutor,
+  RuntimeEventEmitter,
 } from "@testingrequired/bespin-core";
 
 export class AsyncRunner extends Runner {
   async run(
     testsInTestFiles: TestInTestFile[],
-    testTimeout: number
+    testTimeout: number,
+    events: RuntimeEventEmitter
   ): Promise<Array<[TestInTestFile, TestResult]>> {
     const executor = new TestExecutor();
 
-    this.emit("runStart", testsInTestFiles);
+    events.emit("runStart", testsInTestFiles);
 
     const results: Array<[TestInTestFile, TestResult]> = await Promise.all(
       testsInTestFiles.map(
         async (test): Promise<[TestInTestFile, TestResult]> => {
-          this.emit("testStart", test);
+          events.emit("testStart", test);
 
           const result = await executor.executeTest(test.testFn, testTimeout);
 
-          this.emit("testEnd", test, result);
+          events.emit("testEnd", test, result);
 
           return [test, result];
         }
       )
     );
 
-    this.emit("runEnd", results);
+    events.emit("runEnd", results);
 
     return results;
   }

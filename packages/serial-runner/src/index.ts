@@ -1,5 +1,6 @@
 import {
   Runner,
+  RuntimeEventEmitter,
   TestExecutor,
   TestInTestFile,
   TestResult,
@@ -8,25 +9,26 @@ import {
 export class SerialRunner extends Runner {
   async run(
     testsInTestFiles: TestInTestFile[],
-    testTimeout: number
+    testTimeout: number,
+    events: RuntimeEventEmitter
   ): Promise<[TestInTestFile, TestResult][]> {
     const executor = new TestExecutor();
 
-    this.emit("runStart", testsInTestFiles);
+    events.emit("runStart", testsInTestFiles);
 
     const results: Array<[TestInTestFile, TestResult]> = [];
 
     for (const test of testsInTestFiles) {
-      this.emit("testStart", test);
+      events.emit("testStart", test);
 
       const result = await executor.executeTest(test.testFn, testTimeout);
 
-      this.emit("testEnd", test, result);
+      events.emit("testEnd", test, result);
 
       results.push([test, result]);
     }
 
-    this.emit("runEnd", results);
+    events.emit("runEnd", results);
 
     return results;
   }
