@@ -259,8 +259,6 @@ describe("Runtime", () => {
   });
 
   describe("Reporters", () => {
-    class TestReporter extends Reporter {}
-
     let reporterA: Reporter;
     let reporterB: Reporter;
 
@@ -269,23 +267,12 @@ describe("Runtime", () => {
       config.withRunner(runner);
       jest.spyOn(runner, "run");
 
-      reporterA = new TestReporter();
-      config.withReporter(reporterA);
-      jest.spyOn(reporterA, "onRunStart");
-      jest.spyOn(reporterA, "onTestStart");
-      jest.spyOn(reporterA, "onTestEnd");
-      jest.spyOn(reporterA, "onRunEnd");
-
-      reporterB = new TestReporter();
-      config.withReporter(reporterB);
-      jest.spyOn(reporterB, "onRunStart");
-      jest.spyOn(reporterB, "onTestStart");
-      jest.spyOn(reporterB, "onTestEnd");
-      jest.spyOn(reporterB, "onRunEnd");
+      reporterA = testReporter();
+      reporterB = testReporter();
 
       runtime = new Runtime(config as ValidConfig);
 
-      runtime.events.emit("runStart", [expectedTestInTestFile]);
+      runtime.events.emit("runStart", config, [expectedTestInTestFile]);
       runtime.events.emit("testStart", expectedTestInTestFile);
       runtime.events.emit(
         "testEnd",
@@ -331,6 +318,18 @@ describe("Runtime", () => {
         [expectedTestInTestFile, expectedTestResult],
       ]);
     });
+
+    class TestReporter extends Reporter {}
+
+    function testReporter() {
+      const reporter = new TestReporter();
+      config.withReporter(reporter);
+      jest.spyOn(reporter, "onRunStart");
+      jest.spyOn(reporter, "onTestStart");
+      jest.spyOn(reporter, "onTestEnd");
+      jest.spyOn(reporter, "onRunEnd");
+      return reporter;
+    }
   });
 });
 
