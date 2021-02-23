@@ -10,10 +10,21 @@ export class SpecTestFileParser extends TestFileParser {
     delete require.cache[require.resolve(path)];
     spec.load(() => require(path));
 
-    const tests = spec.getTests();
+    const testsInTestFiles = spec.getTests().map(([testName]) => {
+      const spec = new Spec(global);
 
-    return tests.map(
-      ([testName, testfn]) => new TestInTestFile(path, testName, testfn)
-    );
+      delete require.cache[require.resolve(path)];
+      spec.load(() => require(path));
+
+      const foundTest = spec
+        .getTests()
+        .find(([testName2]) => testName2 === testName);
+
+      const testFn = foundTest?.[1] ?? (async () => {});
+
+      return new TestInTestFile(path, testName, testFn);
+    });
+
+    return testsInTestFiles;
   }
 }
