@@ -13,6 +13,7 @@ export class Runtime {
 
   constructor(private config: ValidConfig) {
     this.config.reporters.forEach((reporter) => {
+      this.events.on("runtimeStart", reporter.onRuntimeStart);
       this.events.on("runStart", reporter.onRunStart);
       this.events.on("testStart", reporter.onTestStart);
       this.events.on("testEnd", reporter.onTestEnd);
@@ -22,6 +23,8 @@ export class Runtime {
 
   async run(): Promise<Array<[TestInTestFile, TestResult]>> {
     const { locator, parser, settings, runner, globals } = this.config;
+
+    this.events.emit("runtimeStart", this.config);
 
     let testFilePaths = await locator.locateTestFilePaths();
 

@@ -1,10 +1,14 @@
 import { EventEmitter } from "events";
+import { ValidConfig } from "./Config";
 import { TestInTestFile } from "./TestInTestFile";
 import { TestResult } from "./TestResult";
 
 export class RuntimeEventEmitter extends EventEmitter {}
 
 export declare interface RuntimeEventEmitter {
+  emit(event: "runtimeStart", config: ValidConfig): boolean;
+  on(event: "runtimeStart", listener: (config: ValidConfig) => void): this;
+
   emit(event: "runStart", testsInTestFiles: Array<TestInTestFile>): boolean;
   on(
     event: "runStart",

@@ -16,7 +16,7 @@ export class CLIReporter extends Reporter {
     super();
   }
 
-  onRunStart(config: ValidConfig, testsInTestFiles: Array<TestInTestFile>) {
+  onRuntimeStart(config: ValidConfig) {
     const { print, meta } = this.toolbox;
 
     const { bold, underline, italic } = print.colors;
@@ -29,6 +29,35 @@ export class CLIReporter extends Reporter {
 
     print.info(`${underline("Config")}\n`);
 
+    print.table(
+      [
+        ["Field", "Value"],
+        ["Locator", config.locator.constructor.name],
+        ["Parser", config.parser.constructor.name],
+        ["Runner", config.runner.constructor.name],
+        ["Reporters", config.reporters.map(x => x.constructor.name).join(", ")]
+      ],
+      {
+        format: "markdown"
+      }
+    );
+
+    print.divider();
+
+    this.spinner = print.spin("Loading tests...");
+  }
+
+  onRunStart(testsInTestFiles: Array<TestInTestFile>) {
+    this.spinner.stop();
+
+    const { print } = this.toolbox;
+
+    const { underline } = print.colors;
+
+    print.divider();
+
+    print.info(`${underline("Tests")}\n`);
+
     const testFiles = Array.from(
       new Set(testsInTestFiles.map(x => x.testFilePath))
     );
@@ -36,10 +65,6 @@ export class CLIReporter extends Reporter {
     print.table(
       [
         ["Field", "Value"],
-        ["Locator", config.locator.constructor.name],
-        ["Parser", config.parser.constructor.name],
-        ["Runner", config.runner.constructor.name],
-        ["Reporters", config.reporters.map(x => x.constructor.name).join(", ")],
         ["Test Files", testFiles.length.toString()],
         ["Tests", testsInTestFiles.length.toString()]
       ],
@@ -47,8 +72,6 @@ export class CLIReporter extends Reporter {
         format: "markdown"
       }
     );
-
-    this.startTime = performance.now();
 
     print.divider();
 
