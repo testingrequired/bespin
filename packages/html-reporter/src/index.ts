@@ -15,7 +15,7 @@ export class HtmlReporter extends Reporter {
     super();
   }
 
-  onRunStart(config: ValidConfig) {
+  onRuntimeStart(config: ValidConfig) {
     this.config = config;
   }
 

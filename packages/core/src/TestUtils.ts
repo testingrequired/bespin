@@ -1,4 +1,5 @@
 import { Runner } from "./Runner";
+import { RuntimeEventEmitter } from "./RuntimeEventEmitter";
 import { TestInTestFile } from "./TestInTestFile";
 import { TestResult, TestResultState } from "./TestResult";
 
@@ -19,6 +20,8 @@ export function testRunner<T extends Runner>(
 
     let testsInTestFiles: Array<TestInTestFile>;
 
+    let events = new RuntimeEventEmitter();
+
     beforeEach(() => {
       testsInTestFiles = [
         createTestInTestFile("tests/1", "Test 1 A"),
@@ -32,11 +35,13 @@ export function testRunner<T extends Runner>(
     });
 
     it("should not throw an error", () => {
-      expect(() => runner.run(testsInTestFiles, 1000)).not.toThrowError();
+      expect(() =>
+        runner.run(testsInTestFiles, 1000, events)
+      ).not.toThrowError();
     });
 
     it("should execute all test functions", async () => {
-      await runner.run(testsInTestFiles, 1000);
+      await runner.run(testsInTestFiles, 1000, events);
 
       for (const testInTestFile of testsInTestFiles) {
         expect(testInTestFile.testFn).toHaveBeenCalledTimes(1);
@@ -46,9 +51,9 @@ export function testRunner<T extends Runner>(
     it("should emit runStart event", async () => {
       const event = jest.fn();
 
-      runner.on("runStart", event);
+      events.on("runStart", event);
 
-      await runner.run(testsInTestFiles, 1000);
+      await runner.run(testsInTestFiles, 1000, events);
 
       expect(event).toHaveBeenCalledTimes(1);
       expect(event).toHaveBeenCalledWith(testsInTestFiles);
@@ -57,9 +62,9 @@ export function testRunner<T extends Runner>(
     it("should emit testStart events", async () => {
       const event = jest.fn();
 
-      runner.on("testStart", event);
+      events.on("testStart", event);
 
-      await runner.run(testsInTestFiles, 1000);
+      await runner.run(testsInTestFiles, 1000, events);
 
       expect(event).toHaveBeenCalledTimes(testsInTestFiles.length);
 
@@ -68,12 +73,29 @@ export function testRunner<T extends Runner>(
       }
     });
 
+    it("should emit testEnd events", async () => {
+      const event = jest.fn();
+
+      events.on("testEnd", event);
+
+      await runner.run(testsInTestFiles, 1000, events);
+
+      expect(event).toHaveBeenCalledTimes(testsInTestFiles.length);
+
+      for (const testInTestFile of testsInTestFiles) {
+        expect(event).toHaveBeenCalledWith(testInTestFile, {
+          state: TestResultState.PASS,
+          time: expect.any(Number),
+        } as TestResult);
+      }
+    });
+
     it("should emit runEnd emit", async () => {
       const event = jest.fn();
 
-      runner.on("runEnd", event);
+      events.on("runEnd", event);
 
-      await runner.run(testsInTestFiles, 1000);
+      await runner.run(testsInTestFiles, 1000, events);
 
       expect(event).toHaveBeenCalledTimes(1);
       expect(event).toHaveBeenCalledWith([

@@ -1,4 +1,5 @@
 import {
+  RuntimeEventEmitter,
   TestInTestFile,
   TestResult,
   TestResultState,
@@ -25,6 +26,8 @@ jest.mock("./WorkerPool", () => {
 
 describe("ParallelRunner", () => {
   const expectedConfigFilePath = "expectedConfigFilePath";
+
+  const events = new RuntimeEventEmitter();
 
   let runner: ParallelRunner;
 
@@ -70,27 +73,27 @@ describe("ParallelRunner", () => {
 
     it("should emit runStart event", async () => {
       const event = jest.fn();
-      runner.on("runStart", event);
+      events.on("runStart", event);
 
-      await runner.run(expectedTestInTestFiles);
+      await runner.run(expectedTestInTestFiles, 1000, events);
 
       expect(event).toBeCalledWith(expectedTestInTestFiles);
     });
 
     it("should emit testStart event", async () => {
       const event = jest.fn();
-      runner.on("testStart", event);
+      events.on("testStart", event);
 
-      await runner.run(expectedTestInTestFiles);
+      await runner.run(expectedTestInTestFiles, 1000, events);
 
       expect(event).toBeCalledWith(expectedTestInTestFile);
     });
 
     it("should emit testEnd event", async () => {
       const event = jest.fn();
-      runner.on("testEnd", event);
+      events.on("testEnd", event);
 
-      await runner.run(expectedTestInTestFiles);
+      await runner.run(expectedTestInTestFiles, 1000, events);
 
       expect(event).toBeCalledWith(
         {
@@ -103,9 +106,9 @@ describe("ParallelRunner", () => {
 
     it("should emit runEnd event", async () => {
       const event = jest.fn();
-      runner.on("runEnd", event);
+      events.on("runEnd", event);
 
-      await runner.run(expectedTestInTestFiles);
+      await runner.run(expectedTestInTestFiles, 1000, events);
 
       expect(event).toBeCalledWith([
         [
@@ -119,7 +122,7 @@ describe("ParallelRunner", () => {
     });
 
     it("should return results", async () => {
-      const results = await runner.run(expectedTestInTestFiles);
+      const results = await runner.run(expectedTestInTestFiles, 1000, events);
 
       expect(results).toStrictEqual([
         [

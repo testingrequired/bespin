@@ -18,7 +18,12 @@ export class DebugReporter extends Reporter {
   }
 
   // @ts-ignore: Unused argument/s
-  onRunStart(config: ValidConfig, testsInTestFiles: TestInTestFile[]): void {
+  onRuntimeStart(config: ValidConfig) {
+    debugger;
+  }
+
+  // @ts-ignore: Unused argument/s
+  onRunStart(testsInTestFiles: TestInTestFile[]): void {
     debugger;
   }
 
