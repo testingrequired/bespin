@@ -44,6 +44,7 @@ export class CLIReporter extends Reporter {
 
     print.divider();
 
+    this.startTime = performance.now();
     this.spinner = print.spin("Loading tests...");
   }
 
