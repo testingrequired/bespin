@@ -7,11 +7,17 @@ if (isMainThread) {
 
 const executor = new TestExecutor();
 
+declare var global: any;
+
 parentPort?.on("message", async (data: any) => {
   const { testInTestFile, configFilePath } = data;
   const { testFilePath, testName } = testInTestFile;
 
   const configFile = await Config.load(configFilePath);
+
+  Object.entries(configFile.globals).forEach(([key, value]) => {
+    global[key] = value;
+  });
 
   const tests = await configFile.parser.getTests(testFilePath);
 
@@ -23,6 +29,10 @@ parentPort?.on("message", async (data: any) => {
       configFile.settings.testTimeout
     );
 
-    parentPort?.postMessage([testInTestFile, result]);
+    parentPort?.postMessage([{ testFilePath, testName }, result]);
   }
+
+  Object.entries(configFile.globals).forEach(([key]) => {
+    delete global[key];
+  });
 });

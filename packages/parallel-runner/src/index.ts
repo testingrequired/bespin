@@ -62,7 +62,7 @@ export class ParallelRunner extends Runner {
         const testFilePath = join(process.cwd(), testInTestFile.testFilePath);
 
         const testInTestFileForWorker = {
-          ...testInTestFile,
+          testName: testInTestFile.testName,
           testFilePath,
         };
 

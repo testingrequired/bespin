@@ -52,7 +52,7 @@ export class Runtime {
       testsInTestFiles = randomizeArray(testsInTestFiles);
     }
 
-    const results = runner.run(
+    const results = await runner.run(
       testsInTestFiles,
       settings.testTimeout,
       this.events
