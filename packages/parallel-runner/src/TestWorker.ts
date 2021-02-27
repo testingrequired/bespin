@@ -1,5 +1,9 @@
 import { isMainThread, parentPort } from "worker_threads";
-import { Config, TestExecutor } from "@testingrequired/bespin-core";
+import {
+  Config,
+  TestExecutor,
+  withGlobals,
+} from "@testingrequired/bespin-core";
 
 if (isMainThread) {
   throw new Error("Test worker can not run on main thread");
@@ -15,24 +19,18 @@ parentPort?.on("message", async (data: any) => {
 
   const configFile = await Config.load(configFilePath);
 
-  Object.entries(configFile.globals).forEach(([key, value]) => {
-    global[key] = value;
-  });
+  withGlobals(configFile.globals, async () => {
+    const tests = await configFile.parser.getTests(testFilePath);
 
-  const tests = await configFile.parser.getTests(testFilePath);
+    const test = tests.find((t) => t.testName === testName);
 
-  const test = tests.find((t) => t.testName === testName);
+    if (test) {
+      const result = await executor.executeTest(
+        test.testFn,
+        configFile.settings.testTimeout
+      );
 
-  if (test) {
-    const result = await executor.executeTest(
-      test.testFn,
-      configFile.settings.testTimeout
-    );
-
-    parentPort?.postMessage([{ testFilePath, testName }, result]);
-  }
-
-  Object.entries(configFile.globals).forEach(([key]) => {
-    delete global[key];
+      parentPort?.postMessage([{ testFilePath, testName }, result]);
+    }
   });
 });

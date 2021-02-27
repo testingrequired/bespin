@@ -5,8 +5,7 @@ import { ValidConfig } from "./Config";
 import { randomizeArray } from "./randomize";
 import minimatch from "minimatch";
 import { RuntimeEventEmitter } from "./RuntimeEventEmitter";
-
-declare var global: any;
+import { withGlobals } from "./withGlobals";
 
 export class Runtime {
   public events: EventEmitter = new RuntimeEventEmitter();
@@ -34,34 +33,22 @@ export class Runtime {
       );
     }
 
-    Object.entries(globals).forEach(([key, value]) => {
-      global[key] = value;
+    return withGlobals(globals, async () => {
+      let testsInTestFiles = await Promise.all(
+        testFilePaths.map((path) => parser.getTests(path))
+      ).then((files) => files.flat());
+
+      if (settings.testNameFilter) {
+        testsInTestFiles = testsInTestFiles.filter((test) =>
+          test.testName.includes(settings.testNameFilter as string)
+        );
+      }
+
+      if (settings.randomizeTests) {
+        testsInTestFiles = randomizeArray(testsInTestFiles);
+      }
+
+      return runner.run(testsInTestFiles, settings.testTimeout, this.events);
     });
-
-    let testsInTestFiles = await Promise.all(
-      testFilePaths.map((path) => parser.getTests(path))
-    ).then((files) => files.flat());
-
-    if (settings.testNameFilter) {
-      testsInTestFiles = testsInTestFiles.filter((test) =>
-        test.testName.includes(settings.testNameFilter as string)
-      );
-    }
-
-    if (settings.randomizeTests) {
-      testsInTestFiles = randomizeArray(testsInTestFiles);
-    }
-
-    const results = await runner.run(
-      testsInTestFiles,
-      settings.testTimeout,
-      this.events
-    );
-
-    Object.entries(globals).forEach(([key]) => {
-      delete global[key];
-    });
-
-    return results;
   }
 }
