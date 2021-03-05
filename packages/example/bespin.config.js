@@ -1,4 +1,4 @@
-const { Config } = require("@testingrequired/bespin-core");
+const { Config, Events } = require("@testingrequired/bespin-core");
 const {
   GlobTestFileLocator,
 } = require("@testingrequired/bespin-glob-test-file-locator");

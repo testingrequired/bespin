@@ -4,6 +4,7 @@ import {
   TestExecutor,
   TestInTestFile,
   TestResult,
+  Events,
 } from "@testingrequired/bespin-core";
 
 export class SerialRunner extends Runner {
@@ -14,21 +15,21 @@ export class SerialRunner extends Runner {
   ): Promise<[TestInTestFile, TestResult][]> {
     const executor = new TestExecutor();
 
-    events.emit("runStart", testsInTestFiles);
+    events.emit(Events.runStart, testsInTestFiles);
 
     const results: Array<[TestInTestFile, TestResult]> = [];
 
     for (const test of testsInTestFiles) {
-      events.emit("testStart", test);
+      events.emit(Events.testStart, test);
 
       const result = await executor.executeTest(test.testFn, testTimeout);
 
-      events.emit("testEnd", test, result);
+      events.emit(Events.testEnd, test, result);
 
       results.push([test, result]);
     }
 
-    events.emit("runEnd", results);
+    events.emit(Events.runEnd, results);
 
     return results;
   }

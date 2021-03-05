@@ -3,37 +3,51 @@ import { ValidConfig } from "./Config";
 import { TestInTestFile } from "./TestInTestFile";
 import { TestResult } from "./TestResult";
 
+export enum Events {
+  runtimeStart = "runtimeStart",
+  runStart = "runStart",
+  testStart = "testStart",
+  testEnd = "testEnd",
+  runEnd = "runEnd",
+}
+
 export class RuntimeEventEmitter extends EventEmitter {}
 
 export declare interface RuntimeEventEmitter {
-  emit(event: "runtimeStart", config: ValidConfig): boolean;
-  on(event: "runtimeStart", listener: (config: ValidConfig) => void): this;
+  emit(event: Events.runtimeStart, config: ValidConfig): boolean;
+  on(event: Events.runtimeStart, listener: (config: ValidConfig) => void): this;
 
-  emit(event: "runStart", testsInTestFiles: Array<TestInTestFile>): boolean;
+  emit(
+    event: Events.runStart,
+    testsInTestFiles: Array<TestInTestFile>
+  ): boolean;
   on(
-    event: "runStart",
+    event: Events.runStart,
     listener: (testsInTestFiles: Array<TestInTestFile>) => void
   ): this;
 
-  emit(event: "testStart", testsInTestFile: TestInTestFile): boolean;
+  emit(event: Events.testStart, testsInTestFile: TestInTestFile): boolean;
   on(
-    event: "testStart",
+    event: Events.testStart,
     listener: (testsInTestFile: TestInTestFile) => void
   ): this;
 
   emit(
-    event: "testEnd",
+    event: Events.testEnd,
     testInTestFile: TestInTestFile,
     result: TestResult
   ): boolean;
   on(
-    event: "testEnd",
+    event: Events.testEnd,
     listener: (testInTestFile: TestInTestFile, result: TestResult) => void
   ): this;
 
-  emit(event: "runEnd", results: Array<[TestInTestFile, TestResult]>): boolean;
+  emit(
+    event: Events.runEnd,
+    results: Array<[TestInTestFile, TestResult]>
+  ): boolean;
   on(
-    event: "runEnd",
+    event: Events.runEnd,
     listener: (results: Array<[TestInTestFile, TestResult]>) => void
   ): this;
 }

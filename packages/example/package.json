@@ -21,7 +21,8 @@
     "@testingrequired/bespin-parallel-runner": "0.1.0",
     "@testingrequired/bespin-spec-test-file-parser": "0.1.0",
     "@testingrequired/bespin-serial-runner": "0.1.0",
-    "@testingrequired/bespin-html-report": "0.1.0"
+    "@testingrequired/bespin-html-report": "0.1.0",
+    "@testingrequired/bespin-debug-reporter": "0.1.0"
   },
   "devDependencies": {
     "@types/jest-when": "^2.7.2",

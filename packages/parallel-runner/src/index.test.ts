@@ -3,6 +3,7 @@ import {
   TestInTestFile,
   TestResult,
   TestResultState,
+  Events,
 } from "@testingrequired/bespin-core";
 import { ParallelRunner } from ".";
 
@@ -73,7 +74,7 @@ describe("ParallelRunner", () => {
 
     it("should emit runStart event", async () => {
       const event = jest.fn();
-      events.on("runStart", event);
+      events.on(Events.runStart, event);
 
       await runner.run(expectedTestInTestFiles, 1000, events);
 
@@ -82,7 +83,7 @@ describe("ParallelRunner", () => {
 
     it("should emit testStart event", async () => {
       const event = jest.fn();
-      events.on("testStart", event);
+      events.on(Events.testStart, event);
 
       await runner.run(expectedTestInTestFiles, 1000, events);
 
@@ -91,7 +92,7 @@ describe("ParallelRunner", () => {
 
     it("should emit testEnd event", async () => {
       const event = jest.fn();
-      events.on("testEnd", event);
+      events.on(Events.testEnd, event);
 
       await runner.run(expectedTestInTestFiles, 1000, events);
 
@@ -106,7 +107,7 @@ describe("ParallelRunner", () => {
 
     it("should emit runEnd event", async () => {
       const event = jest.fn();
-      events.on("runEnd", event);
+      events.on(Events.runEnd, event);
 
       await runner.run(expectedTestInTestFiles, 1000, events);
 

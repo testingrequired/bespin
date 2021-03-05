@@ -1,5 +1,5 @@
 import { Runner } from "./Runner";
-import { RuntimeEventEmitter } from "./RuntimeEventEmitter";
+import { Events, RuntimeEventEmitter } from "./RuntimeEventEmitter";
 import { TestInTestFile } from "./TestInTestFile";
 import { TestResult, TestResultState } from "./TestResult";
 
@@ -51,7 +51,7 @@ export function testRunner<T extends Runner>(
     it("should emit runStart event", async () => {
       const event = jest.fn();
 
-      events.on("runStart", event);
+      events.on(Events.runStart, event);
 
       await runner.run(testsInTestFiles, 1000, events);
 
@@ -62,7 +62,7 @@ export function testRunner<T extends Runner>(
     it("should emit testStart events", async () => {
       const event = jest.fn();
 
-      events.on("testStart", event);
+      events.on(Events.testStart, event);
 
       await runner.run(testsInTestFiles, 1000, events);
 
@@ -76,7 +76,7 @@ export function testRunner<T extends Runner>(
     it("should emit testEnd events", async () => {
       const event = jest.fn();
 
-      events.on("testEnd", event);
+      events.on(Events.testEnd, event);
 
       await runner.run(testsInTestFiles, 1000, events);
 
@@ -93,7 +93,7 @@ export function testRunner<T extends Runner>(
     it("should emit runEnd emit", async () => {
       const event = jest.fn();
 
-      events.on("runEnd", event);
+      events.on(Events.runEnd, event);
 
       await runner.run(testsInTestFiles, 1000, events);
 

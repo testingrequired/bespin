@@ -8,7 +8,7 @@ import { TestFileParser } from "./TestFileParser";
 import { TestInTestFile } from "./TestInTestFile";
 import { TestResult, TestResultState } from "./TestResult";
 import { randomizeArray } from "./randomize";
-import { RuntimeEventEmitter } from "./RuntimeEventEmitter";
+import { Events, RuntimeEventEmitter } from "./RuntimeEventEmitter";
 
 jest.mock("./randomize");
 
@@ -204,10 +204,16 @@ describe("Runtime", () => {
 
       (runner.run as jest.Mock).mockImplementation(
         (_: any, __: any, events: RuntimeEventEmitter) => {
-          events.emit("runStart", [expectedTestInTestFile]);
-          events.emit("testStart", expectedTestInTestFile);
-          events.emit("testEnd", expectedTestInTestFile, expectedTestResult);
-          events.emit("runEnd", [[expectedTestInTestFile, expectedTestResult]]);
+          events.emit(Events.runStart, [expectedTestInTestFile]);
+          events.emit(Events.testStart, expectedTestInTestFile);
+          events.emit(
+            Events.testEnd,
+            expectedTestInTestFile,
+            expectedTestResult
+          );
+          events.emit(Events.runEnd, [
+            [expectedTestInTestFile, expectedTestResult],
+          ]);
         }
       );
     });
@@ -215,7 +221,7 @@ describe("Runtime", () => {
     it("reemits runner runStart event", async () => {
       const runStartListener = jest.fn();
 
-      runtime.events.on("runStart", runStartListener);
+      runtime.events.on(Events.runStart, runStartListener);
 
       await runtime.run();
 
@@ -225,7 +231,7 @@ describe("Runtime", () => {
     it("reemits runner startStart events", async () => {
       const testStartListener = jest.fn();
 
-      runtime.events.on("testStart", testStartListener);
+      runtime.events.on(Events.testStart, testStartListener);
 
       await runtime.run();
 
@@ -235,7 +241,7 @@ describe("Runtime", () => {
     it("reemits runner testEnd events", async () => {
       const testEndListener = jest.fn();
 
-      runtime.events.on("testEnd", testEndListener);
+      runtime.events.on(Events.testEnd, testEndListener);
 
       await runtime.run();
 
@@ -248,7 +254,7 @@ describe("Runtime", () => {
     it("reemits runner events", async () => {
       const runEndListener = jest.fn();
 
-      runtime.events.on("runEnd", runEndListener);
+      runtime.events.on(Events.runEnd, runEndListener);
 
       await runtime.run();
 
@@ -272,27 +278,22 @@ describe("Runtime", () => {
 
       runtime = new Runtime(config as ValidConfig);
 
-      runtime.events.emit("runStart", config, [expectedTestInTestFile]);
-      runtime.events.emit("testStart", expectedTestInTestFile);
+      runtime.events.emit(Events.runStart, [expectedTestInTestFile]);
+      runtime.events.emit(Events.testStart, expectedTestInTestFile);
       runtime.events.emit(
-        "testEnd",
+        Events.testEnd,
         expectedTestInTestFile,
         expectedTestResult
       );
-      runtime.events.emit("runEnd", [
+      runtime.events.emit(Events.runEnd, [
         [expectedTestInTestFile, expectedTestResult],
       ]);
     });
 
     it("should call onRunStart", async () => {
       await runtime.run();
-      expect(reporterA.onRunStart).toBeCalledWith(config, [
-        expectedTestInTestFile,
-      ]);
-
-      expect(reporterB.onRunStart).toBeCalledWith(config, [
-        expectedTestInTestFile,
-      ]);
+      expect(reporterA.onRunStart).toBeCalledWith([expectedTestInTestFile]);
+      expect(reporterB.onRunStart).toBeCalledWith([expectedTestInTestFile]);
     });
 
     it("should call onTestStart", async () => {

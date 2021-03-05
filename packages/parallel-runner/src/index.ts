@@ -5,6 +5,7 @@ import {
   RuntimeEventEmitter,
   TestInTestFile,
   TestResult,
+  Events,
 } from "@testingrequired/bespin-core";
 import { WorkerPool } from "./WorkerPool";
 import { workerPath } from "./workerPath";
@@ -37,7 +38,7 @@ export class ParallelRunner extends Runner {
       Math.min(testsInTestFiles.length, os.cpus().length, this.numberOfWorkers)
     );
 
-    events.emit("runStart", testsInTestFiles);
+    events.emit(Events.runStart, testsInTestFiles);
 
     const workers = testsInTestFiles.map((testInTestFile) =>
       this.runTestInTestFile(pool, testInTestFile, events)
@@ -45,7 +46,7 @@ export class ParallelRunner extends Runner {
 
     const results = await Promise.all(workers);
 
-    events.emit("runEnd", results);
+    events.emit(Events.runEnd, results);
 
     return results;
   }
@@ -57,7 +58,7 @@ export class ParallelRunner extends Runner {
   ): Promise<WorkerResult> {
     return pool
       .run(() => {
-        events.emit("testStart", testInTestFile);
+        events.emit(Events.testStart, testInTestFile);
 
         const testFilePath = join(process.cwd(), testInTestFile.testFilePath);
 
@@ -89,7 +90,7 @@ export class ParallelRunner extends Runner {
           testFn: testInTestFile.testFn,
         };
 
-        events.emit("testEnd", fixedTestInTestFile, result);
+        events.emit(Events.testEnd, fixedTestInTestFile, result);
 
         return [fixedTestInTestFile, result];
       });
