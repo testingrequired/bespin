@@ -54,6 +54,10 @@ export class Mock<Fn extends (...args: any) => any> {
     this.calls.find(x => x == args);
   }
 
+  toString() {
+    return `mocked function: "${this.functionToMock.name}"`;
+  }
+
   get fn(): Fn {
     const fn: any = (...args: Parameters<Fn>) => {
       this.calls.push(args);
@@ -64,9 +68,7 @@ export class Mock<Fn extends (...args: any) => any> {
 
       if (!when) {
         throw new Error(
-          `mocked function: "${
-            this.functionToMock.name
-          }" has no matching setup for: ${JSON.stringify(args)}`
+          `${this} has no matching setup for: ${JSON.stringify(args)}`
         );
       }
 
