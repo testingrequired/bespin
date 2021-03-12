@@ -65,8 +65,12 @@ export class Mock<Fn extends (...args: any) => any> {
     this.calls.find(x => x == args);
   }
 
+  get name() {
+    return this.functionToMock.name;
+  }
+
   toString() {
-    return `mocked function: "${this.functionToMock.name}"`;
+    return `mocked function: "${this.name}"`;
   }
 
   get fn(): Fn {
@@ -96,10 +100,7 @@ export class Mock<Fn extends (...args: any) => any> {
     };
 
     Object.defineProperty(fn, 'name', {
-      value:
-        this.functionToMock.name === ''
-          ? 'anonymous lambda'
-          : this.functionToMock.name,
+      value: this.name === '' ? 'anonymous lambda' : this.name,
       writable: false,
     });
 
