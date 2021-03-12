@@ -18,7 +18,7 @@ export class When<ArgsT, ValueT> {
     return new When<ArgsT, ValueT>(args, WhenAction.ERROR, value);
   }
 
-  getValue(): ValueT | Promise<ValueT> {
+  getValue(): ValueT {
     switch (this.action) {
       case WhenAction.RETURN:
         return this.value as ValueT;
@@ -33,8 +33,9 @@ export class When<ArgsT, ValueT> {
 }
 
 export class Mock<Fn extends (...args: any) => any> {
-  private calls: Array<Parameters<Fn>> = [];
-  private returns: Array<When<Parameters<Fn>, ReturnType<Fn>>> = [];
+  private _calls: Array<Parameters<Fn>> = [];
+  private _returns: Array<ReturnType<Fn>> = [];
+  private whens: Array<When<Parameters<Fn>, ReturnType<Fn>>> = [];
 
   constructor(private functionToMock: Fn) {
     if (typeof functionToMock !== 'function') {
@@ -50,19 +51,27 @@ export class Mock<Fn extends (...args: any) => any> {
   }
 
   when(when: When<Parameters<Fn>, ReturnType<Fn>>) {
-    this.returns.push(when);
+    this.whens.push(when);
   }
 
   whenCalledWithThenReturn(args: Parameters<Fn>, value: ReturnType<Fn>) {
-    this.returns.push(When.calledWithThenReturn(args, value));
+    this.whens.push(When.calledWithThenReturn(args, value));
   }
 
   whenCalledWithThenThrow(args: Parameters<Fn>, value: Error) {
-    this.returns.push(When.calledWithThenThrow(args, value));
+    this.whens.push(When.calledWithThenThrow(args, value));
   }
 
   verify(args: Parameters<Fn>) {
-    this.calls.find(x => x == args);
+    this._calls.find(x => x == args);
+  }
+
+  get calls() {
+    return this._calls;
+  }
+
+  get returns() {
+    return this._returns;
   }
 
   get name() {
@@ -75,9 +84,9 @@ export class Mock<Fn extends (...args: any) => any> {
 
   get fn(): Fn {
     const fn: any = (...args: Parameters<Fn>) => {
-      this.calls.push(args);
+      this._calls.push(args);
 
-      const when = this.returns.find(when =>
+      const when = this.whens.find(when =>
         when.args.every((arg: string, i: number) => {
           return arg === args[i];
         })
@@ -96,7 +105,11 @@ export class Mock<Fn extends (...args: any) => any> {
         throw new Error(`${this} has no matching setup for: [${typesString}]`);
       }
 
-      return when.getValue();
+      const value = when.getValue();
+
+      this._returns.push(value);
+
+      return value;
     };
 
     Object.defineProperty(fn, 'name', {

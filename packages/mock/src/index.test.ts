@@ -147,6 +147,58 @@ describe('Mock', () => {
 
             expect(mock.fn('')).toEqual(100);
           });
+
+          it('should return value from first when if there are multiple', async () => {
+            function test(_: string): number {
+              return 10;
+            }
+
+            const mock = Mock.of(test);
+
+            mock.whenCalledWithThenReturn([''], 100);
+            mock.whenCalledWithThenReturn([''], 1000);
+
+            expect(mock.fn('')).toEqual(100);
+          });
+
+          describe('calls', () => {
+            it('should have record of all calls made', () => {
+              function test(_: number) {}
+
+              const mock = Mock.of(test);
+
+              mock.whenCalledWithThenReturn([1]);
+              mock.whenCalledWithThenReturn([2]);
+              mock.whenCalledWithThenReturn([3]);
+
+              mock.fn(1);
+              mock.fn(2);
+              mock.fn(3);
+
+              expect(mock.calls).toStrictEqual([[1], [2], [3]]);
+            });
+          });
+
+          describe('returns', () => {
+            it('should have record of all calls made', () => {
+              function test(_: string): number {
+                return NaN;
+              }
+
+              const mock = Mock.of(test);
+
+              mock.whenCalledWithThenReturn(['a'], 1);
+              mock.whenCalledWithThenReturn(['b'], 2);
+              mock.whenCalledWithThenReturn(['c'], 3);
+
+              mock.fn('a');
+              mock.fn('b');
+              mock.fn('b');
+              mock.fn('c');
+
+              expect(mock.returns).toStrictEqual([1, 2, 2, 3]);
+            });
+          });
         });
 
         describe('whenCalledWithThenThrow', () => {
