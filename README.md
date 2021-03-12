@@ -103,6 +103,7 @@ $ bespin
 - [@testingrequired/bespin-spec-test-file-parser](./packages/spec-test-file-parser) Parse test files with describe/it syntax
 - [@testingrequired/bespin-junit-reporter](./packages/junit-reporter) Write test results to a JUnit file
 - [@testingrequired/bespin-html-reporter](./packages/html-reporter) Write test results to a HTML file
+- [@testingrequired/bespin-debug-reporter](./packages/debug-reporter) Debug breakpoints and logging reporter events
 
 ## Development
 
