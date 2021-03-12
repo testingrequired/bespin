@@ -92,6 +92,7 @@ $ bespin
 - [@testingrequired/bespin-core](./packages/core) Core library for framework primitives
 - [@testingrequired/bespin-cli](./packages/cli) Command line application to run tests
 - [example](./packages/example) An example integration project
+- [@testingrequired/bespin-mock](./packages/mock) Mocking library
 
 ### Addons
 

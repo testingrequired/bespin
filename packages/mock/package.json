@@ -31,7 +31,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "mock",
+  "name": "@testingrequired/bespin-mock",
   "author": "Kylee Tilley",
   "module": "dist/mock.esm.js",
   "size-limit": [
