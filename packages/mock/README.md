@@ -1,4 +1,4 @@
-# bespin glob test file locator
+# bespin mock
 
 Mocking library
 
