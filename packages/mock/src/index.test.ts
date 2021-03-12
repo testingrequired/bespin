@@ -1,69 +1,172 @@
 import { Mock } from './index';
 
 describe('Mock', () => {
-  async function test(_: string): Promise<number> {
-    return 10;
-  }
+  describe('Construct', () => {
+    it('should not error if named function', () => {
+      expect(() => Mock.of(function test() {})).not.toThrowError();
+    });
 
-  it('has original function name', () => {
-    function test(_: string): number {
-      return 10;
-    }
+    it('should not error if named lambda', () => {
+      const test = () => {};
+      expect(() => Mock.of(test)).not.toThrowError();
+    });
 
-    const mock = Mock.of(test);
+    it('should not error if method', () => {
+      const obj = { test() {} };
+      expect(() => Mock.of(obj.test)).not.toThrowError();
+    });
 
-    expect(mock.fn.name).toBe('test');
-  });
+    it('should not error if anonymous lambda', () => {
+      expect(() => Mock.of(() => {})).not.toThrowError();
+    });
 
-  it('works with a method', () => {
-    class TestClass {
-      getValue() {
-        return 'wrongValue';
-      }
-    }
+    it('should error if a number', () => {
+      expect(() => Mock.of(123 as any)).toThrowError(
+        "Must pass a function to mock. Received 'number'"
+      );
+    });
 
-    const mock = Mock.of(new TestClass().getValue);
+    it('should error if a string', () => {
+      expect(() => Mock.of('' as any)).toThrowError(
+        "Must pass a function to mock. Received 'string'"
+      );
+    });
 
-    mock.whenCalledWithThenReturn([], 'rightValue');
+    it('should error if a object', () => {
+      expect(() => Mock.of({} as any)).toThrowError(
+        "Must pass a function to mock. Received 'object'"
+      );
+    });
 
-    expect(mock.fn()).toBe('rightValue');
-  });
-
-  describe('when call does not match when setup', () => {
-    it('should throw', () => {
-      function test(_: string): number {
-        return 10;
-      }
-
-      const mock = Mock.of(test);
-
-      expect(() => {
-        mock.fn('');
-      }).toThrowError(
-        'mocked function: "test" has no matching setup for: [""]'
+    it('should error if a array', () => {
+      expect(() => Mock.of([] as any)).toThrowError(
+        "Must pass a function to mock. Received 'array'"
       );
     });
   });
 
-  describe('when call matches when setup', () => {
-    it('should return value', async () => {
-      function test(_: string): number {
-        return 10;
-      }
+  describe('fn', () => {
+    describe('name', () => {
+      it('should work with named functions', () => {
+        function test() {}
 
-      const mock = Mock.of(test);
+        const mock = Mock.of(test);
 
-      mock.whenCalledWithThenReturn([''], 100);
+        expect(mock.fn.name).toBe('test');
+      });
 
-      expect(mock.fn('')).toEqual(100);
+      it('should work with named lambdas', () => {
+        const testLambda = () => {};
+
+        const mock = Mock.of(testLambda);
+
+        expect(mock.fn.name).toBe('testLambda');
+      });
+
+      it('should work with methods', () => {
+        const obj = {
+          testMethod() {},
+        };
+
+        const mock = Mock.of(obj.testMethod);
+
+        expect(mock.fn.name).toBe('testMethod');
+      });
+
+      it('should work with anonymous lambda', () => {
+        const mock = Mock.of(() => {});
+
+        expect(mock.fn.name).toBe('anonymous lambda');
+      });
     });
 
-    it('should return promise value', async () => {
-      const mock = Mock.of(test);
+    describe('call', () => {
+      describe('when does not match when setup', () => {
+        it('should throw if value doesnt match', () => {
+          function test(_: string): number {
+            return 10;
+          }
 
-      mock.whenCalledWithThenReturn([''], Promise.resolve(100));
+          const mock = Mock.of(test);
 
-      expect(await mock.fn('')).toEqual(100);
+          expect(() => {
+            mock.fn('');
+          }).toThrowError(
+            'mocked function: "test" has no matching setup for: [String("")]'
+          );
+        });
+
+        it('should throw if reference doesnt match', () => {
+          class CustomThing {
+            // @ts-ignore
+            constructor(private value: string) {}
+          }
+
+          function test(_: number, __: CustomThing, ___: string) {}
+
+          const mock = Mock.of(test);
+
+          const custom = new CustomThing('foo');
+
+          mock.whenCalledWithThenReturn([100, custom, 'stringValue']);
+
+          const custom2 = new CustomThing('bar');
+
+          expect(() => {
+            mock.fn(100, custom2, '');
+          }).toThrowError(
+            'mocked function: "test" has no matching setup for: [Number(100), CustomThing({"value":"bar"}), String("")]'
+          );
+        });
+      });
+
+      describe('when matches when setup', () => {
+        describe('whenCalledWithThenReturn', () => {
+          it('should not throw', async () => {
+            function test(_: string): number {
+              return 10;
+            }
+
+            const mock = Mock.of(test);
+
+            mock.whenCalledWithThenReturn([''], 100);
+
+            expect(() => {
+              mock.fn('');
+            }).not.toThrowError();
+          });
+
+          it('should return value', async () => {
+            function test(_: string): number {
+              return 10;
+            }
+
+            const mock = Mock.of(test);
+
+            mock.whenCalledWithThenReturn([''], 100);
+
+            expect(mock.fn('')).toEqual(100);
+          });
+        });
+
+        describe('whenCalledWithThenThrow', () => {
+          it('should throw', async () => {
+            function test(_: string): number {
+              return 10;
+            }
+
+            const mock = Mock.of(test);
+
+            const expectedError = new Error('Expected Error');
+
+            mock.whenCalledWithThenThrow([''], expectedError);
+
+            expect(() => {
+              mock.fn('');
+            }).toThrowError(expectedError);
+          });
+        });
+      });
     });
   });
 });
