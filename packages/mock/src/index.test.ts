@@ -201,6 +201,34 @@ describe('Mock', () => {
           });
         });
 
+        describe('whenCalledWithJustRuns', () => {
+          it('should not throw', async () => {
+            function test(_: string): number {
+              return 10;
+            }
+
+            const mock = Mock.of(test);
+
+            mock.whenCalledWithJustRuns(['']);
+
+            expect(() => {
+              mock.fn('');
+            }).not.toThrowError();
+          });
+
+          it('should return undefined', () => {
+            function test(_: string): number {
+              return 10;
+            }
+
+            const mock = Mock.of(test);
+
+            mock.whenCalledWithJustRuns(['']);
+
+            expect(mock.fn('')).toBeUndefined();
+          });
+        });
+
         describe('whenCalledWithThenThrow', () => {
           it('should throw', async () => {
             function test(_: string): number {

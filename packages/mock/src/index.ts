@@ -14,6 +14,10 @@ export class When<ArgsT, ValueT> {
     return new When<ArgsT, ValueT>(args, WhenAction.RETURN, value);
   }
 
+  static calledWithJustRuns<ArgsT, ValueT>(args: ArgsT) {
+    return new When<ArgsT, ValueT>(args, WhenAction.RETURN, undefined as any);
+  }
+
   static calledWithThenThrow<ArgsT, ValueT>(args: ArgsT, value: Error) {
     return new When<ArgsT, ValueT>(args, WhenAction.ERROR, value);
   }
@@ -60,6 +64,10 @@ export class Mock<Fn extends (...args: any) => any> {
 
   whenCalledWithThenThrow(args: Parameters<Fn>, value: Error) {
     this.whens.push(When.calledWithThenThrow(args, value));
+  }
+
+  whenCalledWithJustRuns(args: Parameters<Fn>) {
+    this.whens.push(When.calledWithJustRuns(args));
   }
 
   verify(args: Parameters<Fn>) {
