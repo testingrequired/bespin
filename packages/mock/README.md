@@ -20,4 +20,6 @@ const mockGetName = Mock.of(getName);
 mockGetName.whenCalledWithThenReturn([], 'Universe');
 
 const greeting = getGreeting(mockGetName.fn); // 'Hello Universe'
+
+mockGetName.verify([]);
 ```
