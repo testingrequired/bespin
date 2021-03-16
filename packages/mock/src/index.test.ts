@@ -1,4 +1,4 @@
-import { Mock } from './index';
+import { Mock, mockObject } from './index';
 
 describe('Mock', () => {
   describe('Construct', () => {
@@ -317,5 +317,21 @@ describe('Mock', () => {
         'mocked function: "test" has no calls for the following setups: [String("foo")] => 2, [String("bar")] => 3, [String("err")] => Error: Error message'
       );
     });
+  });
+});
+
+describe('mockObject', () => {
+  it('should work on class', () => {
+    class Target {
+      foo(): string {
+        return 'bar';
+      }
+    }
+
+    const mock = mockObject(Target);
+
+    (mock.foo as any).mock.whenCalledWithThenReturn([], 'baz');
+
+    expect(mock.foo()).toBe('baz');
   });
 });

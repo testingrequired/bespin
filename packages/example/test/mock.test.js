@@ -1,5 +1,5 @@
 const assert = require("assert");
-const { Mock } = require("@testingrequired/bespin-mock");
+const { Mock, mockObject } = require("@testingrequired/bespin-mock");
 
 describe("Mock", () => {
   it("mocking works", () => {

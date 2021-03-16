@@ -131,8 +131,8 @@ export class Mock<Fn extends (...args: any) => any> {
       .join(', ');
   }
 
-  get fn(): Fn {
-    const fn: any = (...args: Parameters<Fn>) => {
+  get fn(): Fn & { mock: Mock<Fn> } {
+    const fn: any = (...args: Parameters<Fn>): ReturnType<Fn> => {
       this._calls.push(args);
 
       const when = this.whens.find(when => this.matchArgs(args, when.args));
@@ -155,6 +155,27 @@ export class Mock<Fn extends (...args: any) => any> {
       writable: false,
     });
 
+    fn.mock = this;
+
     return fn;
   }
 }
+
+export function mockObject<T>(targetClass: AConstructorTypeOf<T>): T {
+  const mocks: Record<
+    keyof T,
+    Mock<TypeOfClassMethod<T, keyof T>>
+  > = Object.getOwnPropertyNames(targetClass.prototype).reduce((acc, item) => {
+    return { ...acc, [item]: Mock.of(targetClass.prototype[item]).fn };
+  }, {} as Record<keyof T, Mock<TypeOfClassMethod<T, keyof T>>>);
+
+  return mocks as any;
+}
+
+type TypeOfClassMethod<T, M extends keyof T> = T[M] extends (
+  ...args: any
+) => any
+  ? T[M]
+  : never;
+
+type AConstructorTypeOf<T> = new (...args: any[]) => T;
