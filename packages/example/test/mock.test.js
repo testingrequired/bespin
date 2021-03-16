@@ -12,5 +12,8 @@ describe("Mock", () => {
     mock.whenCalledWithThenReturn([10], "100");
 
     assert.strictEqual(mock.fn(10), "100");
+
+    mock.verify([10]);
+    mock.verifyAll();
   });
 });
