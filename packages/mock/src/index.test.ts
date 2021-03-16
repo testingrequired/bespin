@@ -249,4 +249,73 @@ describe('Mock', () => {
       });
     });
   });
+
+  describe('verify', () => {
+    it('should throw if function wasnt called', () => {
+      function test(_: string): number {
+        return 10;
+      }
+
+      const mock = Mock.of(test);
+
+      expect(() => {
+        mock.verify(['']);
+      }).toThrowError('mocked function: "test" has no calls for: [String("")]');
+    });
+
+    it('should not throw if function was called', () => {
+      function test(_: string): number {
+        return 10;
+      }
+
+      const mock = Mock.of(test);
+
+      mock.whenCalledWithThenReturn([''], 1);
+
+      mock.fn('');
+
+      expect(() => {
+        mock.verify(['']);
+      }).not.toThrowError();
+    });
+  });
+
+  describe('verifyAll', () => {
+    it('should not throw if when condition is met by mock calls', () => {
+      function test(_: string): number {
+        return 10;
+      }
+
+      const mock = Mock.of(test);
+
+      mock.whenCalledWithThenReturn([''], 1);
+
+      mock.fn('');
+
+      expect(() => {
+        mock.verifyAll();
+      }).not.toThrowError();
+    });
+
+    it('should throw if when condition not met by mock calls', () => {
+      function test(_: string): number {
+        return 10;
+      }
+
+      const mock = Mock.of(test);
+
+      mock.whenCalledWithThenReturn([''], 1);
+      mock.whenCalledWithThenReturn(['foo'], 2);
+      mock.whenCalledWithThenReturn(['bar'], 3);
+      mock.whenCalledWithThenThrow(['err'], new Error('Error message'));
+
+      mock.fn('');
+
+      expect(() => {
+        mock.verifyAll();
+      }).toThrowError(
+        'mocked function: "test" has no calls for the following setups: [String("foo")] => 2, [String("bar")] => 3, [String("err")] => Error: Error message'
+      );
+    });
+  });
 });

@@ -71,7 +71,31 @@ export class Mock<Fn extends (...args: any) => any> {
   }
 
   verify(args: Parameters<Fn>) {
-    this._calls.find(x => x == args);
+    if (this._calls.find(x => this.matchArgs(x, args))) {
+      return;
+    }
+
+    const typesString = this.getArgsString(args);
+
+    throw new Error(`${this} has no calls for: [${typesString}]`);
+  }
+
+  verifyAll() {
+    const uncalledWhens = this.whens.filter(
+      when => !this._calls.some(call => this.matchArgs(call, when.args))
+    );
+
+    if (uncalledWhens.length === 0) {
+      return;
+    }
+
+    const setupsString = uncalledWhens
+      .map(when => `[${this.getArgsString(when.args)}] => ${when.value}`)
+      .join(', ');
+
+    throw new Error(
+      `${this} has no calls for the following setups: ${setupsString}`
+    );
   }
 
   get calls() {
@@ -90,25 +114,31 @@ export class Mock<Fn extends (...args: any) => any> {
     return `mocked function: "${this.name}"`;
   }
 
+  private matchArgs(argsA: Parameters<Fn>, argsB: Parameters<Fn>): boolean {
+    return argsA.every((arg: string, i: number) => {
+      return arg === argsB[i];
+    });
+  }
+
+  private getArgsString(args: Parameters<Fn>): string {
+    return args
+      .map((arg: any) => {
+        const type = arg.constructor.name || typeof arg;
+        const value = JSON.stringify(arg);
+
+        return `${type}(${value})`;
+      })
+      .join(', ');
+  }
+
   get fn(): Fn {
     const fn: any = (...args: Parameters<Fn>) => {
       this._calls.push(args);
 
-      const when = this.whens.find(when =>
-        when.args.every((arg: string, i: number) => {
-          return arg === args[i];
-        })
-      );
+      const when = this.whens.find(when => this.matchArgs(args, when.args));
 
       if (!when) {
-        const typesString = args
-          .map((arg: any) => {
-            const type = arg.constructor.name || typeof arg;
-            const value = JSON.stringify(arg);
-
-            return `${type}(${value})`;
-          })
-          .join(', ');
+        const typesString = this.getArgsString(args);
 
         throw new Error(`${this} has no matching setup for: [${typesString}]`);
       }
