@@ -321,7 +321,7 @@ describe('Mock', () => {
 });
 
 describe('mockObject', () => {
-  it('should work on class', () => {
+  it('should work on class method', () => {
     class Target {
       foo(): string {
         return 'bar';
@@ -333,5 +333,20 @@ describe('mockObject', () => {
     (mock.foo as any).mock.whenCalledWithThenReturn([], 'baz');
 
     expect(mock.foo()).toBe('baz');
+  });
+
+  it('should work on class getter', () => {
+    class Target {
+      get value() {
+        return 100;
+      }
+    }
+
+    const mock = mockObject(Target);
+
+    (Object.getOwnPropertyDescriptor(mock, 'value')
+      ?.get as any).mock.whenCalledWithThenReturn([], 1000);
+
+    expect(mock.value).toBe(1000);
   });
 });

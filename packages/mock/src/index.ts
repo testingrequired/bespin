@@ -166,7 +166,36 @@ export function mockObject<T>(targetClass: AConstructorTypeOf<T>): T {
     keyof T,
     Mock<TypeOfClassMethod<T, keyof T>>
   > = Object.getOwnPropertyNames(targetClass.prototype).reduce((acc, item) => {
-    return { ...acc, [item]: Mock.of(targetClass.prototype[item]).fn };
+    const d = Object.getOwnPropertyDescriptor(targetClass.prototype, item);
+
+    if (typeof d === 'undefined') {
+      return acc;
+    }
+
+    switch (true) {
+      case typeof d.get !== 'undefined':
+        const obj = {
+          get [item]() {
+            return d?.get!;
+          },
+        };
+
+        Object.defineProperty(acc, item, {
+          enumerable: true,
+          configurable: false,
+          get: Mock.of(obj[item]).fn,
+        });
+
+        return acc;
+
+      case typeof d.value !== 'undefined':
+        return Object.assign({}, acc, {
+          [item]: Mock.of(d?.value!).fn,
+        });
+
+      default:
+        return acc;
+    }
   }, {} as Record<keyof T, Mock<TypeOfClassMethod<T, keyof T>>>);
 
   return mocks as any;
