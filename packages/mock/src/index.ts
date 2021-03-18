@@ -36,10 +36,19 @@ export class When<ArgsT, ValueT> {
   }
 }
 
+type WhenCondition<Fn extends (...args: any) => any> = When<
+  Parameters<Fn>,
+  ReturnType<Fn>
+>;
+
 export class Mock<Fn extends (...args: any) => any> {
+  private _whens: Array<WhenCondition<Fn>> = [];
   private _calls: Array<Parameters<Fn>> = [];
   private _returns: Array<ReturnType<Fn>> = [];
-  private whens: Array<When<Parameters<Fn>, ReturnType<Fn>>> = [];
+
+  get whens() {
+    return this._whens;
+  }
 
   get calls() {
     return this._calls;
@@ -81,15 +90,15 @@ export class Mock<Fn extends (...args: any) => any> {
   }
 
   whenCalledWithThenReturn(args: Parameters<Fn>, value: ReturnType<Fn>) {
-    this.whens.push(When.calledWithThenReturn(args, value));
+    this.when(When.calledWithThenReturn(args, value));
   }
 
   whenCalledWithThenThrow(args: Parameters<Fn>, value: Error) {
-    this.whens.push(When.calledWithThenThrow(args, value));
+    this.when(When.calledWithThenThrow(args, value));
   }
 
   whenCalledWithJustRuns(args: Parameters<Fn>) {
-    this.whens.push(When.calledWithJustRuns(args));
+    this.when(When.calledWithJustRuns(args));
   }
 
   verify(args: Parameters<Fn>) {
@@ -120,24 +129,7 @@ export class Mock<Fn extends (...args: any) => any> {
     );
   }
 
-  private matchArgs(argsA: Parameters<Fn>, argsB: Parameters<Fn>): boolean {
-    return argsA.every((arg: string, i: number) => {
-      return arg === argsB[i];
-    });
-  }
-
-  private getArgsString(args: Parameters<Fn>): string {
-    return args
-      .map((arg: any) => {
-        const type = arg.constructor.name || typeof arg;
-        const value = JSON.stringify(arg);
-
-        return `${type}(${value})`;
-      })
-      .join(', ');
-  }
-
-  get fn(): Fn & { mock: Mock<Fn> } {
+  get fn(): MockedFunction<Fn> {
     const fn: any = (...args: Parameters<Fn>): ReturnType<Fn> => {
       this._calls.push(args);
 
@@ -165,13 +157,32 @@ export class Mock<Fn extends (...args: any) => any> {
 
     return fn;
   }
+
+  private matchArgs(argsA: Parameters<Fn>, argsB: Parameters<Fn>): boolean {
+    return argsA.every((arg: string, i: number) => {
+      return arg === argsB[i];
+    });
+  }
+
+  private getArgsString(args: Parameters<Fn>): string {
+    return args
+      .map((arg: any) => {
+        const type = arg.constructor.name || typeof arg;
+        const value = JSON.stringify(arg);
+
+        return `${type}(${value})`;
+      })
+      .join(', ');
+  }
 }
 
-export function mockFunction<T extends (...args: any) => any>(
-  fn: T
-): T & { mock: Mock<T> } {
+export function mockFunction<Fn extends (...args: any) => any>(
+  fn: Fn
+): MockedFunction<Fn> {
   return Mock.of(fn).fn;
 }
+
+type MockedFunction<Fn extends (...args: any) => any> = Fn & { mock: Mock<Fn> };
 
 type MockedMethod<T> = Method<T, keyof T> & {
   mock: Mock<Method<T, keyof T>>;
