@@ -225,13 +225,14 @@ export function mockFunction<T extends (...args: any) => any>(
   return Mock.of(fn).fn;
 }
 
-export function mockObject<T>(targetClass: Constructor<T>): T {
-  type MockType = Record<keyof T, Mock<Method<T, keyof T>>>;
+export type MockedObject<T> = T &
+  Record<keyof T, Method<T, keyof T> & { mock: Mock<Method<T, keyof T>> }>;
 
-  const mockedInstance: MockType = Object.getOwnPropertyNames(
-    targetClass.prototype
-  ).reduce((acc, item) => {
-    const d = Object.getOwnPropertyDescriptor(targetClass.prototype, item);
+export function mockObject<T>(targetClass: Constructor<T>): MockedObject<T> {
+  const properies = Object.getOwnPropertyNames(targetClass.prototype);
+
+  const mockedInstance: MockedObject<T> = properies.reduce((acc, property) => {
+    const d = Object.getOwnPropertyDescriptor(targetClass.prototype, property);
 
     if (typeof d === 'undefined') {
       return acc;
@@ -240,32 +241,32 @@ export function mockObject<T>(targetClass: Constructor<T>): T {
     switch (true) {
       case typeof d.get !== 'undefined':
         const obj = {
-          get [item]() {
+          get [property]() {
             return d?.get!;
           },
         };
 
-        Object.defineProperty(acc, item, {
+        Object.defineProperty(acc, property, {
           enumerable: true,
           configurable: false,
-          get: Mock.of(obj[item]).fn,
+          get: Mock.of(obj[property]).fn,
         });
 
         return acc;
 
       case typeof d.value !== 'undefined':
         return Object.assign({}, acc, {
-          [item]: Mock.of(d?.value!).fn,
+          [property]: Mock.of(d?.value!).fn,
         });
 
       default:
         return acc;
     }
-  }, {} as MockType);
+  }, {} as MockedObject<T>);
 
   Object.setPrototypeOf(mockedInstance, targetClass.prototype);
 
-  return mockedInstance as any;
+  return mockedInstance;
 }
 
 export type Method<T, M extends keyof T> = T[M] extends (...args: any) => any

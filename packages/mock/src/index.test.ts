@@ -1,11 +1,4 @@
-import {
-  Mock,
-  mockFunction,
-  mockGetter,
-  mockMethod,
-  mockObject,
-  mockSetter,
-} from './index';
+import { Mock, mockFunction, mockGetter, mockObject } from './index';
 
 describe('Mock', () => {
   describe('Construct', () => {
@@ -351,7 +344,7 @@ describe('mockObject', () => {
 
     const mock = mockObject(Target);
 
-    mockMethod(mock, 'foo').whenCalledWithThenReturn([], 'baz');
+    mock.foo.mock.whenCalledWithThenReturn([], 'baz');
 
     expect(mock.foo()).toBe('baz');
   });
@@ -371,22 +364,6 @@ describe('mockObject', () => {
     );
 
     expect(mock.value).toBe(1000);
-  });
-
-  it.skip('should work on class setter', () => {
-    class Target {
-      set value(_: number) {}
-    }
-
-    const mock = mockObject(Target);
-
-    const mockValue = mockSetter(mock, 'value');
-
-    mockValue.whenCalledWithJustRuns([] as never);
-
-    mock.value = 100;
-
-    mockValue.verify([] as never);
   });
 });
 

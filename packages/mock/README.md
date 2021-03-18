@@ -28,6 +28,26 @@ mockGetName.mock.whenCalledWithThenReturn([], 'Universe');
 greeting(mockGetName); // Hello, Universe!
 ```
 
+## mockObject
+
+Create a mocked instance of a class. All methods are mocked.
+
+```typescript
+import { mockObject } from '@testingrequired/bespin-mock';
+
+class Service {
+  getNames(): Array<string> {
+    return [];
+  }
+}
+
+const mockService = mockObject(Service);
+
+mockService.getNames.mock.whenCalledWithThenReturns([], ['foo', 'bar']);
+
+mockSerivce.getNames(); // ['foo', 'bar']
+```
+
 ## Mock
 
 The mock contains setups which match calling arguments to behaviors (e.g. returning values, throwing errors, doing nothing), methods for verifying calls, raw access to call and return sequences.
