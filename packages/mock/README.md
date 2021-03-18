@@ -136,7 +136,7 @@ mockFn(10); // Throws because there are no matching setups
 
 #### verify
 
-Verifies mock was called with expected arugments.
+Verifies mock was called with expected arguments.
 
 ```typescript
 import { mockFunction } from '@testingrequired/bespin-mock';
