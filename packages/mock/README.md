@@ -2,24 +2,24 @@
 
 Mocking library
 
-```typescript
-import { Mock } from '@testingrequired/bespin-mock';
+## mockFunction
 
-function getName(): string {
+Setup mock function's return value based on call arguments. Verify mock functions were called with expected arguments.
+
+```javascript
+import { mockFunction } from '@testingrequired/bespin-mock';
+
+function getName() {
   return 'World';
 }
 
-function getGreeting(getNameFn: () => string): String {
+function greeting(getNameFn) {
   const name = getNameFn();
-
-  return `Hello ${name}`;
+  console.log(`Hello, ${name}!`);
 }
 
-const mockGetName = Mock.of(getName);
+const mockGetName = mockFunction(getName);
+mockGetName.mock.whenCalledWithThenReturn([], 'Universe');
 
-mockGetName.whenCalledWithThenReturn([], 'Universe');
-
-const greeting = getGreeting(mockGetName.fn); // 'Hello Universe'
-
-mockGetName.verify([]);
+greeting(mockGetName); // Hello, Universe!
 ```
