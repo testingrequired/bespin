@@ -1,5 +1,5 @@
 const assert = require("assert");
-const { Mock, mockObject } = require("@testingrequired/bespin-mock");
+const { mockFunction } = require("@testingrequired/bespin-mock");
 
 describe("Mock", () => {
   it("mocking works", () => {
@@ -7,13 +7,13 @@ describe("Mock", () => {
       return input.toString(10);
     }
 
-    const mock = Mock.of(fn);
+    const mockFn = mockFunction(fn);
 
-    mock.whenCalledWithThenReturn([10], "100");
+    mockFn.mock.whenCalledWithThenReturn([10], "100");
 
-    assert.strictEqual(mock.fn(10), "100");
+    assert.strictEqual(mockFn(10), "100");
 
-    mock.verify([10]);
-    mock.verifyAll();
+    mockFn.mock.verify([10]);
+    mockFn.mock.verifyAll();
   });
 });
