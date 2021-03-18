@@ -48,6 +48,12 @@ export class Mock<Fn extends (...args: any) => any> {
         : typeof functionToMock;
       throw Error(`Must pass a function to mock. Received '${errorType}'`);
     }
+
+    if (functionToMock.hasOwnProperty('mock')) {
+      throw Error(
+        `Tried to mock '${functionToMock.name}' but it appears to already be a mock`
+      );
+    }
   }
 
   static of<Fn extends (...args: any) => any>(functionToMock: Fn) {
@@ -197,6 +203,8 @@ export function mockObject<T>(targetClass: AConstructorTypeOf<T>): T {
         return acc;
     }
   }, {} as Record<keyof T, Mock<TypeOfClassMethod<T, keyof T>>>);
+
+  Object.setPrototypeOf(mocks, targetClass.prototype);
 
   return mocks as any;
 }

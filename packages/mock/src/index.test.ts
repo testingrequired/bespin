@@ -20,6 +20,12 @@ describe('Mock', () => {
       expect(() => Mock.of(() => {})).not.toThrowError();
     });
 
+    it('should error if mock', () => {
+      expect(() => Mock.of(Mock.of(() => {}).fn)).toThrowError(
+        "Tried to mock 'anonymous lambda' but it appears to already be a mock"
+      );
+    });
+
     it('should error if a number', () => {
       expect(() => Mock.of(123 as any)).toThrowError(
         "Must pass a function to mock. Received 'number'"
@@ -321,6 +327,14 @@ describe('Mock', () => {
 });
 
 describe('mockObject', () => {
+  it('should be instanceof', () => {
+    class Target {}
+
+    const mock = mockObject(Target);
+
+    expect(mock instanceof Target).toBeTruthy();
+  });
+
   it('should work on class method', () => {
     class Target {
       foo(): string {
