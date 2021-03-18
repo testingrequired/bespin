@@ -219,6 +219,12 @@ export function mockSetter<T, S extends keyof T>(
   throw new Error(`Unable to mock setter: ${setter}`);
 }
 
+export function mockFunction<T extends (...args: any) => any>(
+  fn: T
+): T & { mock: Mock<T> } {
+  return Mock.of(fn).fn;
+}
+
 export function mockObject<T>(targetClass: Constructor<T>): T {
   type MockType = Record<keyof T, Mock<Method<T, keyof T>>>;
 

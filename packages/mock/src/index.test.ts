@@ -1,4 +1,11 @@
-import { Mock, mockGetter, mockMethod, mockObject, mockSetter } from './index';
+import {
+  Mock,
+  mockFunction,
+  mockGetter,
+  mockMethod,
+  mockObject,
+  mockSetter,
+} from './index';
 
 describe('Mock', () => {
   describe('Construct', () => {
@@ -380,5 +387,17 @@ describe('mockObject', () => {
     mock.value = 100;
 
     mockValue.verify([] as never);
+  });
+});
+
+describe('mockFunction', () => {
+  it('should has mock property', () => {
+    function test(a: number, b: number): number {
+      return a + b;
+    }
+
+    const mock = mockFunction(test);
+
+    expect(mock.mock).toBeInstanceOf(Mock);
   });
 });
