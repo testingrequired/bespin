@@ -41,6 +41,22 @@ export class Mock<Fn extends (...args: any) => any> {
   private _returns: Array<ReturnType<Fn>> = [];
   private whens: Array<When<Parameters<Fn>, ReturnType<Fn>>> = [];
 
+  get calls() {
+    return this._calls;
+  }
+
+  get returns() {
+    return this._returns;
+  }
+
+  get name() {
+    return this.functionToMock.name;
+  }
+
+  toString() {
+    return `mocked function: "${this.name}"`;
+  }
+
   constructor(private functionToMock: Fn) {
     if (typeof functionToMock !== 'function') {
       const errorType = Array.isArray(functionToMock)
@@ -104,22 +120,6 @@ export class Mock<Fn extends (...args: any) => any> {
     );
   }
 
-  get calls() {
-    return this._calls;
-  }
-
-  get returns() {
-    return this._returns;
-  }
-
-  get name() {
-    return this.functionToMock.name;
-  }
-
-  toString() {
-    return `mocked function: "${this.name}"`;
-  }
-
   private matchArgs(argsA: Parameters<Fn>, argsB: Parameters<Fn>): boolean {
     return argsA.every((arg: string, i: number) => {
       return arg === argsB[i];
@@ -165,24 +165,6 @@ export class Mock<Fn extends (...args: any) => any> {
 
     return fn;
   }
-}
-
-export function mockMethod<T, M extends keyof T>(
-  mock: T,
-  method: M
-): Mock<Method<T, M>> {
-  const descriptor = Object.getOwnPropertyDescriptor(mock, method);
-
-  if (typeof descriptor === 'undefined') {
-    throw new Error(`Couldn't locate method: ${method}`);
-  }
-
-  if (typeof descriptor.value !== 'undefined') {
-    return (descriptor.value as Method<T, M> & { mock: Mock<Method<T, M>> })
-      .mock;
-  }
-
-  throw new Error(`Unable to mock method: ${method}`);
 }
 
 export function mockFunction<T extends (...args: any) => any>(
