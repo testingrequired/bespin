@@ -225,8 +225,11 @@ export function mockFunction<T extends (...args: any) => any>(
   return Mock.of(fn).fn;
 }
 
-export type MockedObject<T> = T &
-  Record<keyof T, Method<T, keyof T> & { mock: Mock<Method<T, keyof T>> }>;
+export type MockedMethod<T> = Method<T, keyof T> & {
+  mock: Mock<Method<T, keyof T>>;
+};
+
+export type MockedObject<T> = T & Record<keyof T, MockedMethod<T>>;
 
 export function mockObject<T>(targetClass: Constructor<T>): MockedObject<T> {
   const properies = Object.getOwnPropertyNames(targetClass.prototype);
