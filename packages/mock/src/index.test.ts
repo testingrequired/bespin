@@ -1,4 +1,4 @@
-import { Mock, mockFunction, mockGetter, mockObject } from './index';
+import { Mock, mockFunction, mockObject } from './index';
 
 describe('Mock', () => {
   describe('Construct', () => {
@@ -356,23 +356,6 @@ describe('mockObject', () => {
     mock.foo.mock.whenCalledWithThenReturn([], 'baz');
 
     expect(mock.foo()).toBe('baz');
-  });
-
-  it('should work on class getter', () => {
-    class Target {
-      get value() {
-        return 100;
-      }
-    }
-
-    const mock = mockObject(Target);
-
-    mockGetter(mock, 'value').whenCalledWithThenReturn(
-      [] as never,
-      1000 as never
-    );
-
-    expect(mock.value).toBe(1000);
   });
 });
 

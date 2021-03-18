@@ -185,51 +185,17 @@ export function mockMethod<T, M extends keyof T>(
   throw new Error(`Unable to mock method: ${method}`);
 }
 
-export function mockGetter<T, G extends keyof T>(
-  mock: T,
-  getter: G
-): Mock<Method<T, G>> {
-  const descriptor = Object.getOwnPropertyDescriptor(mock, getter);
-
-  if (typeof descriptor === 'undefined') {
-    throw new Error(`Couldn't locate method: ${getter}`);
-  }
-
-  if (typeof descriptor.get !== 'undefined') {
-    return (descriptor.get as Method<T, G> & { mock: Mock<Method<T, G>> }).mock;
-  }
-
-  throw new Error(`Unable to mock getter: ${getter}`);
-}
-
-export function mockSetter<T, S extends keyof T>(
-  mock: T,
-  setter: S
-): Mock<Method<T, S>> {
-  const descriptor = Object.getOwnPropertyDescriptor(mock, setter);
-
-  if (typeof descriptor === 'undefined') {
-    throw new Error(`Couldn't locate method: ${setter}`);
-  }
-
-  if (typeof descriptor.set !== 'undefined') {
-    return (descriptor.set as Method<T, S> & { mock: Mock<Method<T, S>> }).mock;
-  }
-
-  throw new Error(`Unable to mock setter: ${setter}`);
-}
-
 export function mockFunction<T extends (...args: any) => any>(
   fn: T
 ): T & { mock: Mock<T> } {
   return Mock.of(fn).fn;
 }
 
-export type MockedMethod<T> = Method<T, keyof T> & {
+type MockedMethod<T> = Method<T, keyof T> & {
   mock: Mock<Method<T, keyof T>>;
 };
 
-export type MockedObject<T> = T & Record<keyof T, MockedMethod<T>>;
+type MockedObject<T> = T & Record<keyof T, MockedMethod<T>>;
 
 export function mockObject<T>(targetClass: Constructor<T>): MockedObject<T> {
   const properies = Object.getOwnPropertyNames(targetClass.prototype);
@@ -272,7 +238,7 @@ export function mockObject<T>(targetClass: Constructor<T>): MockedObject<T> {
   return mockedInstance;
 }
 
-export type Method<T, M extends keyof T> = T[M] extends (...args: any) => any
+type Method<T, M extends keyof T> = T[M] extends (...args: any) => any
   ? T[M]
   : never;
 
