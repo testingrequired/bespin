@@ -1,8 +1,16 @@
 # bespin mock
 
-Mocking library
+A mocking library.
 
-## mockFunction
+## Install
+
+```bash
+$ npm install -D @testingrequired/bespin-mock
+```
+
+## Usage
+
+### mockFunction
 
 Setup mock function's return value based on call arguments. Verify mock functions were called with expected arguments.
 
@@ -28,7 +36,7 @@ mockGetName.mock.whenCalledWithThenReturn([], 'Universe');
 greeting(mockGetName); // Hello, Universe!
 ```
 
-## mockObject
+### mockObject
 
 Create a mocked instance of a class. All methods are mocked.
 
@@ -48,15 +56,15 @@ mockService.getNames.mock.whenCalledWithThenReturns([], ['foo', 'bar']);
 mockSerivce.getNames(); // ['foo', 'bar']
 ```
 
-## Mock
+### Mock
 
 The mock contains setups which match calling arguments to behaviors (e.g. returning values, throwing errors, doing nothing), methods for verifying calls, raw access to call and return sequences.
 
-### Setups
+#### Setups
 
 Mocks are strict by nature. Meaning they will throw an exception if a call is made without a matching setup. This is not configurable at this time.
 
-#### whenCalledWithThenReturn
+##### whenCalledWithThenReturn
 
 When called with args `[a, b, c...]` then return a `"value"`.
 
@@ -74,7 +82,7 @@ mockFn.mock.whenCalledWithThenReturn([10], '100');
 mockFn(10); // 100
 ```
 
-#### whenCalledWithThenThrow
+##### whenCalledWithThenThrow
 
 When called with args `[a, b, c...]` then throw `error`.
 
@@ -92,7 +100,7 @@ mockFn.mock.whenCalledWithThenThrow([10], new Error('Expected error message'));
 mockFn(10); // Throws 'Expected error message'
 ```
 
-#### whenCalledWithJustRun
+##### whenCalledWithJustRun
 
 When called with args `[a, b, c...]` then do nothing.
 
@@ -110,7 +118,7 @@ mockFn.mock.whenCalledWithJustRun([10]);
 mockFn(10); // Does nothing
 ```
 
-#### reset
+##### reset
 
 Mock setups can be emptied
 
@@ -132,9 +140,9 @@ mockFn.mock.reset();
 mockFn(10); // Throws because there are no matching setups
 ```
 
-### Verifying
+#### Verifying
 
-#### verify
+##### verify
 
 Verifies mock was called with expected arguments.
 
@@ -156,7 +164,7 @@ mockFn.mock.verify([10]);
 mockFn.mock.verify([20]); // Throws because no calls were made passing 20
 ```
 
-#### verifyAll
+##### verifyAll
 
 Verify all setups were called.
 
@@ -197,7 +205,7 @@ mockFn.mock.calls; // [[10], [10], [10]]
 mockFn.mock.returns; // [undefined, undefined, undefined]
 ```
 
-#### clear
+##### clear
 
 This recorded data can be cleared
 
