@@ -101,6 +101,15 @@ export class Mock<Fn extends (...args: any) => any> {
     this.when(When.calledWithJustRuns(args));
   }
 
+  clear() {
+    this._calls = [];
+    this._returns = [];
+  }
+
+  reset() {
+    this._whens = [];
+  }
+
   verify(args: Parameters<Fn>) {
     if (this._calls.find(x => this.matchArgs(x, args))) {
       return;

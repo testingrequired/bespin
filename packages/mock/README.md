@@ -110,6 +110,28 @@ mockFn.mock.whenCalledWithJustRun([10]);
 mockFn(10); // Does nothing
 ```
 
+#### reset
+
+Mock setups can be emptied
+
+```typescript
+import { mockFunction } from '@testingrequired/bespin-mock';
+
+function numberToString(n: number) {
+  console.log(n);
+}
+
+const mockFn = mockFunction(numberToString);
+
+mockFn.mock.whenCalledWithJustRun([10]);
+
+mockFn(10); // Does nothing
+
+mockFn.mock.reset();
+
+mockFn(10); // Throws because there are no matching setups
+```
+
 ### Verifying
 
 #### verify
@@ -150,4 +172,55 @@ const mockFn = mockFunction(numberToString);
 mockFn.mock.whenCalledWithJustRun([10]);
 
 mockFn.mock.verifyAll(); // Throws because no calls were made passing 10
+```
+
+### Recorded Data
+
+Mocks record their input arguments and return values.
+
+```typescript
+import { mockFunction } from '@testingrequired/bespin-mock';
+
+function numberToString(n: number) {
+  console.log(n);
+}
+
+const mockFn = mockFunction(numberToString);
+
+mockFn.mock.whenCalledWithJustRun([10]);
+
+mockFn(10);
+mockFn(10);
+mockFn(10);
+
+mockFn.mock.calls; // [[10], [10], [10]]
+mockFn.mock.returns; // [undefined, undefined, undefined]
+```
+
+#### clear
+
+This recorded data can be cleared
+
+```typescript
+import { mockFunction } from '@testingrequired/bespin-mock';
+
+function numberToString(n: number) {
+  console.log(n);
+}
+
+const mockFn = mockFunction(numberToString);
+
+mockFn.mock.whenCalledWithJustRun([10]);
+
+mockFn(10);
+mockFn(10);
+mockFn(10);
+
+mockFn.mock.calls; // [[10], [10], [10]]
+mockFn.mock.returns; // [undefined, undefined, undefined]
+
+mockFn.mock.clear();
+
+mockFn.mock.calls; // []
+mockFn.mock.returns; // []
 ```

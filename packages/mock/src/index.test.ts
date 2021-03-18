@@ -252,6 +252,43 @@ describe('Mock', () => {
             }).toThrowError(expectedError);
           });
         });
+
+        describe('clear', () => {
+          it('should clear the calls and returns recorded on the mock', () => {
+            function test() {}
+
+            const mock = Mock.of(test);
+
+            mock.whenCalledWithJustRuns([]);
+
+            mock.fn();
+            mock.fn();
+
+            expect(mock.calls).toStrictEqual([[], []]);
+            expect(mock.returns).toStrictEqual([undefined, undefined]);
+
+            mock.clear();
+
+            expect(mock.calls).toStrictEqual([]);
+            expect(mock.returns).toStrictEqual([]);
+          });
+        });
+
+        describe('reset', () => {
+          it('should remove all mock configuration', () => {
+            function test() {}
+
+            const mock = Mock.of(test);
+
+            mock.whenCalledWithJustRuns([]);
+
+            expect(mock.whens.length).toBe(1);
+
+            mock.reset();
+
+            expect(mock.whens.length).toBe(0);
+          });
+        });
       });
     });
   });
