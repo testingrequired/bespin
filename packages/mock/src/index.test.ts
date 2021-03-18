@@ -335,6 +335,15 @@ describe('mockObject', () => {
     expect(mock instanceof Target).toBeTruthy();
   });
 
+  it('should be instanceof a parent', () => {
+    class Parent {}
+    class Target extends Parent {}
+
+    const mock = mockObject(Target);
+
+    expect(mock instanceof Parent).toBeTruthy();
+  });
+
   it('should work on class method', () => {
     class Target {
       foo(): string {
