@@ -191,14 +191,6 @@ export function mockFunction<Fn extends (...args: any) => any>(
   return Mock.of(fn).fn;
 }
 
-type MockedFunction<Fn extends (...args: any) => any> = Fn & { mock: Mock<Fn> };
-
-type MockedMethod<T> = Method<T, keyof T> & {
-  mock: Mock<Method<T, keyof T>>;
-};
-
-type MockedObject<T> = T & Record<keyof T, MockedMethod<T>>;
-
 export function mockObject<T>(targetClass: Constructor<T>): MockedObject<T> {
   const properies = Object.getOwnPropertyNames(targetClass.prototype);
 
@@ -239,6 +231,20 @@ export function mockObject<T>(targetClass: Constructor<T>): MockedObject<T> {
 
   return mockedInstance;
 }
+
+type MockedFunction<Fn extends (...args: any) => any> = Fn & { mock: Mock<Fn> };
+
+type MockedObject<T> = T &
+  Record<
+    keyof T,
+    T[keyof T] extends (...args: any) => any
+      ? MockedMethod<T, keyof T>
+      : T[keyof T]
+  >;
+
+type MockedMethod<T, K extends keyof T> = Method<T, K> & {
+  mock: Mock<Method<T, K>>;
+};
 
 type Method<T, M extends keyof T> = T[M] extends (...args: any) => any
   ? T[M]

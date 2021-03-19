@@ -394,6 +394,18 @@ describe('mockObject', () => {
 
     expect(mock.foo()).toBe('baz');
   });
+
+  it('should preserve class properties', () => {
+    class Target {
+      public value: number = 0;
+    }
+
+    const mock = mockObject(Target);
+
+    mock.value = 100;
+
+    expect(mock.value).toBe(100);
+  });
 });
 
 describe('mockFunction', () => {
