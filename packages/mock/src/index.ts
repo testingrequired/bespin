@@ -242,9 +242,7 @@ type MockedObject<T> = T &
       : T[keyof T]
   >;
 
-type MockedMethod<T, K extends keyof T> = Method<T, K> & {
-  mock: Mock<Method<T, K>>;
-};
+type MockedMethod<T, K extends keyof T> = MockedFunction<Method<T, K>>;
 
 type Method<T, M extends keyof T> = T[M] extends (...args: any) => any
   ? T[M]
