@@ -7,9 +7,7 @@ export const name = "bespin";
 export const run = async (toolbox: GluegunToolbox) => {
   const { print, filesystem } = toolbox;
 
-  const possibleConfigPaths = ["bespin.config.ts", "bespin.config.js"].filter(
-    x => x
-  );
+  const possibleConfigPaths = ["bespin.config.ts", "bespin.config.js"];
 
   let configFilePath;
 
@@ -33,7 +31,7 @@ export const run = async (toolbox: GluegunToolbox) => {
 
   if (!configFilePath) {
     print.error(
-      `bespin could not find config file: ${possibleConfigPaths.join(", ")}`
+      `bespin could not find config file: ${possibleConfigPaths.join(" or ")}`
     );
 
     return;
