@@ -32,31 +32,31 @@ This provides the foundation for the framework but it still needs to know how to
 $ npm install -D @testingrequired/bespin-glob-test-file-locator @testingrequired/bespin-spec-test-file-parser @testingrequired/bespin-serial-runner
 ```
 
-These will provide finding test files using a glob pattern (e.g. `**/*.test.js`), parse test files with a `describe`/`it`/`beforeEach` syntax and execute the tests in parallel.
+These will provide finding test files using a glob pattern (e.g. `**/*.test.ts`), parse test files with a `describe`/`it`/`beforeEach` syntax and execute the tests in parallel.
 
-Now create a configuration file called `bespin.config.js` at your project root:
+Now create a configuration file called `bespin.config.ts` at your project root:
 
-```javascript
-const { Config } = require("@testingrequired/bespin-core");
-const {
-  GlobTestFileLocator,
-} = require("@testingrequired/bespin-glob-test-file-locator");
-const {
-  SpecTestFileParse,
-} = require("@testingrequired/bespin-spec-test-file-parser");
-const { AsyncRunner } = require("@testingrequired/bespin-async-runner");
+```typescript
+import { Config } from "@testingrequired/bespin-core";
+import { GlobTestFileLocator } from "@testingrequired/bespin-glob-test-file-locator";
+import { SpecTestFileParser } from "@testingrequired/bespin-spec-test-file-parser";
+import { AsyncRunner } from "@testingrequired/bespin-async-runner";
+import { JUnitReporter } from "@testingrequired/bespin-junit-reporter";
+import { GlobalTestValuePlugin } from "./src/GlobalTestValuePlugin";
 
-module.exports = new Config(__filename)
-  .withLocator(new GlobTestFileLocator("**/*.test.js"))
-  .withParser(new SpecTestFileParse())
+export default new Config(__filename)
+  .withLocator(new GlobTestFileLocator("**/*.test.ts"))
+  .withParser(new SpecTestFileParser())
   .withRunner(new AsyncRunner())
-  .withSetting("randomizeTests", true);
+  .withReporters([
+    new JUnitReporter("./junit.xml"),
+  ]);
 ```
 
 ### Write Tests
 
 ```javascript
-const assert = require("assert");
+import * as assert from 'assert';
 
 describe("beforeEach", () => {
   let baseValue;
@@ -86,6 +86,10 @@ describe("beforeEach", () => {
 ```bash
 $ bespin
 ```
+
+### Typescript
+
+The examples shown are written in typescript which currently supported only when using `@testingrequired/bespin-cli` but will eventually be supported through code transforms at the runtime level.
 
 ## Packages
 

@@ -60,7 +60,11 @@ export class Config {
   }
 
   static async load(configFilePath: string): Promise<ValidConfig> {
-    const configFile: Config = await import(configFilePath);
+    let configFile: Config = await import(configFilePath);
+
+    if ((configFile as any).default) {
+      configFile = (configFile as any).default;
+    }
 
     if (!Config.isValidConfig(configFile)) {
       let missing = [];

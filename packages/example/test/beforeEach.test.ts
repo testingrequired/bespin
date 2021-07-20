@@ -1,5 +1,5 @@
-const assert = require("assert");
-const { sum } = require("../src/index");
+import * as assert from "assert";
+import { sum } from "../src/index";
 
 describe("beforeEach", () => {
   let baseValue;

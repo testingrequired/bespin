@@ -1,5 +1,5 @@
-const assert = require("assert");
-const { sum } = require("../src/index");
+import * as assert from "assert";
+import { sum } from "../src/index";
 
 it("should sum", async () => {
   assert.strictEqual(sum(1, 1), 2);
