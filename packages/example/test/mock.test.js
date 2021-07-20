@@ -1,5 +1,5 @@
-import * as assert from "assert";
-import { mockFunction } from "@testingrequired/bespin-mock";
+const assert = require("assert");
+const { mockFunction } = require("@testingrequired/bespin-mock");
 
 describe("Mock", () => {
   it("mocking works", () => {

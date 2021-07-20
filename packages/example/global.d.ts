@@ -1,1 +1,0 @@
-declare var globalTestValue: string;

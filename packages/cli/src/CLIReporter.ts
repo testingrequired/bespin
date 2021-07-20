@@ -27,7 +27,7 @@ export class CLIReporter extends Reporter {
 
     print.divider();
 
-    print.info(`${underline("Config")}: ${config.path}\n`);
+    print.info(`${underline("Config")}\n`);
 
     print.table(
       [

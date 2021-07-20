@@ -1,7 +1,4 @@
-/// <reference path="../global.d.ts" />
-
-
-import * as assert from "assert";
+const assert = require("assert");
 
 describe("globals", () => {
   globalTestValue;
