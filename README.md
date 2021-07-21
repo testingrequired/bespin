@@ -62,11 +62,11 @@ describe("beforeEach", () => {
   let baseValue;
 
   beforeEach(() => {
-    baseValue = 7;
+    baseValue = 10;
   });
 
   it("should sum with base value", async () => {
-    assert.strictEqual(baseValue, 8);
+    assert.strictEqual(baseValue, 10);
   });
 
   describe("nesting", () => {
@@ -75,7 +75,7 @@ describe("beforeEach", () => {
     });
 
     it("should sum with incremented base value", async () => {
-      assert.strictEqual(baseValue, 9);
+      assert.strictEqual(baseValue, 11);
     });
   });
 });
