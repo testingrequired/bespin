@@ -9,7 +9,8 @@
   "name": "@testingrequired/bespin-example",
   "author": "Kylee Tilley",
   "scripts": {
-    "bespin": "bespin",
+    "bespin": "bespin --compiled-build",
+    "bespin:dev": "bespin",
     "test": "echo 'No tests'",
     "build": "echo 'No Build'"
   },

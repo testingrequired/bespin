@@ -10,6 +10,7 @@
     "reinstall": "find . -name \"node_modules\" -type d -prune -exec rm -rf '{}' + && yarn install",
     "test": "yarn workspaces run test",
     "verify": "yarn build && yarn test && yarn bespin",
-    "bespin": "yarn workspace @testingrequired/bespin-example run bespin"
+    "bespin": "yarn workspace @testingrequired/bespin-example run bespin",
+    "bespin:dev": "yarn workspace @testingrequired/bespin-example run bespin"
   }
 }
