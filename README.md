@@ -8,7 +8,6 @@ A test framework engine.
 
 - Extendable
 - Easy to understand
-- Parallel test execution
 
 ## Architecture
 
@@ -108,3 +107,7 @@ $ bespin
 ## Development
 
 - [DEVELOPMENT.md](./DEVELOPMENT.md)
+
+## Name
+
+_bespin_ is a working title and will change upon initial release.
