@@ -4,6 +4,7 @@
     "target": "ES5",
     "module": "esnext",
     "lib": ["esnext"],
+    "outDir": "dist/esm",
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,

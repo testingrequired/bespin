@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "./dist/bespin-core.cjs.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "tsdx build --entry src/index.ts",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json",
     "test": "tsdx test --no-cache --coverage",
     "lint": "tsdx lint",
     "prepare": "tsdx build"
@@ -25,7 +25,7 @@
   },
   "name": "@testingrequired/bespin-core",
   "author": "Kylee Tilley",
-  "module": "dist/bespin.esm.js",
+  "module": "dist/esm/bespin-core.js",
   "devDependencies": {
     "@types/jest-when": "^2.7.2",
     "husky": "^4.2.5",
