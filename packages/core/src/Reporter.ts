@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
+
 import { ValidConfig } from "./Config";
 import { TestInTestFile } from "./TestInTestFile";
 import { TestResult } from "./TestResult";

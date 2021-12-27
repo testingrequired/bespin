@@ -1,10 +1,10 @@
-declare var global: Record<string, any>;
+declare const global: Record<string, unknown>;
 
 export async function withGlobals<T>(
-  globals: Record<string, any>,
+  globals: Record<string, unknown>,
   fn: () => T
 ): Promise<T> {
-  const originals: Record<string, any> = {};
+  const originals: Record<string, unknown> = {};
 
   Object.entries(globals).forEach(([key, value]) => {
     if (global[key]) {

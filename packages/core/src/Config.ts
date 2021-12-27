@@ -14,7 +14,7 @@ export class Config {
     randomizeTests: false,
     testTimeout: 5000,
   };
-  public globals: Record<string, any> = {};
+  public globals: Record<string, unknown> = {};
   public plugins: Array<Plugin> = [];
 
   constructor(public readonly path: string) {}
@@ -63,7 +63,7 @@ export class Config {
     const configFile: Config = await import(configFilePath);
 
     if (!Config.isValidConfig(configFile)) {
-      let missing = [];
+      const missing = [];
 
       if (!configFile.path) {
         missing.push("path");

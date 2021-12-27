@@ -15,7 +15,7 @@ export class TestExecutor {
       t0 = performance.now();
 
       const testTimeout = new Promise((_, reject) => {
-        let id = setTimeout(() => {
+        const id = setTimeout(() => {
           clearTimeout(id);
           reject(`Test timed out after ${timeoutMs}ms`);
         }, timeoutMs);
