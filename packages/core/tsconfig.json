@@ -1,9 +1,14 @@
 {
   "include": ["src", "types"],
+  "exclude": [
+    "src/*.test.ts",
+    "src/**/__mocks__"
+  ],
   "compilerOptions": {
     "target": "ES5",
     "module": "esnext",
     "lib": ["esnext"],
+    "outDir": "dist/esm",
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,

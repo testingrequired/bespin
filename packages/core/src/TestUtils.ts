@@ -12,15 +12,15 @@ export function createTestInTestFile(
 }
 
 export function testRunner<T extends Runner>(
-  runnerClass: new (...args: Array<any>) => T,
-  ...args: Array<any>
+  runnerClass: new (...args: Array<unknown>) => T,
+  ...args: Array<unknown>
 ) {
   describe(runnerClass.prototype.name, () => {
+    const events = new RuntimeEventEmitter();
+
     let runner: T;
 
     let testsInTestFiles: Array<TestInTestFile>;
-
-    let events = new RuntimeEventEmitter();
 
     beforeEach(() => {
       testsInTestFiles = [
